@@ -1,0 +1,38 @@
+{
+  "items": {
+    "deeperdarker:echo_sword": 4,
+    "deeperdarker:echo_pickaxe": 3,
+    "deeperdarker:echo_axe": 3,
+    "deeperdarker:echo_shovel": 3,
+    "deeperdarker:echo_hoe": 3,
+
+    "deeperdarker:echo_helmet": 5,
+    "deeperdarker:echo_chestplate": 4,
+    "deeperdarker:echo_leggings": 4,
+    "deeperdarker:echo_boots": 5,
+
+    "deeperdarker:resonarium_sword": 6,
+    "deeperdarker:resonarium_pickaxe": 5,
+    "deeperdarker:resonarium_axe": 5,
+    "deeperdarker:resonarium_shovel": 5,
+    "deeperdarker:resonarium_hoe": 5,
+
+    "deeperdarker:resonarium_helmet": 7,
+    "deeperdarker:resonarium_chestplate": 6,
+    "deeperdarker:resonarium_leggings": 6,
+    "deeperdarker:resonarium_boots": 7,
+
+    "deeperdarker:warden_sword": 7,
+    "deeperdarker:warden_pickaxe": 6,
+    "deeperdarker:warden_axe": 6,
+    "deeperdarker:warden_shovel": 6,
+    "deeperdarker:warden_hoe": 6,
+
+    "deeperdarker:warden_helmet": 8,
+    "deeperdarker:warden_chestplate": 7,
+    "deeperdarker:warden_leggings": 7,
+    "deeperdarker:warden_boots": 8,
+
+    "deeperdarker:soul_elytra": 5
+  }
+}

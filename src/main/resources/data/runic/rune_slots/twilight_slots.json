@@ -1,0 +1,80 @@
+{
+  "items": {
+    "twilightforest:ironwood_sword": 4,
+    "twilightforest:ironwood_pickaxe": 3,
+    "twilightforest:ironwood_axe": 3,
+    "twilightforest:ironwood_shovel": 3,
+    "twilightforest:ironwood_hoe": 3,
+
+    "twilightforest:ironwood_helmet": 5,
+    "twilightforest:ironwood_chestplate": 4,
+    "twilightforest:ironwood_leggings": 4,
+    "twilightforest:ironwood_boots": 5,
+
+    "twilightforest:steeleaf_sword": 5,
+    "twilightforest:steeleaf_pickaxe": 4,
+    "twilightforest:steeleaf_axe": 4,
+    "twilightforest:steeleaf_shovel": 4,
+    "twilightforest:steeleaf_hoe": 4,
+
+    "twilightforest:steeleaf_helmet": 6,
+    "twilightforest:steeleaf_chestplate": 5,
+    "twilightforest:steeleaf_leggings": 5,
+    "twilightforest:steeleaf_boots": 6,
+
+    "twilightforest:knightmetal_sword": 6,
+    "twilightforest:knightmetal_pickaxe": 5,
+    "twilightforest:knightmetal_axe": 5,
+    "twilightforest:knightmetal_shovel": 5,
+    "twilightforest:knightmetal_hoe": 5,
+
+    "twilightforest:knightmetal_helmet": 7,
+    "twilightforest:knightmetal_chestplate": 6,
+    "twilightforest:knightmetal_leggings": 6,
+    "twilightforest:knightmetal_boots": 7,
+
+    "twilightforest:fiery_sword": 7,
+    "twilightforest:fiery_pickaxe": 6,
+    "twilightforest:fiery_axe": 6,
+    "twilightforest:fiery_shovel": 6,
+    "twilightforest:fiery_hoe": 6,
+
+    "twilightforest:fiery_helmet": 8,
+    "twilightforest:fiery_chestplate": 7,
+    "twilightforest:fiery_leggings": 7,
+    "twilightforest:fiery_boots": 8,
+
+    "twilightforest:yeti_helmet": 8,
+    "twilightforest:yeti_chestplate": 7,
+    "twilightforest:yeti_leggings": 7,
+    "twilightforest:yeti_boots": 8,
+
+    "twilightforest:naga_helmet": 9,
+    "twilightforest:naga_chestplate": 8,
+    "twilightforest:naga_leggings": 8,
+    "twilightforest:naga_boots": 9,
+
+    "twilightforest:phantom_helmet": 7,
+    "twilightforest:phantom_chestplate": 6,
+
+    "twilightforest:glass_sword": 3,
+    "twilightforest:giant_sword": 2,
+    "twilightforest:giant_pickaxe": 2,
+
+    "twilightforest:minotaur_axe": 7,
+    "twilightforest:mazebreaker_pickaxe": 6,
+    "twilightforest:gold_minotaur_axe": 5,
+    "twilightforest:mystic_crown": 6,
+    "twilightforest:ice_sword": 6,
+    "twilightforest:block_and_chain": 4,
+    "twilightforest:knightmetal_shield": 4,
+
+
+
+    "twilightforest:ice_bow": 6,
+    "twilightforest:seeker_bow": 6,
+    "twilightforest:triple_bow": 6,
+    "twilightforest:ender_bow": 5,
+    "twilightforest:endless_quiver": 3
+  }
+}

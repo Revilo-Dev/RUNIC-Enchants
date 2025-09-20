@@ -121,7 +121,7 @@ public final class RuneSlotCapacityData extends SimpleJsonResourceReloadListener
         map.put(item, Math.max(0, slots));
     }
 
-    /** Get rune slot capacity for a given item */
+    /** Get rune slot capacity */
     public static int capacity(Item item) {
         // 1. Direct lookup
         Integer direct = CAPACITIES.get(item);

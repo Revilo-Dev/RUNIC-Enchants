@@ -1,0 +1,117 @@
+{
+  "items": {
+    "mysticalagriculture:inferium_sword": 5,
+    "mysticalagriculture:inferium_pickaxe": 4,
+    "mysticalagriculture:inferium_axe": 4,
+    "mysticalagriculture:inferium_shovel": 4,
+    "mysticalagriculture:inferium_hoe": 4,
+
+    "mysticalagriculture:inferium_helmet": 4,
+    "mysticalagriculture:inferium_chestplate": 3,
+    "mysticalagriculture:inferium_leggings": 3,
+    "mysticalagriculture:inferium_boots": 4,
+
+    "mysticalagriculture:prudentium_sword": 6,
+    "mysticalagriculture:prudentium_pickaxe": 5,
+    "mysticalagriculture:prudentium_axe": 5,
+    "mysticalagriculture:prudentium_shovel": 5,
+    "mysticalagriculture:prudentium_hoe": 5,
+
+    "mysticalagriculture:prudentium_helmet": 5,
+    "mysticalagriculture:prudentium_chestplate": 4,
+    "mysticalagriculture:prudentium_leggings": 4,
+    "mysticalagriculture:prudentium_boots": 5,
+
+    "mysticalagriculture:tertium_sword": 7,
+    "mysticalagriculture:tertium_pickaxe": 6,
+    "mysticalagriculture:tertium_axe": 6,
+    "mysticalagriculture:tertium_shovel": 6,
+    "mysticalagriculture:tertium_hoe": 6,
+
+    "mysticalagriculture:tertium_helmet": 6,
+    "mysticalagriculture:tertium_chestplate": 5,
+    "mysticalagriculture:tertium_leggings": 5,
+    "mysticalagriculture:tertium_boots": 6,
+
+    "mysticalagriculture:imperium_sword": 8,
+    "mysticalagriculture:imperium_pickaxe": 7,
+    "mysticalagriculture:imperium_axe": 7,
+    "mysticalagriculture:imperium_shovel": 7,
+    "mysticalagriculture:imperium_hoe": 7,
+
+    "mysticalagriculture:imperium_helmet": 7,
+    "mysticalagriculture:imperium_chestplate": 6,
+    "mysticalagriculture:imperium_leggings": 6,
+    "mysticalagriculture:imperium_boots": 7,
+
+    "mysticalagriculture:supremium_sword": 9,
+    "mysticalagriculture:supremium_pickaxe": 8,
+    "mysticalagriculture:supremium_axe": 8,
+    "mysticalagriculture:supremium_shovel": 8,
+    "mysticalagriculture:supremium_hoe": 8,
+
+    "mysticalagriculture:supremium_helmet": 8,
+    "mysticalagriculture:supremium_chestplate": 7,
+    "mysticalagriculture:supremium_leggings": 7,
+    "mysticalagriculture:supremium_boots": 8,
+
+    "mysticalagradditions:awakened_supremium_sword": 10,
+    "mysticalagradditions:awakened_supremium_pickaxe": 9,
+    "mysticalagradditions:awakened_supremium_axe": 9,
+    "mysticalagradditions:awakened_supremium_shovel": 9,
+    "mysticalagradditions:awakened_supremium_hoe": 9,
+
+    "mysticalagradditions:awakened_supremium_helmet": 9,
+    "mysticalagradditions:awakened_supremium_chestplate": 8,
+    "mysticalagradditions:awakened_supremium_leggings": 8,
+    "mysticalagradditions:awakened_supremium_boots": 9,
+
+    "mysticalagradditions:awakened_supremium_bow": 9,
+    "mysticalagradditions:awakened_supremium_crossbow": 9,
+    "mysticalagradditions:awakened_supremium_scythe": 9,
+    "mysticalagradditions:awakened_supremium_sickle": 9,
+    "mysticalagradditions:awakened_supremium_shears": 7,
+    "mysticalagradditions:awakened_supremium_watering_can": 7,
+
+    "mysticalagriculture:soulium_dagger": 5,
+    "mysticalagriculture:soulium_dagger_passive": 5,
+    "mysticalagriculture:soulium_dagger_hostile": 5,
+    "mysticalagriculture:soulium_dagger_creative": 7,
+
+    "mysticalagriculture:inferium_watering_can": 2,
+    "mysticalagriculture:prudentium_watering_can": 3,
+    "mysticalagriculture:tertium_watering_can": 4,
+    "mysticalagriculture:imperium_watering_can": 5,
+    "mysticalagriculture:supremium_watering_can": 6,
+
+    "mysticalagriculture:inferium_shears": 2,
+    "mysticalagriculture:prudentium_shears": 3,
+    "mysticalagriculture:tertium_shears": 4,
+    "mysticalagriculture:imperium_shears": 5,
+    "mysticalagriculture:supremium_shears": 6,
+
+    "mysticalagriculture:inferium_bow": 4,
+    "mysticalagriculture:prudentium_bow": 5,
+    "mysticalagriculture:tertium_bow": 6,
+    "mysticalagriculture:imperium_bow": 7,
+    "mysticalagriculture:supremium_bow": 8,
+
+    "mysticalagriculture:inferium_crossbow": 4,
+    "mysticalagriculture:prudentium_crossbow": 5,
+    "mysticalagriculture:tertium_crossbow": 6,
+    "mysticalagriculture:imperium_crossbow": 7,
+    "mysticalagriculture:supremium_crossbow": 8,
+
+    "mysticalagriculture:inferium_scythe": 4,
+    "mysticalagriculture:prudentium_scythe": 5,
+    "mysticalagriculture:tertium_scythe": 6,
+    "mysticalagriculture:imperium_scythe": 7,
+    "mysticalagriculture:supremium_scythe": 8,
+
+    "mysticalagriculture:inferium_sickle": 4,
+    "mysticalagriculture:prudentium_sickle": 5,
+    "mysticalagriculture:tertium_sickle": 6,
+    "mysticalagriculture:imperium_sickle": 7,
+    "mysticalagriculture:supremium_sickle": 8
+  }
+}
