@@ -71,19 +71,9 @@ public class RuneRarityInjector extends LootModifier {
         Holder<Enchantment> chosen = pickRandomEnchantOf(rarity, rand, ctx.getLevel());
         if (chosen == null) return generatedLoot;
 
-        // --- Centralized creation with blacklist & EMPTY guard ---
         ItemStack rune = RuneItem.createForEnchantment(new EnchantmentInstance(chosen, 1));
         if (!rune.isEmpty()) {
             generatedLoot.add(rune);
-            RunicMod.LOGGER.info("[Runic] Injected rune with {} (rarity {}) into loot from {}",
-                    chosen.unwrapKey().map(k -> k.location().toString()).orElse("unknown"),
-                    rarity.key(),
-                    tableId != null ? tableId : entity != null ? entity.getType().builtInRegistryHolder().key().location() : "unknown");
-        } else {
-            RunicMod.LOGGER.info("[Runic] Skipped blacklisted enchant {} for rarity {} in {}",
-                    chosen.unwrapKey().map(k -> k.location().toString()).orElse("unknown"),
-                    rarity.key(),
-                    tableId != null ? tableId : entity != null ? entity.getType().builtInRegistryHolder().key().location() : "unknown");
         }
 
         return generatedLoot;
@@ -103,7 +93,6 @@ public class RuneRarityInjector extends LootModifier {
         return pool.get(rand.nextInt(pool.size()));
     }
 
-    // ===== Wildcard-aware routes loader =====
     public static final class RoutesConfig {
         private static RoutesConfig CACHED = null;
 

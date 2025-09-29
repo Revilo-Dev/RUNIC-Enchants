@@ -35,7 +35,7 @@
     { "predicate": { "runic:rune_model": 26.0 }, "model": "runic:item/rune/minecraft/fortune" },
     { "predicate": { "runic:rune_model": 27.0 }, "model": "runic:item/rune/minecraft/unbreaking" },
     { "predicate": { "runic:rune_model": 28.0 }, "model": "runic:item/rune/minecraft/mending" },
-    { "predicate": { "runic:rune_model": 29.0 }, "model": "runic:item/rune/minecraft/vanishing" },
+    { "predicate": { "runic:rune_model": 29.0 }, "model": "runic:item/rune/minecraft/vanishing_" },
     { "predicate": { "runic:rune_model": 30.0 }, "model": "runic:item/rune/minecraft/binding" },
 
     { "predicate": { "runic:rune_model": 31.0 }, "model": "runic:item/rune/minecraft/power" },

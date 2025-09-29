@@ -20,21 +20,20 @@ public final class RunicClientModels {
 
 
     public static void init() {
-        RunicMod.LOGGER.info("[Runic] Registering rune_model predicate for {}", ModItems.ENHANCED_RUNE.getId());
         ItemProperties.register(ModItems.ENHANCED_RUNE.get(), id("rune_model"), RunicClientModels::runePredicate);
     }
 
     private static float runePredicate(ItemStack stack, ClientLevel level, LivingEntity entity, int seed) {
         if (stack.isEmpty()) return 0.0F;
 
-        // Get stored or direct enchantments
+
         ItemEnchantments enchants = stack.getOrDefault(net.minecraft.core.component.DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
         if (enchants.isEmpty()) {
             enchants = stack.getOrDefault(net.minecraft.core.component.DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
         }
         if (enchants.isEmpty()) return 0.0F;
 
-        // Take the first enchantment
+
         for (var entry : enchants.entrySet()) {
             Holder<Enchantment> ench = entry.getKey();
             String path = ench.unwrapKey().map(k -> k.location().getPath()).orElse("");
