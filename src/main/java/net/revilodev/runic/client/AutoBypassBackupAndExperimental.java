@@ -24,7 +24,6 @@ public final class AutoBypassBackupAndExperimental {
     public static void onInitPost(ScreenEvent.Init.Post e) {
         Screen s = e.getScreen();
         String name = s.getClass().getName();
-        RunicMod.LOGGER.info("[Runic] Init.Post: {}", name);
 
         if (s instanceof ConfirmExperimentalFeaturesScreen
                 || s instanceof BackupConfirmScreen
@@ -76,7 +75,7 @@ public final class AutoBypassBackupAndExperimental {
                         btn.getMessage() == null ? "" : btn.getMessage().getString());
             });
         } else {
-            RunicMod.LOGGER.warn("[Runic] No suitable button found to auto-click.");
+            return;
         }
     }
 }

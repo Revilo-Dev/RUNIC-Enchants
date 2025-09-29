@@ -18,7 +18,7 @@ public final class RunicClientModels {
         return ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, path);
     }
 
-    /** Called from RunicMod.ClientModEvents#onClientSetup */
+
     public static void init() {
         RunicMod.LOGGER.info("[Runic] Registering rune_model predicate for {}", ModItems.ENHANCED_RUNE.getId());
         ItemProperties.register(ModItems.ENHANCED_RUNE.get(), id("rune_model"), RunicClientModels::runePredicate);

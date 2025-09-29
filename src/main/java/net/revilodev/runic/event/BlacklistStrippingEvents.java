@@ -16,7 +16,6 @@ import net.revilodev.runic.RunicMod;
 public final class BlacklistStrippingEvents {
     private BlacklistStrippingEvents() {}
 
-    /** Strip blacklisted enchants when a dropped item is picked up (before inventory add). */
     @SubscribeEvent
     public static void onItemPickup(ItemEntityPickupEvent.Pre event) {
         ItemEntity itemEntity = event.getItemEntity();
@@ -26,7 +25,6 @@ public final class BlacklistStrippingEvents {
         }
     }
 
-    /** Strip blacklisted enchants from the player's inventory every tick (server only). */
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) { // run at end of tick
         Player player = event.getEntity();
