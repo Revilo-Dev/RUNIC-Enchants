@@ -29,8 +29,8 @@ public class ModEnhancements {
             Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "slowness_aspect"));
     public static final ResourceKey<Enchantment> WEAKNESS_ASPECT = ResourceKey.create(
             Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "weakness_aspect"));
-    public static final ResourceKey<Enchantment> SWIFTSTRIKE = ResourceKey.create(
-            Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "swiftstrike"));
+    public static final ResourceKey<Enchantment> SWIFT_STRIKE = ResourceKey.create(
+            Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "swift_strike"));
     public static final ResourceKey<Enchantment> SWIFT = ResourceKey.create(
             Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "swift"));
 
@@ -91,8 +91,8 @@ public class ModEnhancements {
                 .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER,
                         EnchantmentTarget.VICTIM, new WeaknessAspect()));
 
-        // Swiftstrike (I–IV): +5% attack speed per level
-        var swiftstrikeDef = Enchantment.definition(
+
+        var swift_strikeDef = Enchantment.definition(
                 items.getOrThrow(ItemTags.WEAPON_ENCHANTABLE),
                 items.getOrThrow(ItemTags.SWORD_ENCHANTABLE),
                 5, 4,
@@ -102,14 +102,13 @@ public class ModEnhancements {
                 EquipmentSlotGroup.MAINHAND
         );
 
-        register(context, SWIFTSTRIKE, Enchantment.enchantment(swiftstrikeDef)
+        register(context, SWIFT_STRIKE, Enchantment.enchantment(swift_strikeDef)
                 .exclusiveWith(enchantments.getOrThrow(EnchantmentTags.DAMAGE_EXCLUSIVE))
                 .withEffect(EnchantmentEffectComponents.ATTRIBUTES,
                         new EnchantmentAttributeEffect(
-                                ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "swiftstrike"),
+                                ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "swift_strike"),
                                 Attributes.ATTACK_SPEED,
-                                // 5% base, +5% per extra level → I:0.05, II:0.10, III:0.15, IV:0.20
-                                LevelBasedValue.perLevel(0.05F, 0.05F),
+                                LevelBasedValue.perLevel(0.1F, 0.05F),
                                 AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
                         )));
         var swiftDef = Enchantment.definition(
@@ -127,7 +126,7 @@ public class ModEnhancements {
                 Enchantment.enchantment(swiftDef)
                         .withEffect(EnchantmentEffectComponents.ATTRIBUTES,
                                 new EnchantmentAttributeEffect(
-                                        ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "swift_speed"),
+                                        ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "swift"),
                                         Attributes.MOVEMENT_SPEED,
                                         LevelBasedValue.perLevel(0.15F, 0.10F),
                                         AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL

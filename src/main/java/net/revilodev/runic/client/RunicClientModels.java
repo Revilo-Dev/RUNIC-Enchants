@@ -69,15 +69,15 @@ public final class RunicClientModels {
             case "poison_aspect" -> 20.0F;
             case "slowness_aspect" -> 21.0F;
             case "weakness_aspect" -> 22.0F;
-            case "swiftstrike" -> 23.0F;
+            case "swift_strike" -> 23.0F;
 
             case "efficiency" -> 24.0F;
             case "silk_touch" -> 25.0F;
             case "fortune" -> 26.0F;
             case "unbreaking" -> 27.0F;
             case "mending" -> 28.0F;
-            case "vanishing" -> 29.0F;
-            case "binding" -> 30.0F;
+            case "vanishing_curse" -> 29.0F;
+            case "binding_curse" -> 30.0F;
 
             case "power" -> 31.0F;
             case "punch" -> 32.0F;
@@ -102,6 +102,17 @@ public final class RunicClientModels {
 
             case "swift" -> 48.0F;
             case "smelting" -> 49.0F;
+
+            case "sculk_smite" -> 50.0F;
+            case "capacity" -> 51.0F;
+            case "soul_siphoner" -> 52.0F;
+            case "fire_react" -> 53.0F;
+            case "catalysis" -> 54.0F;
+            case "destruction" -> 55.0F;
+            case "mystical_enlightenment" -> 56.0F;
+            case "renewal" -> 57.0F;
+            case "chill_aura" -> 58.0F;
+            case "potato_recovery" -> 59.0F;
 
             default -> 0.0F;
         };

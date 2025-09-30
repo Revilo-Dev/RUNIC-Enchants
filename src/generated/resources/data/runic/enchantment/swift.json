@@ -12,7 +12,7 @@
           "per_level_above_first": 0.1
         },
         "attribute": "minecraft:generic.movement_speed",
-        "id": "runic:swift_speed",
+        "id": "runic:swift",
         "operation": "add_multiplied_total"
       }
     ]

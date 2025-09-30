@@ -16,11 +16,9 @@ import net.revilodev.runic.RunicMod;
 
 public final class ModEnhancementEffects {
 
-    // Registry type is MapCodec<? extends EnchantmentEntityEffect>
     public static final DeferredRegister<MapCodec<? extends EnchantmentEntityEffect>> ENTITY_ENCHANTMENT_EFFECTS =
             DeferredRegister.create(Registries.ENCHANTMENT_ENTITY_EFFECT_TYPE, RunicMod.MOD_ID);
 
-    // NeoForge uses DeferredHolder for generic registries (no .get() needed unless you want the value)
     public static final DeferredHolder<MapCodec<? extends EnchantmentEntityEffect>, MapCodec<? extends EnchantmentEntityEffect>> LIGHTNING_ASPECT =
             ENTITY_ENCHANTMENT_EFFECTS.register("lightning_aspect", () -> LightningAspect.CODEC);
 

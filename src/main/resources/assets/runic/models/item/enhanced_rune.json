@@ -35,8 +35,8 @@
     { "predicate": { "runic:rune_model": 26.0 }, "model": "runic:item/rune/minecraft/fortune" },
     { "predicate": { "runic:rune_model": 27.0 }, "model": "runic:item/rune/minecraft/unbreaking" },
     { "predicate": { "runic:rune_model": 28.0 }, "model": "runic:item/rune/minecraft/mending" },
-    { "predicate": { "runic:rune_model": 29.0 }, "model": "runic:item/rune/minecraft/vanishing_" },
-    { "predicate": { "runic:rune_model": 30.0 }, "model": "runic:item/rune/minecraft/binding" },
+    { "predicate": { "runic:rune_model": 29.0 }, "model": "runic:item/rune/minecraft/vanishing_curse" },
+    { "predicate": { "runic:rune_model": 30.0 }, "model": "runic:item/rune/minecraft/binding_curse" },
 
     { "predicate": { "runic:rune_model": 31.0 }, "model": "runic:item/rune/minecraft/power" },
     { "predicate": { "runic:rune_model": 32.0 }, "model": "runic:item/rune/minecraft/punch" },
@@ -60,6 +60,18 @@
     { "predicate": { "runic:rune_model": 47.0 }, "model": "runic:item/rune/minecraft/swift_sneak" },
     { "predicate": { "runic:rune_model": 48.0 }, "model": "runic:item/rune/runic/swift" },
 
-    { "predicate": { "runic:rune_model": 49.0 }, "model": "runic:item/rune/runic/smelting" }
+    { "predicate": { "runic:rune_model": 49.0 }, "model": "runic:item/rune/runic/smelting" },
+
+    { "predicate": { "runic:rune_model": 50.0 }, "model": "runic:item/rune/modded/sculk_smite" },
+    { "predicate": { "runic:rune_model": 51.0 }, "model": "runic:item/rune/modded/capacity" },
+    { "predicate": { "runic:rune_model": 52.0 }, "model": "runic:item/rune/modded/soul_siphoner" },
+    { "predicate": { "runic:rune_model": 53.0 }, "model": "runic:item/rune/modded/fire_react" },
+    { "predicate": { "runic:rune_model": 54.0 }, "model": "runic:item/rune/modded/catalysis" },
+    { "predicate": { "runic:rune_model": 55.0 }, "model": "runic:item/rune/modded/destruction" },
+    { "predicate": { "runic:rune_model": 56.0 }, "model": "runic:item/rune/modded/mystical_enlightenment" },
+    { "predicate": { "runic:rune_model": 57.0 }, "model": "runic:item/rune/modded/renewal" },
+    { "predicate": { "runic:rune_model": 58.0 }, "model": "runic:item/rune/modded/chill_aura" },
+    { "predicate": { "runic:rune_model": 59.0 }, "model": "runic:item/rune/modded/potato_recovery" }
+
   ]
 }
