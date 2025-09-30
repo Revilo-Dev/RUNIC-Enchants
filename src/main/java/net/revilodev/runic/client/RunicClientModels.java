@@ -113,6 +113,10 @@ public final class RunicClientModels {
             case "renewal" -> 57.0F;
             case "chill_aura" -> 58.0F;
             case "potato_recovery" -> 59.0F;
+            case "acrobat" -> 60.0F;
+            case "longfooted" -> 61.0F;
+            case "multi_roll" -> 62.0F;
+
 
             default -> 0.0F;
         };

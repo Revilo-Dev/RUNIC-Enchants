@@ -71,7 +71,11 @@
     { "predicate": { "runic:rune_model": 56.0 }, "model": "runic:item/rune/modded/mystical_enlightenment" },
     { "predicate": { "runic:rune_model": 57.0 }, "model": "runic:item/rune/modded/renewal" },
     { "predicate": { "runic:rune_model": 58.0 }, "model": "runic:item/rune/modded/chill_aura" },
-    { "predicate": { "runic:rune_model": 59.0 }, "model": "runic:item/rune/modded/potato_recovery" }
+    { "predicate": { "runic:rune_model": 59.0 }, "model": "runic:item/rune/modded/potato_recovery" },
+    { "predicate": { "runic:rune_model": 60.0 }, "model": "runic:item/rune/modded/acrobat" },
+    { "predicate": { "runic:rune_model": 61.0 }, "model": "runic:item/rune/modded/longfooted" },
+    { "predicate": { "runic:rune_model": 62.0 }, "model": "runic:item/rune/modded/multi_roll" }
+
 
   ]
 }

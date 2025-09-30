@@ -3,7 +3,7 @@
 
   "item.runic.rune": " Blank Rune",
   "item.runic.expansion_rune": "Expansion Rune",
-  "item.runic.enhanced_rune": "Enhancement Rune",
+  "item.runic.enhanced_rune": "Enhanced Rune",
 
   "block.runic.etching_table": "Etching Table",
 
@@ -16,7 +16,7 @@
   "enchantment.runic.poison_aspect": "Poison Aspect",
   "enchantment.runic.slowness_aspect": "Slowness Aspect",
   "enchantment.runic.weakness_aspect": "Weakening Aspect",
-  "enchantment.runic.swiftstrike": "Swift Strike",
+  "enchantment.runic.swift_strike": "Swift Strike",
   "enchantment.runic.swift": "Swift",
 
 
@@ -24,7 +24,7 @@
   "enchantment.minecraft.unbreaking": "Unbreaking",
 
 
-  "tooltip.runic.blank_rune": "Transfer Enhancements With An Etching Table",
+  "tooltip.runic.blank_rune": "Does nothing yet.",
 
 
 
@@ -77,8 +77,20 @@
   "tooltip.runic.lightning_aspect": "% chance to summon lightning on hit",
   "tooltip.runic.weakness_aspect": "% chance to weaken enemy on hit",
   "tooltip.runic.slowness_aspect": "% chance to slowdown enemy on hit",
-  "tooltip.runic.poison_aspect": "% chance to poison enemy on hit"
+  "tooltip.runic.poison_aspect": "% chance to poison enemy on hit",
 
+
+  "tooltip.runic.skulk_smite": "Deals extra damage to sculk creatures",
+  "tooltip.runic.capacity": "Increases the maximum capacity",
+  "tooltip.runic.soul_siphoner": "Restores durability using XP from kills",
+  "tooltip.runic.fire_react": "% chance to ignite attackers when hit",
+  "tooltip.runic.catalysis": "Enhances the effects of potions",
+  "tooltip.runic.destruction": "Greatly increases attack damage",
+  "tooltip.runic.mystical_enlightenment": "Boosts enchanting power of nearby tables",
+  "tooltip.runic.renewal": "Gradually repairs the item over time",
+  "tooltip.runic.chill_aura": "Slows nearby enemies with a freezing aura",
+  "tooltip.runic.potato_recovery": "% chance to restore hunger with potatoes",
+  "tooltip.runic.power_of_the_depth": "Increases damage dealt underwater"
 
 
 

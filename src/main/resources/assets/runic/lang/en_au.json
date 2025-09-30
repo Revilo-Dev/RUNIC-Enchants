@@ -8,10 +8,6 @@
   "block.runic.etching_table": "Etching Table",
 
 
-
-
-
-
   "enchantment.runic.lightning_aspect": "Lighting Aspect",
   "enchantment.runic.poison_aspect": "Poison Aspect",
   "enchantment.runic.slowness_aspect": "Slowness Aspect",
@@ -82,15 +78,17 @@
 
   "tooltip.runic.skulk_smite": "Deals extra damage to sculk creatures",
   "tooltip.runic.capacity": "Increases the maximum capacity",
-  "tooltip.runic.soul_siphoner": "Restores durability using XP from kills",
+  "tooltip.runic.soul_siphoner": "% chance to siphon extra soul essence on kill",
   "tooltip.runic.fire_react": "% chance to ignite attackers when hit",
-  "tooltip.runic.catalysis": "Enhances the effects of potions",
-  "tooltip.runic.destruction": "Greatly increases attack damage",
+  "tooltip.runic.catalysis": "Enhances potion and catalyst effects",
+  "tooltip.runic.destruction": "+% attack damage",
   "tooltip.runic.mystical_enlightenment": "Boosts enchanting power of nearby tables",
   "tooltip.runic.renewal": "Gradually repairs the item over time",
   "tooltip.runic.chill_aura": "Slows nearby enemies with a freezing aura",
-  "tooltip.runic.potato_recovery": "% chance to restore hunger with potatoes",
-  "tooltip.runic.power_of_the_depth": "Increases damage dealt underwater"
+  "tooltip.runic.potato_recovery": "% chance to not consume a potato",
+  "tooltip.runic.acrobat": "Reduces dodge roll cooldown",
+  "tooltip.runic.longfooted": "Increases dodge roll distance",
+  "tooltip.runic.multi_roll": "Allows multiple rolls before cooldown"
 
 
 
