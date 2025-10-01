@@ -25,19 +25,16 @@ import net.revilodev.runic.loot.rarity.EnhancementRarity;
 @EventBusSubscriber(modid = RunicMod.MOD_ID, value = Dist.CLIENT)
 public class EnchantTooltipHandler {
 
-    // Use a plain ResourceLocation for the rune ID (no RegistryObject / ResourceKey needed)
+
     private static final ResourceLocation ENHANCED_RUNE_ID =
             ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "enhanced_rune");
-    // If your mappings don’t have fromNamespaceAndPath(..), use:
-    // private static final ResourceLocation ENHANCED_RUNE_ID =
-    //         ResourceLocation.parse(RunicMod.MOD_ID + ":enhanced_rune");
+
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onItemTooltip(ItemTooltipEvent event) {
         ItemStack stack = event.getItemStack();
         if (stack.isEmpty()) return;
 
-        // Determine if this stack is the Enhanced Rune item by comparing registry ID
         boolean isRune = stack.getItemHolder()
                 .unwrapKey()
                 .map(k -> k.location().equals(ENHANCED_RUNE_ID))
@@ -60,7 +57,6 @@ public class EnchantTooltipHandler {
 
         var tooltip = event.getToolTip();
 
-        // Remove vanilla enchant lines
         int firstIdx = -1;
         for (int i = tooltip.size() - 1; i >= 0; i--) {
             String s = tooltip.get(i).getString();

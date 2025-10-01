@@ -30,7 +30,7 @@ import java.util.List;
 public final class ItemBlacklistEvents {
     private ItemBlacklistEvents() {}
 
-    /** Delete enchanted books and enchanting tables when a player tries to pick them up. */
+
     @SubscribeEvent
     public static void onItemPickup(ItemEntityPickupEvent.Pre event) {
         ItemEntity itemEntity = event.getItemEntity();

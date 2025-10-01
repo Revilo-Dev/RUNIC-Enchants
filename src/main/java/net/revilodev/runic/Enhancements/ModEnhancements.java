@@ -14,6 +14,7 @@ import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
 import net.minecraft.world.item.enchantment.EnchantmentTarget;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.item.enchantment.effects.EnchantmentAttributeEffect;
+import net.revilodev.runic.Enhancements.custom.BleedingAspect;
 import net.revilodev.runic.Enhancements.custom.LightningAspect;
 import net.revilodev.runic.Enhancements.custom.PoisonAspect;
 import net.revilodev.runic.Enhancements.custom.SlownessAspect;
@@ -21,25 +22,19 @@ import net.revilodev.runic.Enhancements.custom.WeaknessAspect;
 import net.revilodev.runic.RunicMod;
 
 public class ModEnhancements {
-    public static final ResourceKey<Enchantment> LIGHTNING_ASPECT = ResourceKey.create(
-            Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "lightning_aspect"));
-    public static final ResourceKey<Enchantment> POISON_ASPECT = ResourceKey.create(
-            Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "poison_aspect"));
-    public static final ResourceKey<Enchantment> SLOWNESS_ASPECT = ResourceKey.create(
-            Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "slowness_aspect"));
-    public static final ResourceKey<Enchantment> WEAKNESS_ASPECT = ResourceKey.create(
-            Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "weakness_aspect"));
-    public static final ResourceKey<Enchantment> SWIFT_STRIKE = ResourceKey.create(
-            Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "swift_strike"));
-    public static final ResourceKey<Enchantment> SWIFT = ResourceKey.create(
-            Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "swift"));
-
+    public static final ResourceKey<Enchantment> LIGHTNING_ASPECT = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "lightning_aspect"));
+    public static final ResourceKey<Enchantment> POISON_ASPECT = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "poison_aspect"));
+    public static final ResourceKey<Enchantment> SLOWNESS_ASPECT = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "slowness_aspect"));
+    public static final ResourceKey<Enchantment> WEAKNESS_ASPECT = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "weakness_aspect"));
+    public static final ResourceKey<Enchantment> SWIFT_STRIKE = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "swift_strike"));
+    public static final ResourceKey<Enchantment> SWIFT = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "swift"));
+    public static final ResourceKey<Enchantment> AIR_JUMP = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "air_jump"));
+    public static final ResourceKey<Enchantment> BLEEDING_ASPECT = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "bleeding_aspect"));
 
     public static void bootstrap(BootstrapContext<Enchantment> context) {
         var enchantments = context.lookup(Registries.ENCHANTMENT);
         var items = context.lookup(Registries.ITEM);
 
-        // Lightning
         register(context, LIGHTNING_ASPECT, Enchantment.enchantment(Enchantment.definition(
                         items.getOrThrow(ItemTags.WEAPON_ENCHANTABLE),
                         items.getOrThrow(ItemTags.SWORD_ENCHANTABLE),
@@ -49,10 +44,8 @@ public class ModEnhancements {
                         2,
                         EquipmentSlotGroup.MAINHAND))
                 .exclusiveWith(enchantments.getOrThrow(EnchantmentTags.DAMAGE_EXCLUSIVE))
-                .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER,
-                        EnchantmentTarget.VICTIM, new LightningAspect()));
+                .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER, EnchantmentTarget.VICTIM, new LightningAspect()));
 
-        // Poison
         register(context, POISON_ASPECT, Enchantment.enchantment(Enchantment.definition(
                         items.getOrThrow(ItemTags.WEAPON_ENCHANTABLE),
                         items.getOrThrow(ItemTags.SWORD_ENCHANTABLE),
@@ -62,10 +55,8 @@ public class ModEnhancements {
                         2,
                         EquipmentSlotGroup.MAINHAND))
                 .exclusiveWith(enchantments.getOrThrow(EnchantmentTags.DAMAGE_EXCLUSIVE))
-                .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER,
-                        EnchantmentTarget.VICTIM, new PoisonAspect()));
+                .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER, EnchantmentTarget.VICTIM, new PoisonAspect()));
 
-        // Slowness
         register(context, SLOWNESS_ASPECT, Enchantment.enchantment(Enchantment.definition(
                         items.getOrThrow(ItemTags.WEAPON_ENCHANTABLE),
                         items.getOrThrow(ItemTags.SWORD_ENCHANTABLE),
@@ -75,10 +66,8 @@ public class ModEnhancements {
                         2,
                         EquipmentSlotGroup.MAINHAND))
                 .exclusiveWith(enchantments.getOrThrow(EnchantmentTags.DAMAGE_EXCLUSIVE))
-                .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER,
-                        EnchantmentTarget.VICTIM, new SlownessAspect()));
+                .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER, EnchantmentTarget.VICTIM, new SlownessAspect()));
 
-        // Weakness
         register(context, WEAKNESS_ASPECT, Enchantment.enchantment(Enchantment.definition(
                         items.getOrThrow(ItemTags.WEAPON_ENCHANTABLE),
                         items.getOrThrow(ItemTags.SWORD_ENCHANTABLE),
@@ -88,9 +77,7 @@ public class ModEnhancements {
                         2,
                         EquipmentSlotGroup.MAINHAND))
                 .exclusiveWith(enchantments.getOrThrow(EnchantmentTags.DAMAGE_EXCLUSIVE))
-                .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER,
-                        EnchantmentTarget.VICTIM, new WeaknessAspect()));
-
+                .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER, EnchantmentTarget.VICTIM, new WeaknessAspect()));
 
         var swift_strikeDef = Enchantment.definition(
                 items.getOrThrow(ItemTags.WEAPON_ENCHANTABLE),
@@ -111,6 +98,7 @@ public class ModEnhancements {
                                 LevelBasedValue.perLevel(0.1F, 0.05F),
                                 AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
                         )));
+
         var swiftDef = Enchantment.definition(
                 items.getOrThrow(ItemTags.ARMOR_ENCHANTABLE),
                 items.getOrThrow(ItemTags.FOOT_ARMOR_ENCHANTABLE),
@@ -122,19 +110,41 @@ public class ModEnhancements {
                 EquipmentSlotGroup.FEET
         );
 
-        register(context, SWIFT,
-                Enchantment.enchantment(swiftDef)
-                        .withEffect(EnchantmentEffectComponents.ATTRIBUTES,
-                                new EnchantmentAttributeEffect(
-                                        ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "swift"),
-                                        Attributes.MOVEMENT_SPEED,
-                                        LevelBasedValue.perLevel(0.15F, 0.10F),
-                                        AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
-                                )
-                        )
+        register(context, SWIFT, Enchantment.enchantment(swiftDef)
+                .withEffect(EnchantmentEffectComponents.ATTRIBUTES,
+                        new EnchantmentAttributeEffect(
+                                ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "swift"),
+                                Attributes.MOVEMENT_SPEED,
+                                LevelBasedValue.perLevel(0.15F, 0.10F),
+                                AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
+                        )));
+
+        var airDef = Enchantment.definition(
+                items.getOrThrow(ItemTags.ARMOR_ENCHANTABLE),
+                items.getOrThrow(ItemTags.FOOT_ARMOR_ENCHANTABLE),
+                2,
+                1,
+                Enchantment.dynamicCost(20, 0),
+                Enchantment.dynamicCost(50, 0),
+                1,
+                EquipmentSlotGroup.FEET
         );
 
+        register(context, AIR_JUMP, Enchantment.enchantment(airDef));
 
+        var bleedDef = Enchantment.definition(
+                items.getOrThrow(ItemTags.WEAPON_ENCHANTABLE),
+                items.getOrThrow(ItemTags.SWORD_ENCHANTABLE),
+                5, 3,
+                Enchantment.dynamicCost(10, 10),
+                Enchantment.dynamicCost(40, 10),
+                2,
+                EquipmentSlotGroup.MAINHAND
+        );
+
+        register(context, BLEEDING_ASPECT, Enchantment.enchantment(bleedDef)
+                .exclusiveWith(enchantments.getOrThrow(EnchantmentTags.DAMAGE_EXCLUSIVE))
+                .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER, EnchantmentTarget.VICTIM, new BleedingAspect()));
     }
 
     private static void register(BootstrapContext<Enchantment> registry, ResourceKey<Enchantment> key, Enchantment.Builder builder) {

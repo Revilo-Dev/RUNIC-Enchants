@@ -12,7 +12,6 @@ import java.util.concurrent.CompletableFuture;
 
 public class ModGLMProvider extends GlobalLootModifierProvider {
     public ModGLMProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
-        // ✅ Note the argument order: output, lookupProvider, modid
         super(output, lookupProvider, RunicMod.MOD_ID);
     }
 

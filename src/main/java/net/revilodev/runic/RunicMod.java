@@ -13,8 +13,10 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.revilodev.runic.Enhancements.ModEnhancementEffects;
+import net.revilodev.runic.Enhancements.custom.AirJumpHandler;
 import net.revilodev.runic.block.ModBlocks;
 import net.revilodev.runic.client.RunicClientModels;
+import net.revilodev.runic.effect.ModMobEffects;
 import net.revilodev.runic.item.ModCreativeModeTabs;
 import net.revilodev.runic.item.ModItems;
 import net.revilodev.runic.loot.ModLootModifiers;
@@ -29,15 +31,10 @@ public class RunicMod {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public RunicMod(ModContainer modContainer, IEventBus modEventBus) {
-        // lifecycle listeners
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::addCreative);
-
-        // client-only listeners
         modEventBus.addListener(ClientModEvents::onRegisterScreens);
         modEventBus.addListener(ClientModEvents::onClientSetup);
-
-        // deferred registers
         ModCreativeModeTabs.register(modEventBus);
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
@@ -45,15 +42,12 @@ public class RunicMod {
         ModMenuTypes.register(modEventBus);
         ModDataComponents.DATA_COMPONENT_TYPES.register(modEventBus);
         ModEnhancementEffects.register(modEventBus);
-
-        // global events
+        ModMobEffects.register(modEventBus);
+        AirJumpHandler.register();
         NeoForge.EVENT_BUS.register(this);
-
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {}
-
-
 
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
@@ -66,9 +60,7 @@ public class RunicMod {
     }
 
     @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event) {
-        // server start logic
-    }
+    public void onServerStarting(ServerStartingEvent event) {}
 
     public static class ClientModEvents {
         public static void onRegisterScreens(RegisterMenuScreensEvent event) {
@@ -77,6 +69,5 @@ public class RunicMod {
         public static void onClientSetup(FMLClientSetupEvent event) {
             RunicClientModels.init();
         }
-
     }
 }
