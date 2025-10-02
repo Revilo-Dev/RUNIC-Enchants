@@ -18,6 +18,7 @@ import net.revilodev.runic.Enhancements.custom.BleedingAspect;
 import net.revilodev.runic.Enhancements.custom.LightningAspect;
 import net.revilodev.runic.Enhancements.custom.PoisonAspect;
 import net.revilodev.runic.Enhancements.custom.SlownessAspect;
+import net.revilodev.runic.Enhancements.custom.StunningAspect;
 import net.revilodev.runic.Enhancements.custom.WeaknessAspect;
 import net.revilodev.runic.RunicMod;
 
@@ -30,6 +31,7 @@ public class ModEnhancements {
     public static final ResourceKey<Enchantment> SWIFT = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "swift"));
     public static final ResourceKey<Enchantment> AIR_JUMP = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "air_jump"));
     public static final ResourceKey<Enchantment> BLEEDING_ASPECT = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "bleeding_aspect"));
+    public static final ResourceKey<Enchantment> STUNNING_ASPECT = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "stunning_aspect"));
 
     public static void bootstrap(BootstrapContext<Enchantment> context) {
         var enchantments = context.lookup(Registries.ENCHANTMENT);
@@ -145,6 +147,20 @@ public class ModEnhancements {
         register(context, BLEEDING_ASPECT, Enchantment.enchantment(bleedDef)
                 .exclusiveWith(enchantments.getOrThrow(EnchantmentTags.DAMAGE_EXCLUSIVE))
                 .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER, EnchantmentTarget.VICTIM, new BleedingAspect()));
+
+        var stunDef = Enchantment.definition(
+                items.getOrThrow(ItemTags.WEAPON_ENCHANTABLE),
+                items.getOrThrow(ItemTags.SWORD_ENCHANTABLE),
+                5, 3,
+                Enchantment.dynamicCost(10, 10),
+                Enchantment.dynamicCost(40, 10),
+                2,
+                EquipmentSlotGroup.MAINHAND
+        );
+
+        register(context, STUNNING_ASPECT, Enchantment.enchantment(stunDef)
+                .exclusiveWith(enchantments.getOrThrow(EnchantmentTags.DAMAGE_EXCLUSIVE))
+                .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER, EnchantmentTarget.VICTIM, new StunningAspect()));
     }
 
     private static void register(BootstrapContext<Enchantment> registry, ResourceKey<Enchantment> key, Enchantment.Builder builder) {

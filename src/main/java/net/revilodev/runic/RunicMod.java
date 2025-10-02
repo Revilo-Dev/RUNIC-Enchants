@@ -14,12 +14,14 @@ import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.revilodev.runic.Enhancements.ModEnhancementEffects;
 import net.revilodev.runic.Enhancements.custom.AirJumpHandler;
+import net.revilodev.runic.Enhancements.custom.StunningHandler;
 import net.revilodev.runic.block.ModBlocks;
 import net.revilodev.runic.client.RunicClientModels;
 import net.revilodev.runic.effect.ModMobEffects;
 import net.revilodev.runic.item.ModCreativeModeTabs;
 import net.revilodev.runic.item.ModItems;
 import net.revilodev.runic.loot.ModLootModifiers;
+import net.revilodev.runic.particle.ModParticles;
 import net.revilodev.runic.registry.ModDataComponents;
 import net.revilodev.runic.screen.ModMenuTypes;
 import net.revilodev.runic.screen.custom.EtchingTableScreen;
@@ -43,8 +45,11 @@ public class RunicMod {
         ModDataComponents.DATA_COMPONENT_TYPES.register(modEventBus);
         ModEnhancementEffects.register(modEventBus);
         ModMobEffects.register(modEventBus);
+        ModParticles.register(modEventBus);
         AirJumpHandler.register();
         NeoForge.EVENT_BUS.register(this);
+        StunningHandler.register();
+
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {}

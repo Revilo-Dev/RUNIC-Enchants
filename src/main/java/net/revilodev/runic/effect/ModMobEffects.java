@@ -12,6 +12,9 @@ public final class ModMobEffects {
 
     public static final DeferredHolder<MobEffect, MobEffect> BLEEDING = MOB_EFFECTS.register("bleeding", BleedingMobEffect::new);
 
+    public static final DeferredHolder<MobEffect, MobEffect> STUNNING = MOB_EFFECTS.register("stunning", StunningMobEffect::new);
+
+
     public static void register(IEventBus modBus) {
         MOB_EFFECTS.register(modBus);
     }

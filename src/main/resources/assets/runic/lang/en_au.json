@@ -8,6 +8,13 @@
   "block.runic.etching_table": "Etching Table",
 
 
+  "effect.runic.bleeding": "Bleeding",
+  "effect.runic.stunning": "Stunned",
+
+
+  "enchantment.minecraft.infinity": "Ethereal",
+  "enchantment.minecraft.unbreaking": "Unbreaking",
+
   "enchantment.runic.lightning_aspect": "Lightning Aspect",
   "enchantment.runic.poison_aspect": "Poison Aspect",
   "enchantment.runic.slowness_aspect": "Slowness Aspect",
@@ -15,16 +22,9 @@
   "enchantment.runic.swift_strike": "Swift Strike",
   "enchantment.runic.swift": "Swift",
   "enchantment.runic.bleeding_aspect": "Bleeding Aspect",
+  "enchantment.runic.stunning_aspect": "Stunning Aspect",
 
-
-  "enchantment.minecraft.infinity": "Ethereal",
-  "enchantment.minecraft.unbreaking": "Unbreaking",
-
-
-  "tooltip.runic.blank_rune": "Does nothing yet.",
-
-
-
+  "tooltip.runic.blank_rune": "Does nothing just yet.",
 
   "tooltip.runic.aqua_affinity": "Increases underwater mining speed",
   "tooltip.runic.bane_of_arthropods": "Deal more damage to arthropod type enemies",
@@ -76,6 +76,7 @@
   "tooltip.runic.slowness_aspect": "% Chance to slowdown enemy on hit",
   "tooltip.runic.poison_aspect": "% Chance to poison enemy on hit",
   "tooltip.runic.bleeding_aspect": "% Chance to cause mobs to bleed on hit",
+  "tooltip.runic.stunning_aspect": "% Chance to stun mobs on hit",
 
 
   "tooltip.runic.skulk_smite": "Deals extra damage to sculk creatures",

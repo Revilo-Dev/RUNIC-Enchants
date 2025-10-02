@@ -6,11 +6,7 @@ import net.minecraft.world.item.enchantment.effects.EnchantmentEntityEffect;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.revilodev.runic.Enhancements.custom.BleedingAspect;
-import net.revilodev.runic.Enhancements.custom.LightningAspect;
-import net.revilodev.runic.Enhancements.custom.PoisonAspect;
-import net.revilodev.runic.Enhancements.custom.SlownessAspect;
-import net.revilodev.runic.Enhancements.custom.WeaknessAspect;
+import net.revilodev.runic.Enhancements.custom.*;
 import net.revilodev.runic.RunicMod;
 
 public final class ModEnhancementEffects {
@@ -27,6 +23,9 @@ public final class ModEnhancementEffects {
             ENTITY_ENCHANTMENT_EFFECTS.register("weakness_aspect", () -> WeaknessAspect.CODEC);
     public static final DeferredHolder<MapCodec<? extends EnchantmentEntityEffect>, MapCodec<? extends EnchantmentEntityEffect>> BLEEDING_ASPECT =
             ENTITY_ENCHANTMENT_EFFECTS.register("bleeding_aspect", () -> BleedingAspect.CODEC);
+    public static final DeferredHolder<MapCodec<? extends EnchantmentEntityEffect>, MapCodec<? extends EnchantmentEntityEffect>> STUNNING_ASPECT =
+            ENTITY_ENCHANTMENT_EFFECTS.register("stunning_aspect", () -> StunningAspect.CODEC);
+
 
     public static void register(IEventBus modBus) {
         ENTITY_ENCHANTMENT_EFFECTS.register(modBus);
