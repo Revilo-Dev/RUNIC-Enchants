@@ -11,6 +11,7 @@ import net.minecraft.world.item.enchantment.EnchantedItemInUse;
 import net.minecraft.world.item.enchantment.effects.EnchantmentEntityEffect;
 import net.minecraft.world.phys.Vec3;
 import net.revilodev.runic.effect.ModMobEffects;
+import net.revilodev.runic.particle.ModParticles;
 
 public record StunningAspect() implements EnchantmentEntityEffect {
     public static final MapCodec<StunningAspect> CODEC = MapCodec.unit(StunningAspect::new);
@@ -39,6 +40,20 @@ public record StunningAspect() implements EnchantmentEntityEffect {
                     .getHolderOrThrow(ModMobEffects.STUNNING.getKey());
 
             living.addEffect(new MobEffectInstance(holder, duration, amplifier, false, false, true));
+
+            if (!level.isClientSide) {
+                int lifetime = duration;
+                double angularSpeed = 0.2;
+                for (int i = 0; i < 5; i++) {
+                    double angle = (2 * Math.PI / 5) * i;
+                    level.sendParticles(ModParticles.STUN_STAR.get(),
+                            living.getX(),
+                            living.getY() + living.getBbHeight() + 0.5,
+                            living.getZ(),
+                            1,
+                            angle, angularSpeed, lifetime, 0.0);
+                }
+            }
         }
     }
 

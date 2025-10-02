@@ -12,8 +12,8 @@ public class ModParticles {
     public static final DeferredRegister<ParticleType<?>> PARTICLES =
             DeferredRegister.create(Registries.PARTICLE_TYPE, RunicMod.MOD_ID);
 
-    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> BLOOD_DROP =
-            PARTICLES.register("blood_drop", () -> new SimpleParticleType(true));
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> STUN_STAR =
+            PARTICLES.register("stun_star", () -> new SimpleParticleType(false));
 
     public static void register(IEventBus bus) {
         PARTICLES.register(bus);

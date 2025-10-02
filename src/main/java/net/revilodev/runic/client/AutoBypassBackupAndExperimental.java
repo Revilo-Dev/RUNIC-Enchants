@@ -71,8 +71,6 @@ public final class AutoBypassBackupAndExperimental {
                 double mx = btn.getX() + btn.getWidth() / 2.0;
                 double my = btn.getY() + btn.getHeight() / 2.0;
                 btn.mouseClicked(mx, my, 0);
-                RunicMod.LOGGER.info("[Runic] Auto-clicked: '{}'",
-                        btn.getMessage() == null ? "" : btn.getMessage().getString());
             });
         } else {
             return;

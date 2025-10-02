@@ -7,15 +7,17 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.revilodev.runic.RunicMod;
 
-public final class ModMobEffects {
-    public static final DeferredRegister<MobEffect> MOB_EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, RunicMod.MOD_ID);
+public class ModMobEffects {
+    public static final DeferredRegister<MobEffect> MOB_EFFECTS =
+            DeferredRegister.create(Registries.MOB_EFFECT, RunicMod.MOD_ID);
 
-    public static final DeferredHolder<MobEffect, MobEffect> BLEEDING = MOB_EFFECTS.register("bleeding", BleedingMobEffect::new);
+    public static final DeferredHolder<MobEffect, MobEffect> BLEEDING =
+            MOB_EFFECTS.register("bleeding", BleedingMobEffect::new);
 
-    public static final DeferredHolder<MobEffect, MobEffect> STUNNING = MOB_EFFECTS.register("stunning", StunningMobEffect::new);
+    public static final DeferredHolder<MobEffect, MobEffect> STUNNING =
+            MOB_EFFECTS.register("stunning", StunningMobEffect::new);
 
-
-    public static void register(IEventBus modBus) {
-        MOB_EFFECTS.register(modBus);
+    public static void register(IEventBus bus) {
+        MOB_EFFECTS.register(bus);
     }
 }
