@@ -1,0 +1,45 @@
+{
+  "anvil_cost": 2,
+  "description": {
+    "translate": "enchantment.runic.reach"
+  },
+  "effects": {
+    "minecraft:attributes": [
+      {
+        "amount": {
+          "type": "minecraft:linear",
+          "base": 0.5,
+          "per_level_above_first": 0.5
+        },
+        "attribute": "minecraft:player.block_interaction_range",
+        "id": "runic:reach_block",
+        "operation": "add_value"
+      },
+      {
+        "amount": {
+          "type": "minecraft:linear",
+          "base": 0.5,
+          "per_level_above_first": 0.5
+        },
+        "attribute": "minecraft:player.entity_interaction_range",
+        "id": "runic:reach_entity",
+        "operation": "add_value"
+      }
+    ]
+  },
+  "max_cost": {
+    "base": 45,
+    "per_level_above_first": 10
+  },
+  "max_level": 3,
+  "min_cost": {
+    "base": 15,
+    "per_level_above_first": 10
+  },
+  "primary_items": "#minecraft:enchantable/mining",
+  "slots": [
+    "mainhand"
+  ],
+  "supported_items": "#minecraft:enchantable/mining",
+  "weight": 3
+}
