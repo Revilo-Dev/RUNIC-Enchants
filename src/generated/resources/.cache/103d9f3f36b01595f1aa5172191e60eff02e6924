@@ -1,11 +1,13 @@
-// 1.21.1	2025-10-03T11:52:01.0606307	Registries
+// 1.21.1	2025-10-03T12:53:21.6401698	Registries
 73550d7b22e89683e4220acd0d01fe9054203e72 data/runic/enchantment/air_jump.json
 6209c894c15146a4e8eba4855160e73261131efe data/runic/enchantment/bleeding_aspect.json
 06ed596fafb7fa7db55287f159ff4d827e38eba4 data/runic/enchantment/hoard_aspect.json
 ebea5c1aeeb7733bc5876896d1d72b1e3d133cea data/runic/enchantment/leaping.json
 47f3714180823b2b65514386b45de8043e351d82 data/runic/enchantment/lightning_aspect.json
 e2965d761594016daceed32758e25383780cc01b data/runic/enchantment/poison_aspect.json
+b2699e34463610d7db10e4ed530afce40565d454 data/runic/enchantment/reach.json
 879fd78e4a89e434d2a36e318ff062cf20f68827 data/runic/enchantment/slowness_aspect.json
+f675a3a8be46b46a1c311fa8d6e855892b290345 data/runic/enchantment/soulbound.json
 0f97bd18939896f58822f38976c59b704c6586da data/runic/enchantment/stunning_aspect.json
 31f707051d3cea30b5eeaa1c65e600d3ac463855 data/runic/enchantment/swift.json
 22e016ba1d86b97c2ca2c1071f1d9b49ef178c18 data/runic/enchantment/swift_strike.json

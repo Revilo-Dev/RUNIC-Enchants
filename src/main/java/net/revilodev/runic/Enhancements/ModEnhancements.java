@@ -30,6 +30,7 @@ public class ModEnhancements {
     public static final ResourceKey<Enchantment> HOARD_ASPECT = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "hoard_aspect"));
     public static final ResourceKey<Enchantment> LEAPING = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "leaping"));
     public static final ResourceKey<Enchantment> REACH = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "reach"));
+    public static final ResourceKey<Enchantment> SOULBOUND = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "soulbound"));
 
     public static void bootstrap(BootstrapContext<Enchantment> context) {
         var enchantments = context.lookup(Registries.ENCHANTMENT);
@@ -187,7 +188,7 @@ public class ModEnhancements {
                         new EnchantmentAttributeEffect(
                                 ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "leaping"),
                                 Attributes.JUMP_STRENGTH,
-                                LevelBasedValue.perLevel(0.5F, 0.5F),
+                                LevelBasedValue.perLevel(0.05F, 0.05F),
                                 AttributeModifier.Operation.ADD_VALUE
                         )));
 
@@ -213,9 +214,21 @@ public class ModEnhancements {
                         new EnchantmentAttributeEffect(
                                 ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "reach_entity"),
                                 Attributes.ENTITY_INTERACTION_RANGE,
-                                LevelBasedValue.perLevel(0.5F, 0.5F),
+                                LevelBasedValue.perLevel(1.0F, 0.5F),
                                 AttributeModifier.Operation.ADD_VALUE
                         )));
+
+        var soulboundDef = Enchantment.definition(
+                items.getOrThrow(ItemTags.VANISHING_ENCHANTABLE),
+                items.getOrThrow(ItemTags.VANISHING_ENCHANTABLE),
+                1, 1,
+                Enchantment.dynamicCost(30, 0),
+                Enchantment.dynamicCost(60, 0),
+                1,
+                EquipmentSlotGroup.ANY
+        );
+
+        register(context, SOULBOUND, Enchantment.enchantment(soulboundDef));
     }
 
     private static void register(BootstrapContext<Enchantment> registry, ResourceKey<Enchantment> key, Enchantment.Builder builder) {

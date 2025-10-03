@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.enchantment.effects.EnchantmentEntityEffect;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.revilodev.runic.Enhancements.custom.*;
@@ -30,5 +31,7 @@ public final class ModEnhancementEffects {
 
     public static void register(IEventBus modBus) {
         ENTITY_ENCHANTMENT_EFFECTS.register(modBus);
+        NeoForge.EVENT_BUS.addListener(SoulboundHandler::onLivingDrops);
+        NeoForge.EVENT_BUS.addListener(SoulboundHandler::onClone);
     }
 }
