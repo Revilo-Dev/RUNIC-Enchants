@@ -8,7 +8,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.revilodev.runic.RunicMod;
-import net.revilodev.runic.particle.ModParticles;
 
 public class StunningMobEffect extends MobEffect {
     public StunningMobEffect() {
@@ -33,7 +32,6 @@ public class StunningMobEffect extends MobEffect {
                 double x = entity.getX() + radius * Math.cos(angle);
                 double z = entity.getZ() + radius * Math.sin(angle);
                 double y = entity.getY() + entity.getBbHeight() + 0.4;
-                sl.sendParticles(ModParticles.STUN_STAR.get(), x, y, z, 1, 0.0, 0.0, 0.0, 0.0);
             }
         }
         return true;

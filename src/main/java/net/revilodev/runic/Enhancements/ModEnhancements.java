@@ -14,12 +14,7 @@ import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
 import net.minecraft.world.item.enchantment.EnchantmentTarget;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.item.enchantment.effects.EnchantmentAttributeEffect;
-import net.revilodev.runic.Enhancements.custom.BleedingAspect;
-import net.revilodev.runic.Enhancements.custom.LightningAspect;
-import net.revilodev.runic.Enhancements.custom.PoisonAspect;
-import net.revilodev.runic.Enhancements.custom.SlownessAspect;
-import net.revilodev.runic.Enhancements.custom.StunningAspect;
-import net.revilodev.runic.Enhancements.custom.WeaknessAspect;
+import net.revilodev.runic.Enhancements.custom.*;
 import net.revilodev.runic.RunicMod;
 
 public class ModEnhancements {
@@ -32,6 +27,9 @@ public class ModEnhancements {
     public static final ResourceKey<Enchantment> AIR_JUMP = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "air_jump"));
     public static final ResourceKey<Enchantment> BLEEDING_ASPECT = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "bleeding_aspect"));
     public static final ResourceKey<Enchantment> STUNNING_ASPECT = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "stunning_aspect"));
+    public static final ResourceKey<Enchantment> HOARD_ASPECT = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "hoard_aspect"));
+    public static final ResourceKey<Enchantment> LEAPING = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "leaping"));
+    public static final ResourceKey<Enchantment> REACH = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "reach"));
 
     public static void bootstrap(BootstrapContext<Enchantment> context) {
         var enchantments = context.lookup(Registries.ENCHANTMENT);
@@ -80,6 +78,18 @@ public class ModEnhancements {
                         EquipmentSlotGroup.MAINHAND))
                 .exclusiveWith(enchantments.getOrThrow(EnchantmentTags.DAMAGE_EXCLUSIVE))
                 .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER, EnchantmentTarget.VICTIM, new WeaknessAspect()));
+
+        register(context, HOARD_ASPECT, Enchantment.enchantment(Enchantment.definition(
+                        items.getOrThrow(ItemTags.WEAPON_ENCHANTABLE),
+                        items.getOrThrow(ItemTags.SWORD_ENCHANTABLE),
+                        5, 2,
+                        Enchantment.dynamicCost(5, 8),
+                        Enchantment.dynamicCost(25, 8),
+                        2,
+                        EquipmentSlotGroup.MAINHAND))
+                .exclusiveWith(enchantments.getOrThrow(EnchantmentTags.DAMAGE_EXCLUSIVE))
+                .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER,
+                        EnchantmentTarget.VICTIM, new HoardAspect()));
 
         var swift_strikeDef = Enchantment.definition(
                 items.getOrThrow(ItemTags.WEAPON_ENCHANTABLE),
@@ -161,6 +171,51 @@ public class ModEnhancements {
         register(context, STUNNING_ASPECT, Enchantment.enchantment(stunDef)
                 .exclusiveWith(enchantments.getOrThrow(EnchantmentTags.DAMAGE_EXCLUSIVE))
                 .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER, EnchantmentTarget.VICTIM, new StunningAspect()));
+
+        var leapDef = Enchantment.definition(
+                items.getOrThrow(ItemTags.ARMOR_ENCHANTABLE),
+                items.getOrThrow(ItemTags.FOOT_ARMOR_ENCHANTABLE),
+                2, 2,
+                Enchantment.dynamicCost(10, 8),
+                Enchantment.dynamicCost(30, 8),
+                2,
+                EquipmentSlotGroup.FEET
+        );
+
+        register(context, LEAPING, Enchantment.enchantment(leapDef)
+                .withEffect(EnchantmentEffectComponents.ATTRIBUTES,
+                        new EnchantmentAttributeEffect(
+                                ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "leaping"),
+                                Attributes.JUMP_STRENGTH,
+                                LevelBasedValue.perLevel(0.5F, 0.5F),
+                                AttributeModifier.Operation.ADD_VALUE
+                        )));
+
+        var reachDef = Enchantment.definition(
+                items.getOrThrow(ItemTags.MINING_ENCHANTABLE),
+                items.getOrThrow(ItemTags.MINING_ENCHANTABLE),
+                3, 3,
+                Enchantment.dynamicCost(15, 10),
+                Enchantment.dynamicCost(45, 10),
+                2,
+                EquipmentSlotGroup.MAINHAND
+        );
+
+        register(context, REACH, Enchantment.enchantment(reachDef)
+                .withEffect(EnchantmentEffectComponents.ATTRIBUTES,
+                        new EnchantmentAttributeEffect(
+                                ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "reach_block"),
+                                Attributes.BLOCK_INTERACTION_RANGE,
+                                LevelBasedValue.perLevel(0.5F, 0.5F),
+                                AttributeModifier.Operation.ADD_VALUE
+                        ))
+                .withEffect(EnchantmentEffectComponents.ATTRIBUTES,
+                        new EnchantmentAttributeEffect(
+                                ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "reach_entity"),
+                                Attributes.ENTITY_INTERACTION_RANGE,
+                                LevelBasedValue.perLevel(0.5F, 0.5F),
+                                AttributeModifier.Operation.ADD_VALUE
+                        )));
     }
 
     private static void register(BootstrapContext<Enchantment> registry, ResourceKey<Enchantment> key, Enchantment.Builder builder) {

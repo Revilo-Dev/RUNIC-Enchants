@@ -25,7 +25,8 @@ public final class ModEnhancementEffects {
             ENTITY_ENCHANTMENT_EFFECTS.register("bleeding_aspect", () -> BleedingAspect.CODEC);
     public static final DeferredHolder<MapCodec<? extends EnchantmentEntityEffect>, MapCodec<? extends EnchantmentEntityEffect>> STUNNING_ASPECT =
             ENTITY_ENCHANTMENT_EFFECTS.register("stunning_aspect", () -> StunningAspect.CODEC);
-
+    public static final DeferredHolder<MapCodec<? extends EnchantmentEntityEffect>, MapCodec<? extends EnchantmentEntityEffect>> HOARD_ASPECT =
+            ENTITY_ENCHANTMENT_EFFECTS.register("hoard_aspect", () -> HoardAspect.CODEC);
 
     public static void register(IEventBus modBus) {
         ENTITY_ENCHANTMENT_EFFECTS.register(modBus);

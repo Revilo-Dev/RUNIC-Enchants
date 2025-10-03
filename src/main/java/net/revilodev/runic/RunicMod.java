@@ -20,8 +20,6 @@ import net.revilodev.runic.effect.ModMobEffects;
 import net.revilodev.runic.item.ModCreativeModeTabs;
 import net.revilodev.runic.item.ModItems;
 import net.revilodev.runic.loot.ModLootModifiers;
-import net.revilodev.runic.particle.ModParticles;
-import net.revilodev.runic.particle.StunStarParticle;
 import net.revilodev.runic.registry.ModDataComponents;
 import net.revilodev.runic.screen.ModMenuTypes;
 import net.revilodev.runic.screen.custom.EtchingTableScreen;
@@ -37,7 +35,6 @@ public class RunicMod {
         modEventBus.addListener(this::addCreative);
         modEventBus.addListener(ClientModEvents::onRegisterScreens);
         modEventBus.addListener(ClientModEvents::onClientSetup);
-        modEventBus.addListener(ClientModEvents::onRegisterParticles);
 
         ModCreativeModeTabs.register(modEventBus);
         ModItems.register(modEventBus);
@@ -47,7 +44,6 @@ public class RunicMod {
         ModDataComponents.DATA_COMPONENT_TYPES.register(modEventBus);
         ModEnhancementEffects.register(modEventBus);
         ModMobEffects.register(modEventBus);
-        ModParticles.register(modEventBus);
         AirJumpHandler.register();
         StunningHandler.register();
 
@@ -76,10 +72,6 @@ public class RunicMod {
 
         public static void onClientSetup(FMLClientSetupEvent event) {
             RunicClientModels.init();
-        }
-
-        public static void onRegisterParticles(RegisterParticleProvidersEvent event) {
-            event.registerSpriteSet(ModParticles.STUN_STAR.get(), StunStarParticle::provider);
         }
 
     }
