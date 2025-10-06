@@ -74,8 +74,17 @@
     { "predicate": { "runic:rune_model": 59.0 }, "model": "runic:item/rune/modded/potato_recovery" },
     { "predicate": { "runic:rune_model": 60.0 }, "model": "runic:item/rune/modded/acrobat" },
     { "predicate": { "runic:rune_model": 61.0 }, "model": "runic:item/rune/modded/longfooted" },
-    { "predicate": { "runic:rune_model": 62.0 }, "model": "runic:item/rune/modded/multi_roll" }
+    { "predicate": { "runic:rune_model": 62.0 }, "model": "runic:item/rune/modded/multi_roll" },
 
-
+    { "predicate": { "runic:rune_model": 63.0 }, "model": "runic:item/rune/runic/bleeding_aspect" },
+    { "predicate": { "runic:rune_model": 64.0 }, "model": "runic:item/rune/runic/stunning_aspect" },
+    { "predicate": { "runic:rune_model": 65.0 }, "model": "runic:item/rune/runic/soulbound" },
+    { "predicate": { "runic:rune_model": 66.0 }, "model": "runic:item/rune/runic/wither_aspect" },
+    { "predicate": { "runic:rune_model": 67.0 }, "model": "runic:item/rune/runic/mandela" },
+    { "predicate": { "runic:rune_model": 68.0 }, "model": "runic:item/rune/runic/vitality" },
+    { "predicate": { "runic:rune_model": 69.0 }, "model": "runic:item/rune/runic/leaping" },
+    { "predicate": { "runic:rune_model": 70.0 }, "model": "runic:item/rune/runic/reach" },
+    { "predicate": { "runic:rune_model": 71.0 }, "model": "runic:item/rune/runic/buzzing_aspect" },
+    { "predicate": { "runic:rune_model": 72.0 }, "model": "runic:item/rune/runic/curse_of_oozing" }
   ]
 }

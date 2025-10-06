@@ -23,8 +23,19 @@
   "enchantment.runic.swift": "Swift",
   "enchantment.runic.bleeding_aspect": "Bleeding Aspect",
   "enchantment.runic.stunning_aspect": "Stunning Aspect",
+  "enchantment.runic.soulbound": "Soulbound",
+  "enchantment.runic.air_jump": "Air Jump",
+  "enchantment.runic.wither_aspect": "Withering Aspect",
+  "enchantment.runic.mandela": "Mandela",
+  "enchantment.runic.vitality": "Vitality",
+  "enchantment.runic.leaping": "Leaping",
+  "enchantment.runic.reach": "Reach",
+  "enchantment.runic.buzzing": "Buzzing Aspect",
+  "enchantment.runic.curse_of_oozing": "Curse of Oozing",
+  "enchantment.runic.curse_of_unluck": "Curse of Unluck",
 
   "tooltip.runic.blank_rune": "Does nothing just yet.",
+  "tooltip.runic.expansion_rune": "Adds an Additional Rune Slot to your Gear at the cost of max durability",
 
   "tooltip.runic.aqua_affinity": "Increases underwater mining speed",
   "tooltip.runic.bane_of_arthropods": "Deal more damage to arthropod type enemies",
@@ -77,6 +88,13 @@
   "tooltip.runic.poison_aspect": "% Chance to poison enemy on hit",
   "tooltip.runic.bleeding_aspect": "% Chance to cause mobs to bleed on hit",
   "tooltip.runic.stunning_aspect": "% Chance to stun mobs on hit",
+  "tooltip.runic.soulbound": "Keep Your item on Death at the cost of 25% durability",
+  "tooltip.runic.wither_aspect": "% Chance to Wither Enemy on hit",
+  "tooltip.runic.mandela_aspect": "PVP Enchant that causes your opponent to lose vision and hallucinate",
+  "tooltip.runic.vitality": "Increases your max health by 25%",
+  "tooltip.runic.leaping": "Increases your jump height by 5%",
+  "tooltip.runic.reach": "Increases your reach",
+  "tooltip.runic.hoard_aspect": "PVP Enchant, summons Bees to distract the opponent",
 
 
   "tooltip.runic.skulk_smite": "Deals extra damage to sculk creatures",

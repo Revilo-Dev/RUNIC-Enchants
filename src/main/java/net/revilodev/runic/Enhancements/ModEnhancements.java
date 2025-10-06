@@ -24,13 +24,18 @@ public class ModEnhancements {
     public static final ResourceKey<Enchantment> WEAKNESS_ASPECT = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "weakness_aspect"));
     public static final ResourceKey<Enchantment> SWIFT_STRIKE = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "swift_strike"));
     public static final ResourceKey<Enchantment> SWIFT = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "swift"));
-    public static final ResourceKey<Enchantment> AIR_JUMP = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "air_jump"));
+    //public static final ResourceKey<Enchantment> AIR_JUMP = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "air_jump"));
     public static final ResourceKey<Enchantment> BLEEDING_ASPECT = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "bleeding_aspect"));
     public static final ResourceKey<Enchantment> STUNNING_ASPECT = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "stunning_aspect"));
-    public static final ResourceKey<Enchantment> HOARD_ASPECT = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "hoard_aspect"));
+    public static final ResourceKey<Enchantment> HOARD_ASPECT = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "buzzing"));
     public static final ResourceKey<Enchantment> LEAPING = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "leaping"));
     public static final ResourceKey<Enchantment> REACH = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "reach"));
-    public static final ResourceKey<Enchantment> SOULBOUND = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "soulbound"));
+    //public static final ResourceKey<Enchantment> SOULBOUND = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "soulbound"));
+    public static final ResourceKey<Enchantment> VITALITY = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "vitality"));
+    public static final ResourceKey<Enchantment> WITHER_ASPECT = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "wither_aspect"));
+    public static final ResourceKey<Enchantment> MANDELA_ASPECT = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "mandela"));
+    public static final ResourceKey<Enchantment> CURSEOFOOZING = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "curse_of_oozing"));
+    public static final ResourceKey<Enchantment> CURSEOFUNLUCK = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "curse_of_unluck"));
 
     public static void bootstrap(BootstrapContext<Enchantment> context) {
         var enchantments = context.lookup(Registries.ENCHANTMENT);
@@ -143,7 +148,7 @@ public class ModEnhancements {
                 EquipmentSlotGroup.FEET
         );
 
-        register(context, AIR_JUMP, Enchantment.enchantment(airDef));
+        //register(context, AIR_JUMP, Enchantment.enchantment(airDef));
 
         var bleedDef = Enchantment.definition(
                 items.getOrThrow(ItemTags.WEAPON_ENCHANTABLE),
@@ -192,6 +197,25 @@ public class ModEnhancements {
                                 AttributeModifier.Operation.ADD_VALUE
                         )));
 
+        var unluckdef = Enchantment.definition(
+                items.getOrThrow(ItemTags.ARMOR_ENCHANTABLE),
+                items.getOrThrow(ItemTags.FOOT_ARMOR_ENCHANTABLE),
+                2, 1,
+                Enchantment.dynamicCost(10, 8),
+                Enchantment.dynamicCost(30, 8),
+                2,
+                EquipmentSlotGroup.FEET
+        );
+
+        register(context, CURSEOFUNLUCK, Enchantment.enchantment(unluckdef)
+                .withEffect(EnchantmentEffectComponents.ATTRIBUTES,
+                        new EnchantmentAttributeEffect(
+                                ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "unluck"),
+                                Attributes.LUCK,
+                                LevelBasedValue.perLevel(-0.15F, -0.15F),
+                                AttributeModifier.Operation.ADD_VALUE
+                        )));
+
         var reachDef = Enchantment.definition(
                 items.getOrThrow(ItemTags.MINING_ENCHANTABLE),
                 items.getOrThrow(ItemTags.MINING_ENCHANTABLE),
@@ -228,7 +252,68 @@ public class ModEnhancements {
                 EquipmentSlotGroup.ANY
         );
 
-        register(context, SOULBOUND, Enchantment.enchantment(soulboundDef));
+        var vitalityDef = Enchantment.definition(
+                items.getOrThrow(ItemTags.ARMOR_ENCHANTABLE),
+                items.getOrThrow(ItemTags.CHEST_ARMOR_ENCHANTABLE),
+                5,
+                5,
+                Enchantment.dynamicCost(10, 8),
+                Enchantment.dynamicCost(30, 8),
+                2,
+                EquipmentSlotGroup.CHEST
+        );
+
+        register(context, VITALITY, Enchantment.enchantment(vitalityDef)
+                .withEffect(EnchantmentEffectComponents.ATTRIBUTES,
+                        new EnchantmentAttributeEffect(
+                                ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "vitality"),
+                                Attributes.MAX_HEALTH,
+                                LevelBasedValue.perLevel(4.0F, 4.0F),
+                                AttributeModifier.Operation.ADD_VALUE
+                        )));
+        register(context, WITHER_ASPECT, Enchantment.enchantment(Enchantment.definition(
+                        items.getOrThrow(ItemTags.WEAPON_ENCHANTABLE),
+                        items.getOrThrow(ItemTags.SWORD_ENCHANTABLE),
+                        5, 2,
+                        Enchantment.dynamicCost(5, 8),
+                        Enchantment.dynamicCost(25, 8),
+                        2,
+                        EquipmentSlotGroup.MAINHAND))
+                .exclusiveWith(enchantments.getOrThrow(EnchantmentTags.DAMAGE_EXCLUSIVE))
+                .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER, EnchantmentTarget.VICTIM, new WitherAspect()));
+
+        register(context, MANDELA_ASPECT, Enchantment.enchantment(Enchantment.definition(
+                        items.getOrThrow(ItemTags.WEAPON_ENCHANTABLE),
+                        items.getOrThrow(ItemTags.SWORD_ENCHANTABLE),
+                        5, 2,
+                        Enchantment.dynamicCost(5, 8),
+                        Enchantment.dynamicCost(25, 8),
+                        2,
+                        EquipmentSlotGroup.MAINHAND))
+                .exclusiveWith(enchantments.getOrThrow(EnchantmentTags.DAMAGE_EXCLUSIVE))
+                .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER, EnchantmentTarget.VICTIM, new Mandela_Aspect()));
+
+        var curseofoozingdef = Enchantment.definition(
+                items.getOrThrow(ItemTags.ARMOR_ENCHANTABLE),
+                items.getOrThrow(ItemTags.CHEST_ARMOR_ENCHANTABLE),
+                5,
+                2,
+                Enchantment.dynamicCost(10, 8),
+                Enchantment.dynamicCost(30, 8),
+                2,
+                EquipmentSlotGroup.CHEST
+        );
+
+        register(context, CURSEOFOOZING, Enchantment.enchantment(vitalityDef)
+                .withEffect(EnchantmentEffectComponents.ATTRIBUTES,
+                        new EnchantmentAttributeEffect(
+                                ResourceLocation.tryParse(RunicMod.MOD_ID + "curse_of_oozing"),
+                                Attributes.ARMOR,
+                                LevelBasedValue.perLevel(0.15F, 0.10F),
+                                AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
+                        )));
+
+        //register(context, SOULBOUND, Enchantment.enchantment(soulboundDef));
     }
 
     private static void register(BootstrapContext<Enchantment> registry, ResourceKey<Enchantment> key, Enchantment.Builder builder) {

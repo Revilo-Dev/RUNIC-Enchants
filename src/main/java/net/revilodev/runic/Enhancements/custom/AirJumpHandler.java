@@ -35,9 +35,9 @@ public final class AirJumpHandler {
         ItemStack boots = player.getItemBySlot(EquipmentSlot.FEET);
         if (boots.isEmpty()) return;
 
-        Holder<Enchantment> enchant = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(ModEnhancements.AIR_JUMP);
-        int lvl = EnchantmentHelper.getItemEnchantmentLevel(enchant, boots);
-        if (lvl <= 0) return;
+        //Holder<Enchantment> enchant = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(ModEnhancements.AIR_JUMP);
+        //int lvl = EnchantmentHelper.getItemEnchantmentLevel(enchant, boots);
+        //if (lvl <= 0) return;
 
         boolean onGround = player.onGround();
         boolean sneaking = player.isShiftKeyDown();

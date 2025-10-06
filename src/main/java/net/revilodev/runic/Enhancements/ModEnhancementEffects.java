@@ -28,10 +28,18 @@ public final class ModEnhancementEffects {
             ENTITY_ENCHANTMENT_EFFECTS.register("stunning_aspect", () -> StunningAspect.CODEC);
     public static final DeferredHolder<MapCodec<? extends EnchantmentEntityEffect>, MapCodec<? extends EnchantmentEntityEffect>> HOARD_ASPECT =
             ENTITY_ENCHANTMENT_EFFECTS.register("hoard_aspect", () -> HoardAspect.CODEC);
+    public static final DeferredHolder<MapCodec<? extends EnchantmentEntityEffect>, MapCodec<? extends EnchantmentEntityEffect>> WITHER_ASPECT =
+            ENTITY_ENCHANTMENT_EFFECTS.register("wither_aspect", () -> WitherAspect.CODEC);
+    public static final DeferredHolder<MapCodec<? extends EnchantmentEntityEffect>, MapCodec<? extends EnchantmentEntityEffect>> MANDELA_ASPECT =
+            ENTITY_ENCHANTMENT_EFFECTS.register("mandela_aspect", () -> Mandela_Aspect.CODEC);
+    public static final DeferredHolder<MapCodec<? extends EnchantmentEntityEffect>, MapCodec<? extends EnchantmentEntityEffect>> CURSEOFOOZING =
+            ENTITY_ENCHANTMENT_EFFECTS.register("curse_of_oozing", () -> Mandela_Aspect.CODEC);
+    public static final DeferredHolder<MapCodec<? extends EnchantmentEntityEffect>, MapCodec<? extends EnchantmentEntityEffect>> CURSEOFUNLUCK =
+            ENTITY_ENCHANTMENT_EFFECTS.register("curse_of_unluck", () -> Mandela_Aspect.CODEC);
+
 
     public static void register(IEventBus modBus) {
         ENTITY_ENCHANTMENT_EFFECTS.register(modBus);
-        NeoForge.EVENT_BUS.addListener(SoulboundHandler::onLivingDrops);
-        NeoForge.EVENT_BUS.addListener(SoulboundHandler::onClone);
+
     }
 }

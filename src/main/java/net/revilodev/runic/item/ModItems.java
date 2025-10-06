@@ -26,7 +26,13 @@ public class ModItems {
             });
 
     public static final DeferredItem<Item> EXPANSION_RUNE = ITEMS.register("expansion_rune",
-            () -> new Item(new Item.Properties()));
+            () -> new Item(new Item.Properties()) {
+                @Override
+                public void appendHoverText(ItemStack stack, TooltipContext ctx, List<Component> tooltip, TooltipFlag flag) {
+                    tooltip.add(Component.translatable("tooltip.runic.expansion_rune"));
+                    super.appendHoverText(stack, ctx, tooltip, flag);
+                }
+            });
 
     public static final DeferredItem<Item> ENHANCED_RUNE = ITEMS.register("enhanced_rune",
             () -> new RuneItem(new Item.Properties()));

@@ -8,7 +8,7 @@
     "minecraft:projectile_protection": "common",
 
 
-    "minecraft:thorns": "epic",
+    "minecraft:thorns": "rare",
     "minecraft:respiration": "common",
     "minecraft:aqua_affinity": "uncommon",
     "minecraft:depth_strider": "rare",
@@ -23,26 +23,43 @@
     "minecraft:smite": "common",
     "minecraft:bane_of_arthropods": "uncommon",
     "minecraft:knockback": "common",
-    "minecraft:fire_aspect": "epic",
+    "minecraft:fire_aspect": "rare",
     "minecraft:looting": "uncommon",
-    "minecraft:sweeping_edge": "rare",
+    "minecraft:sweeping_edge": "uncommon",
+
+
     "runic:lightning_aspect": "legendary",
-    "runic:poison_aspect": "rare",
-    "runic:slowness_aspect": "epic",
+    "runic:poison_aspect": "epic",
+    "runic:slowness_aspect": "rare",
     "runic:weakness_aspect": "epic",
     "runic:swiftstrike": "rare",
+    "runic:bleeding_aspect": "epic",
+    "runic:stunning_aspect": "legendary",
+    "runic:soulbound": "legendary",
+    "runic:air_jump": "rare",
+    "runic:wither_aspect": "rare",
+    "runic:mandela_aspect": "epic",
+    "runic:vitality": "epic",
+    "runic:leaping": "common",
+    "runic:reach": "common",
+    "runic:hoard_aspect": "rare",
+
 
 
     "minecraft:efficiency": "common",
-    "minecraft:silk_touch": "epic",
+    "minecraft:silk_touch": "uncommon",
     "minecraft:fortune": "uncommon",
     "minecraft:smelting": "uncommon",
 
 
     "minecraft:unbreaking": "uncommon",
     "minecraft:mending": "legendary",
+
+
     "minecraft:vanishing_curse": "cursed",
     "minecraft:binding_curse": "cursed",
+    "runic:curse_of_unluck": "cursed",
+    "runic:curse_of_oozing": "cursed",
 
 
     "minecraft:power": "uncommon",
@@ -52,18 +69,18 @@
 
 
     "minecraft:multishot": "epic",
-    "minecraft:piercing": "epic",
+    "minecraft:piercing": "rare",
     "minecraft:quick_charge": "uncommon",
 
 
-    "minecraft:impaling": "rare",
+    "minecraft:impaling": "uncommon",
     "minecraft:riptide": "rare",
     "minecraft:loyalty": "legendary",
     "minecraft:channeling": "epic",
 
 
     "minecraft:luck_of_the_sea": "rare",
-    "minecraft:lure": "rare",
+    "minecraft:lure": "uncommon",
 
     "minecraft:breach": "legendary",
     "minecraft:density": "legendary",
