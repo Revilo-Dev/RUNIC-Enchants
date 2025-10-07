@@ -122,12 +122,13 @@ public final class RunicClientModels {
             case "stunning_aspect" -> 64.0F;
             case "soulbound" -> 65.0F;
             case "wither_aspect" -> 66.0F;
-            case "mandela" -> 67.0F;
+            case "mandela_aspect" -> 67.0F;
             case "vitality" -> 68.0F;
             case "leaping" -> 69.0F;
             case "reach" -> 70.0F;
             case "buzzing_aspect" -> 71.0F;
             case "curse_of_oozing" -> 72.0F;
+            case "curse_of_unluck" -> 73.0F;
 
             default -> 0.0F;
         };

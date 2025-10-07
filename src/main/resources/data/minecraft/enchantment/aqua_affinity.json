@@ -1,0 +1,18 @@
+{
+  "description": "Aqua Affinity",
+  "supported_items": "#minecraft:armor_enchantable",
+  "primary_items": "#minecraft:helmet_enchantable",
+  "exclusive_set": "#minecraft:armor_exclusive",
+  "weight": 2,
+  "min_cost": {
+    "base": 5,
+    "per_level_above_first": 10
+  },
+  "max_cost": {
+    "base": 25,
+    "per_level_above_first": 15
+  },
+  "anvil_cost": 2,
+  "max_level": 2,
+  "slots": ["head"]
+}

@@ -27,13 +27,13 @@ public class ModEnhancements {
     //public static final ResourceKey<Enchantment> AIR_JUMP = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "air_jump"));
     public static final ResourceKey<Enchantment> BLEEDING_ASPECT = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "bleeding_aspect"));
     public static final ResourceKey<Enchantment> STUNNING_ASPECT = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "stunning_aspect"));
-    public static final ResourceKey<Enchantment> HOARD_ASPECT = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "buzzing"));
+    public static final ResourceKey<Enchantment> HOARD_ASPECT = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "buzzing_aspect"));
     public static final ResourceKey<Enchantment> LEAPING = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "leaping"));
     public static final ResourceKey<Enchantment> REACH = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "reach"));
     //public static final ResourceKey<Enchantment> SOULBOUND = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "soulbound"));
     public static final ResourceKey<Enchantment> VITALITY = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "vitality"));
     public static final ResourceKey<Enchantment> WITHER_ASPECT = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "wither_aspect"));
-    public static final ResourceKey<Enchantment> MANDELA_ASPECT = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "mandela"));
+    public static final ResourceKey<Enchantment> MANDELA_ASPECT = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "mandela_aspect"));
     public static final ResourceKey<Enchantment> CURSEOFOOZING = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "curse_of_oozing"));
     public static final ResourceKey<Enchantment> CURSEOFUNLUCK = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "curse_of_unluck"));
 
@@ -253,7 +253,7 @@ public class ModEnhancements {
         );
 
         var vitalityDef = Enchantment.definition(
-                items.getOrThrow(ItemTags.ARMOR_ENCHANTABLE),
+                items.getOrThrow(ItemTags.CHEST_ARMOR_ENCHANTABLE),
                 items.getOrThrow(ItemTags.CHEST_ARMOR_ENCHANTABLE),
                 5,
                 5,
@@ -270,7 +270,9 @@ public class ModEnhancements {
                                 Attributes.MAX_HEALTH,
                                 LevelBasedValue.perLevel(4.0F, 4.0F),
                                 AttributeModifier.Operation.ADD_VALUE
-                        )));
+                        )
+                )
+        );
         register(context, WITHER_ASPECT, Enchantment.enchantment(Enchantment.definition(
                         items.getOrThrow(ItemTags.WEAPON_ENCHANTABLE),
                         items.getOrThrow(ItemTags.SWORD_ENCHANTABLE),

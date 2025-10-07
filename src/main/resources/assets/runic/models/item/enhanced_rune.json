@@ -80,11 +80,13 @@
     { "predicate": { "runic:rune_model": 64.0 }, "model": "runic:item/rune/runic/stunning_aspect" },
     { "predicate": { "runic:rune_model": 65.0 }, "model": "runic:item/rune/runic/soulbound" },
     { "predicate": { "runic:rune_model": 66.0 }, "model": "runic:item/rune/runic/wither_aspect" },
-    { "predicate": { "runic:rune_model": 67.0 }, "model": "runic:item/rune/runic/mandela" },
+    { "predicate": { "runic:rune_model": 67.0 }, "model": "runic:item/rune/runic/mandela_aspect" },
     { "predicate": { "runic:rune_model": 68.0 }, "model": "runic:item/rune/runic/vitality" },
     { "predicate": { "runic:rune_model": 69.0 }, "model": "runic:item/rune/runic/leaping" },
     { "predicate": { "runic:rune_model": 70.0 }, "model": "runic:item/rune/runic/reach" },
     { "predicate": { "runic:rune_model": 71.0 }, "model": "runic:item/rune/runic/buzzing_aspect" },
-    { "predicate": { "runic:rune_model": 72.0 }, "model": "runic:item/rune/runic/curse_of_oozing" }
+    { "predicate": { "runic:rune_model": 72.0 }, "model": "runic:item/rune/runic/curse_of_oozing" },
+    { "predicate": { "runic:rune_model": 73.0 }, "model": "runic:item/rune/runic/curse_of_unluck" }
+
   ]
 }
