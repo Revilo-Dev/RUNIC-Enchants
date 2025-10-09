@@ -32,8 +32,6 @@ public final class ModEnhancementEffects {
             ENTITY_ENCHANTMENT_EFFECTS.register("wither_aspect", () -> WitherAspect.CODEC);
     public static final DeferredHolder<MapCodec<? extends EnchantmentEntityEffect>, MapCodec<? extends EnchantmentEntityEffect>> MANDELA_ASPECT =
             ENTITY_ENCHANTMENT_EFFECTS.register("mandela_aspect", () -> Mandela_Aspect.CODEC);
-    public static final DeferredHolder<MapCodec<? extends EnchantmentEntityEffect>, MapCodec<? extends EnchantmentEntityEffect>> CURSEOFOOZING =
-            ENTITY_ENCHANTMENT_EFFECTS.register("curse_of_oozing", () -> Mandela_Aspect.CODEC);
     public static final DeferredHolder<MapCodec<? extends EnchantmentEntityEffect>, MapCodec<? extends EnchantmentEntityEffect>> CURSEOFUNLUCK =
             ENTITY_ENCHANTMENT_EFFECTS.register("curse_of_unluck", () -> Mandela_Aspect.CODEC);
 

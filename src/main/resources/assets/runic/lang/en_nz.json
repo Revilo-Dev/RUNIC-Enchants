@@ -1,33 +1,41 @@
 {
   "creativetab.runicmod.runic_items": "RUNIC",
 
-  "item.runic.rune": " Blank Rune",
+  "item.runic.rune": "Blank Rune",
   "item.runic.expansion_rune": "Expansion Rune",
   "item.runic.enhanced_rune": "Enhanced Rune",
 
   "block.runic.etching_table": "Etching Table",
 
 
-
-
-
-
-  "enchantment.runic.lightning_aspect": "Lighting Aspect",
-  "enchantment.runic.poison_aspect": "Poison Aspect",
-  "enchantment.runic.slowness_aspect": "Slowness Aspect",
-  "enchantment.runic.weakness_aspect": "Weakening Aspect",
-  "enchantment.runic.swift_strike": "Swift Strike",
-  "enchantment.runic.swift": "Swift",
+  "effect.runic.bleeding": "Bleeding",
+  "effect.runic.stunning": "Stunned",
 
 
   "enchantment.minecraft.infinity": "Ethereal",
   "enchantment.minecraft.unbreaking": "Unbreaking",
 
+  "enchantment.runic.lightning_aspect": "Lightning Aspect",
+  "enchantment.runic.poison_aspect": "Poison Aspect",
+  "enchantment.runic.slowness_aspect": "Slowness Aspect",
+  "enchantment.runic.weakness_aspect": "Weakening Aspect",
+  "enchantment.runic.swift_strike": "Swift Strike",
+  "enchantment.runic.swift": "Swift",
+  "enchantment.runic.bleeding_aspect": "Bleeding Aspect",
+  "enchantment.runic.stunning_aspect": "Stunning Aspect",
+  "enchantment.runic.soulbound": "Soulbound",
+  "enchantment.runic.air_jump": "Air Jump",
+  "enchantment.runic.wither_aspect": "Withering Aspect",
+  "enchantment.runic.mandela_aspect": "Mandela",
+  "enchantment.runic.vitality": "Vitality",
+  "enchantment.runic.leaping": "Leaping",
+  "enchantment.runic.reach": "Reach",
+  "enchantment.runic.buzzing_aspect": "Buzzing Aspect",
+  "enchantment.runic.toughness": "Toughness",
+  "enchantment.runic.curse_of_unluck": "Curse of Unluckiness",
 
-  "tooltip.runic.blank_rune": "Does nothing yet.",
-
-
-
+  "tooltip.runic.blank_rune": "Does nothing just yet.",
+  "tooltip.runic.expansion_rune": "§7Adds an Additional Rune Slot to your Gear at the cost of 25% max durability",
 
   "tooltip.runic.aqua_affinity": "Increases underwater mining speed",
   "tooltip.runic.bane_of_arthropods": "Deal more damage to arthropod type enemies",
@@ -71,26 +79,39 @@
   "tooltip.runic.vanishing_curse": "The item will vanish on death",
   "tooltip.runic.wind_burst": "Summons a wind charge on attack",
   "tooltip.runic.density": "Deal more damage the higher you fall",
+  "tooltip.runic.toughness": "Extra Armor points",
+  "tooltip.runic.curse_of_unluck": "Decreased chance to find rare loot",
 
   "tooltip.runic.swift": "Increases your movement speed",
   "tooltip.runic.swift_strike": "+% cooldown reduction",
-  "tooltip.runic.lightning_aspect": "% chance to summon lightning on hit",
-  "tooltip.runic.weakness_aspect": "% chance to weaken enemy on hit",
-  "tooltip.runic.slowness_aspect": "% chance to slowdown enemy on hit",
-  "tooltip.runic.poison_aspect": "% chance to poison enemy on hit",
+  "tooltip.runic.lightning_aspect": "% Chance to summon lightning on hit",
+  "tooltip.runic.weakness_aspect": "% Chance to weaken enemy on hit",
+  "tooltip.runic.slowness_aspect": "% Chance to slowdown enemy on hit",
+  "tooltip.runic.poison_aspect": "% Chance to poison enemy on hit",
+  "tooltip.runic.bleeding_aspect": "% Chance to cause mobs to bleed on hit",
+  "tooltip.runic.stunning_aspect": "% Chance to stun mobs on hit",
+  "tooltip.runic.soulbound": "Keep Your item on Death at the cost of 25% durability",
+  "tooltip.runic.wither_aspect": "% Chance to Wither Enemy on hit",
+  "tooltip.runic.mandela_aspect": "PVP Enchant that causes your opponent to lose vision and hallucinate",
+  "tooltip.runic.vitality": "Increases your max health",
+  "tooltip.runic.leaping": "Increases your jump height",
+  "tooltip.runic.reach": "Increases your reach",
+  "tooltip.runic.hoard_aspect": "PVP Enchant, summons Bees to distract the opponent",
 
 
   "tooltip.runic.skulk_smite": "Deals extra damage to sculk creatures",
   "tooltip.runic.capacity": "Increases the maximum capacity",
-  "tooltip.runic.soul_siphoner": "Restores durability using XP from kills",
+  "tooltip.runic.soul_siphoner": "% chance to siphon extra soul essence on kill",
   "tooltip.runic.fire_react": "% chance to ignite attackers when hit",
-  "tooltip.runic.catalysis": "Enhances the effects of potions",
-  "tooltip.runic.destruction": "Greatly increases attack damage",
+  "tooltip.runic.catalysis": "Enhances potion and catalyst effects",
+  "tooltip.runic.destruction": "+% attack damage",
   "tooltip.runic.mystical_enlightenment": "Boosts enchanting power of nearby tables",
   "tooltip.runic.renewal": "Gradually repairs the item over time",
   "tooltip.runic.chill_aura": "Slows nearby enemies with a freezing aura",
-  "tooltip.runic.potato_recovery": "% chance to restore hunger with potatoes",
-  "tooltip.runic.power_of_the_depth": "Increases damage dealt underwater"
+  "tooltip.runic.potato_recovery": "% chance to not consume a potato",
+  "tooltip.runic.acrobat": "Reduces dodge roll cooldown",
+  "tooltip.runic.longfooted": "Increases dodge roll distance",
+  "tooltip.runic.multi_roll": "Allows multiple rolls before cooldown"
 
 
 

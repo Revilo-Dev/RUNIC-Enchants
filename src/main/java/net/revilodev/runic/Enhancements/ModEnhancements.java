@@ -34,7 +34,7 @@ public class ModEnhancements {
     public static final ResourceKey<Enchantment> VITALITY = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "vitality"));
     public static final ResourceKey<Enchantment> WITHER_ASPECT = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "wither_aspect"));
     public static final ResourceKey<Enchantment> MANDELA_ASPECT = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "mandela_aspect"));
-    public static final ResourceKey<Enchantment> CURSEOFOOZING = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "curse_of_oozing"));
+    public static final ResourceKey<Enchantment> TOUGH = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "toughness"));
     public static final ResourceKey<Enchantment> CURSEOFUNLUCK = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "curse_of_unluck"));
 
     public static void bootstrap(BootstrapContext<Enchantment> context) {
@@ -199,12 +199,12 @@ public class ModEnhancements {
 
         var unluckdef = Enchantment.definition(
                 items.getOrThrow(ItemTags.ARMOR_ENCHANTABLE),
-                items.getOrThrow(ItemTags.FOOT_ARMOR_ENCHANTABLE),
+                items.getOrThrow(ItemTags.ARMOR_ENCHANTABLE),
                 2, 1,
                 Enchantment.dynamicCost(10, 8),
                 Enchantment.dynamicCost(30, 8),
                 2,
-                EquipmentSlotGroup.FEET
+                EquipmentSlotGroup.ARMOR
         );
 
         register(context, CURSEOFUNLUCK, Enchantment.enchantment(unluckdef)
@@ -295,25 +295,22 @@ public class ModEnhancements {
                 .exclusiveWith(enchantments.getOrThrow(EnchantmentTags.DAMAGE_EXCLUSIVE))
                 .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER, EnchantmentTarget.VICTIM, new Mandela_Aspect()));
 
-        var curseofoozingdef = Enchantment.definition(
+        var toughDef = Enchantment.definition(
                 items.getOrThrow(ItemTags.ARMOR_ENCHANTABLE),
-                items.getOrThrow(ItemTags.CHEST_ARMOR_ENCHANTABLE),
-                5,
-                2,
+                items.getOrThrow(ItemTags.ARMOR_ENCHANTABLE),
+                5, 2,
                 Enchantment.dynamicCost(10, 8),
                 Enchantment.dynamicCost(30, 8),
                 2,
-                EquipmentSlotGroup.CHEST
-        );
+                EquipmentSlotGroup.ARMOR);
 
-        register(context, CURSEOFOOZING, Enchantment.enchantment(vitalityDef)
+        register(context, TOUGH, Enchantment.enchantment(toughDef)
                 .withEffect(EnchantmentEffectComponents.ATTRIBUTES,
                         new EnchantmentAttributeEffect(
-                                ResourceLocation.tryParse(RunicMod.MOD_ID + "curse_of_oozing"),
+                                ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "toughness"),
                                 Attributes.ARMOR,
-                                LevelBasedValue.perLevel(0.15F, 0.10F),
-                                AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
-                        )));
+                                LevelBasedValue.perLevel(1.0F, 1.0F),
+                                AttributeModifier.Operation.ADD_VALUE)));
 
         //register(context, SOULBOUND, Enchantment.enchantment(soulboundDef));
     }

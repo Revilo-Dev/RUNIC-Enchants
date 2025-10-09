@@ -31,7 +31,7 @@
   "enchantment.runic.leaping": "Leaping",
   "enchantment.runic.reach": "Reach",
   "enchantment.runic.buzzing_aspect": "Buzzing Aspect",
-  "enchantment.runic.curse_of_oozing": "Curse of Oozing",
+  "enchantment.runic.toughness": "Toughness",
   "enchantment.runic.curse_of_unluck": "Curse of Unluckiness",
 
   "tooltip.runic.blank_rune": "Does nothing just yet.",
@@ -79,7 +79,7 @@
   "tooltip.runic.vanishing_curse": "The item will vanish on death",
   "tooltip.runic.wind_burst": "Summons a wind charge on attack",
   "tooltip.runic.density": "Deal more damage the higher you fall",
-  "tooltip.runic.curse_of_oozing": "Burst into silverfish apon death",
+  "tooltip.runic.toughness": "Extra Armor points",
   "tooltip.runic.curse_of_unluck": "Decreased chance to find rare loot",
 
   "tooltip.runic.swift": "Increases your movement speed",
@@ -93,8 +93,8 @@
   "tooltip.runic.soulbound": "Keep Your item on Death at the cost of 25% durability",
   "tooltip.runic.wither_aspect": "% Chance to Wither Enemy on hit",
   "tooltip.runic.mandela_aspect": "PVP Enchant that causes your opponent to lose vision and hallucinate",
-  "tooltip.runic.vitality": "Increases your max health by 25%",
-  "tooltip.runic.leaping": "Increases your jump height by 5%",
+  "tooltip.runic.vitality": "Increases your max health",
+  "tooltip.runic.leaping": "Increases your jump height",
   "tooltip.runic.reach": "Increases your reach",
   "tooltip.runic.hoard_aspect": "PVP Enchant, summons Bees to distract the opponent",
 

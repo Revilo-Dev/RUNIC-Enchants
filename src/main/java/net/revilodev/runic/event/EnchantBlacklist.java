@@ -25,11 +25,10 @@ public final class EnchantBlacklist {
         return h.unwrapKey().map(ResourceKey::location).map(IDS::contains).orElse(false);
     }
 
-    /** Remove blacklisted enchants (normal + stored). @return true if changed */
     public static boolean strip(ItemStack stack) {
         boolean changed = false;
 
-        // 1) normal enchants on gear
+        // enchants on gear
         ItemEnchantments cur = stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
         if (!cur.isEmpty()) {
             ItemEnchantments.Mutable mut = new ItemEnchantments.Mutable(cur);
@@ -38,7 +37,7 @@ public final class EnchantBlacklist {
             if (!cleaned.equals(cur)) { stack.set(DataComponents.ENCHANTMENTS, cleaned); changed = true; }
         }
 
-        // 2) stored enchants (enchanted books)
+        // stored enchants
         ItemEnchantments stored = stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
         if (!stored.isEmpty()) {
             ItemEnchantments.Mutable mut = new ItemEnchantments.Mutable(stored);

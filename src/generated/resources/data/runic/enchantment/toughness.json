@@ -1,19 +1,19 @@
 {
   "anvil_cost": 2,
   "description": {
-    "translate": "enchantment.runic.curse_of_oozing"
+    "translate": "enchantment.runic.toughness"
   },
   "effects": {
     "minecraft:attributes": [
       {
         "amount": {
           "type": "minecraft:linear",
-          "base": 0.15,
-          "per_level_above_first": 0.1
+          "base": 1.0,
+          "per_level_above_first": 1.0
         },
         "attribute": "minecraft:generic.armor",
-        "id": "minecraft:runiccurse_of_oozing",
-        "operation": "add_multiplied_total"
+        "id": "runic:toughness",
+        "operation": "add_value"
       }
     ]
   },
@@ -21,14 +21,14 @@
     "base": 30,
     "per_level_above_first": 8
   },
-  "max_level": 5,
+  "max_level": 2,
   "min_cost": {
     "base": 10,
     "per_level_above_first": 8
   },
-  "primary_items": "#minecraft:enchantable/chest_armor",
+  "primary_items": "#minecraft:enchantable/armor",
   "slots": [
-    "chest"
+    "armor"
   ],
   "supported_items": "#minecraft:enchantable/armor",
   "weight": 5

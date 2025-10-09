@@ -127,7 +127,7 @@ public final class RunicClientModels {
             case "leaping" -> 69.0F;
             case "reach" -> 70.0F;
             case "buzzing_aspect" -> 71.0F;
-            case "curse_of_oozing" -> 72.0F;
+            case "toughness" -> 72.0F;
             case "curse_of_unluck" -> 73.0F;
 
             default -> 0.0F;
