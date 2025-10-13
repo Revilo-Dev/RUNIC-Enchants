@@ -69,14 +69,14 @@ public class EnchantTooltipHandler {
             }
         }
 
-        // Insert our rebuilt lines
+
         int insertAt = firstIdx;
         if (insertAt != -1) {
             tooltip.addAll(insertAt, newLines);
             insertAt += newLines.size();
         }
 
-        // Enhanced Rune: add Shift details section (descriptions from lang)
+
         if (isRune && (recolorGear || !stored.isEmpty())) {
             appendRuneShiftDescriptions(tooltip, insertAt, live, stored);
         }

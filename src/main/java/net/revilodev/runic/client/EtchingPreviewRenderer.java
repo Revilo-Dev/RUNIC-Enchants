@@ -16,9 +16,6 @@ import net.minecraft.world.level.Level;
 public final class EtchingPreviewRenderer {
     private EtchingPreviewRenderer() {}
 
-    /**
-     * Render a spinning 3D item inside a GUI rectangle (abs coords).
-     */
     public static void render(GuiGraphics gg, ItemStack stack,
                               int absX, int absY, int w, int h, float partialTick) {
         if (stack == null || stack.isEmpty()) return;
@@ -40,7 +37,7 @@ public final class EtchingPreviewRenderer {
 
         // Scale model to the box; item models are ~16 units
         float s = ((Math.min(w, h) * 0.9f) / 16f) * 10f;
-        ps.scale(s, -s, s); // flip Y for GUI coords
+        ps.scale(s, -s, s);
 
         // gentle tilt + spin over time
         float t = level != null ? (level.getGameTime() + partialTick)
