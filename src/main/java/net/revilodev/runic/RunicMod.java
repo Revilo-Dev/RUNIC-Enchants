@@ -13,13 +13,13 @@ import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.revilodev.runic.Enhancements.ModEnhancementEffects;
 import net.revilodev.runic.Enhancements.custom.AirJumpHandler;
 import net.revilodev.runic.Enhancements.custom.StunningHandler;
+import net.revilodev.runic.Enhancements.soulbound.SoulboundConfig;
 import net.revilodev.runic.block.ModBlocks;
 import net.revilodev.runic.client.RunicClientModels;
 import net.revilodev.runic.effect.ModMobEffects;
 import net.revilodev.runic.item.ModCreativeModeTabs;
 import net.revilodev.runic.item.ModItems;
 import net.revilodev.runic.loot.ModLootModifiers;
-import net.revilodev.runic.network.RuneNetwork;
 import net.revilodev.runic.registry.ModDataComponents;
 import net.revilodev.runic.screen.ModMenuTypes;
 import net.revilodev.runic.screen.custom.EtchingTableScreen;
@@ -47,20 +47,20 @@ public class RunicMod {
         AirJumpHandler.register();
         StunningHandler.register();
 
+        modContainer.registerConfig(net.neoforged.fml.config.ModConfig.Type.COMMON, SoulboundConfig.SPEC);
+
         NeoForge.EVENT_BUS.register(this);
     }
 
-    private void commonSetup(final net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent event) {
-        //
-    }
+    private void commonSetup(final net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent event) {}
 
-    private void addCreative(BuildCreativeModeTabContentsEvent event) {
+    private void addCreative(net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
-            event.accept(ModItems.RUNE.get());
-            event.accept(ModItems.EXPANSION_RUNE.get());
+            event.accept(net.revilodev.runic.item.ModItems.RUNE.get());
+            event.accept(net.revilodev.runic.item.ModItems.EXPANSION_RUNE.get());
         }
         if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
-            event.accept(ModBlocks.ETCHING_TABLE.get());
+            event.accept(net.revilodev.runic.block.ModBlocks.ETCHING_TABLE.get());
         }
     }
 
