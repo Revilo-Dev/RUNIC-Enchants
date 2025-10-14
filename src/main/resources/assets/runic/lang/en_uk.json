@@ -7,6 +7,8 @@
 
   "block.runic.etching_table": "Etching Table",
 
+  "minecraft:enchanted_golden_apple": "Enhanced Golden Apple",
+  "minecraft:experience_bottle": "Bottle o' Experience",
 
   "effect.runic.bleeding": "Bleeding",
   "effect.runic.stunning": "Stunned",
@@ -34,7 +36,7 @@
   "enchantment.runic.toughness": "Toughness",
   "enchantment.runic.curse_of_unluck": "Curse of Unluckiness",
 
-  "tooltip.runic.blank_rune": "Does nothing just yet.",
+  "tooltip.runic.blank_rune": "§7Does nothing just yet.",
   "tooltip.runic.expansion_rune": "§7Adds an Additional Rune Slot to your Gear at the cost of 25% max durability",
 
   "tooltip.runic.aqua_affinity": "Increases underwater mining speed",
