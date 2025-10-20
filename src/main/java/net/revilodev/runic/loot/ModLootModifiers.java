@@ -12,8 +12,8 @@ public class ModLootModifiers {
     public static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> LOOT_MODIFIERS =
             DeferredRegister.create(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, RunicMod.MOD_ID);
 
-    public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<? extends IGlobalLootModifier>> RUNE_RARITY_INJECTOR =
-            LOOT_MODIFIERS.register("rune_rarity_injector", () -> RuneRarityInjector.CODEC);
+    public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<? extends IGlobalLootModifier>> RUNE_INJECTOR =
+            LOOT_MODIFIERS.register("rune_injector", () -> RuneInjector.CODEC);
 
     public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<? extends IGlobalLootModifier>> ENCHANT_INJECTOR =
             LOOT_MODIFIERS.register("enchant_injector", () -> EnchantInjector.CODEC);
@@ -23,6 +23,5 @@ public class ModLootModifiers {
 
     public static void register(IEventBus bus) {
         LOOT_MODIFIERS.register(bus);
-        RunicMod.LOGGER.debug("[ModLootModifiers] Registered loot modifier codecs.");
     }
 }

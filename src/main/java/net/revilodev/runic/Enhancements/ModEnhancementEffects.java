@@ -33,7 +33,7 @@ public final class ModEnhancementEffects {
     public static final DeferredHolder<MapCodec<? extends EnchantmentEntityEffect>, MapCodec<? extends EnchantmentEntityEffect>> MANDELA_ASPECT =
             ENTITY_ENCHANTMENT_EFFECTS.register("mandela_aspect", () -> Mandela_Aspect.CODEC);
     public static final DeferredHolder<MapCodec<? extends EnchantmentEntityEffect>, MapCodec<? extends EnchantmentEntityEffect>> CURSEOFUNLUCK =
-            ENTITY_ENCHANTMENT_EFFECTS.register("curse_of_unluck", () -> Mandela_Aspect.CODEC);
+            ENTITY_ENCHANTMENT_EFFECTS.register("curse_of_unluck", () -> Unluck.CODEC);
 
 
 

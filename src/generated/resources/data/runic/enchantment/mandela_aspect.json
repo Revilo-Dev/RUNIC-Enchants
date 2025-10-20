@@ -8,7 +8,7 @@
       {
         "affected": "victim",
         "effect": {
-          "type": "runic:chronos"
+          "type": "runic:mandela_aspect"
         },
         "enchanted": "attacker"
       }
