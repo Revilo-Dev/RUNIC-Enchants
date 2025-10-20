@@ -62,24 +62,19 @@ public class EnchantInjector extends LootModifier {
     protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generated, LootContext ctx) {
         if (!(ctx.getLevel() instanceof ServerLevel level)) return generated;
         RandomSource rng = level.getRandom();
-
         var enchRegistry = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
 
         ObjectArrayList<ItemStack> out = new ObjectArrayList<>(generated.size());
         for (ItemStack stack : generated) {
-            // Skip enchanted books
             if (stack.is(Items.ENCHANTED_BOOK)) {
                 out.add(stack);
                 continue;
             }
-
-            // Only vanilla items
             if (onlyVanilla && !"minecraft".equals(stack.getItem().builtInRegistryHolder().key().location().getNamespace())) {
                 out.add(stack);
                 continue;
             }
 
-            // Read current enchants once
             ItemEnchantments current = stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
             ItemEnchantments.Mutable mut = new ItemEnchantments.Mutable(current);
             boolean changed = false;
@@ -89,18 +84,15 @@ public class EnchantInjector extends LootModifier {
                 if (opt.isEmpty()) continue;
 
                 Holder<Enchantment> ench = opt.get();
-                // If this enchantment can go on this item
                 if (!ench.value().canEnchant(stack)) continue;
 
                 if (rng.nextFloat() < this.chance) {
                     int rolled = rng.nextIntBetweenInclusive(this.minLevel, this.maxLevel);
                     int levelClamped = Mth.clamp(rolled, 1, ench.value().getMaxLevel());
-
                     if (mut.getLevel(ench) < levelClamped) {
                         mut.set(ench, levelClamped);
                         changed = true;
-                        RunicMod.LOGGER.debug("[EnchantInjector] Applied {} lvl {} to {}",
-                                id, levelClamped, stack.getHoverName().getString());
+                        RunicMod.LOGGER.debug("[EnchantInjector] Applied {} lvl {} to {}", id, levelClamped, stack.getHoverName().getString());
                     }
                 }
             }

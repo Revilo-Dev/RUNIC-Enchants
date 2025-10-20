@@ -8,7 +8,7 @@
       {
         "affected": "victim",
         "effect": {
-          "type": "runic:curse_of_unluck"
+          "type": "runic:chronos"
         },
         "enchanted": "attacker"
       }

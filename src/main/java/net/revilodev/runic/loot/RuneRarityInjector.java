@@ -26,11 +26,13 @@ import net.revilodev.runic.loot.rarity.EnhancementRarities;
 import net.revilodev.runic.loot.rarity.EnhancementRarity;
 
 import java.io.BufferedReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public class RuneRarityInjector extends LootModifier {
-
     public static final MapCodec<RuneRarityInjector> CODEC =
             RecordCodecBuilder.mapCodec(inst -> codecStart(inst).apply(inst, RuneRarityInjector::new));
 
@@ -81,14 +83,12 @@ public class RuneRarityInjector extends LootModifier {
 
     private Holder<Enchantment> pickRandomEnchantOf(EnhancementRarity target, RandomSource rand, Level level) {
         Registry<Enchantment> reg = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
-
         List<Holder<Enchantment>> pool = new ArrayList<>();
         for (Map.Entry<ResourceLocation, EnhancementRarity> e : EnhancementRarities.rawMap().entrySet()) {
             if (e.getValue() != target) continue;
             ResourceKey<Enchantment> key = ResourceKey.create(Registries.ENCHANTMENT, e.getKey());
             reg.getHolder(key).ifPresent(pool::add);
         }
-
         if (pool.isEmpty()) return null;
         return pool.get(rand.nextInt(pool.size()));
     }
@@ -151,7 +151,6 @@ public class RuneRarityInjector extends LootModifier {
                 var rl = ResourceLocation.fromNamespaceAndPath("runic", "loot/routes.json");
                 var opt = rm.getResource(rl);
                 if (opt.isEmpty()) return new RoutesConfig(List.of());
-
                 var res = opt.get();
                 try (BufferedReader reader = res.openAsReader()) {
                     StringBuilder sb = new StringBuilder();
@@ -177,9 +176,7 @@ public class RuneRarityInjector extends LootModifier {
                     List<Pattern> tablePatterns = new ArrayList<>();
                     if (g.has("tables")) {
                         for (var t : g.getAsJsonArray("tables")) {
-                            String pat = t.getAsString()
-                                    .replace(".", "\\.")
-                                    .replace("*", ".*");
+                            String pat = t.getAsString().replace(".", "\\.").replace("*", ".*");
                             tablePatterns.add(Pattern.compile(pat));
                         }
                     }
@@ -187,9 +184,7 @@ public class RuneRarityInjector extends LootModifier {
                     List<Pattern> entityPatterns = new ArrayList<>();
                     if (g.has("entities")) {
                         for (var e : g.getAsJsonArray("entities")) {
-                            String pat = e.getAsString()
-                                    .replace(".", "\\.")
-                                    .replace("*", ".*");
+                            String pat = e.getAsString().replace(".", "\\.").replace("*", ".*");
                             entityPatterns.add(Pattern.compile(pat));
                         }
                     }
@@ -204,7 +199,6 @@ public class RuneRarityInjector extends LootModifier {
                     }
 
                     float baseChance = g.has("base_chance") ? g.get("base_chance").getAsFloat() : 0.0f;
-
                     groups.add(new Group(name, tablePatterns, entityPatterns, weights, baseChance));
                 }
             }

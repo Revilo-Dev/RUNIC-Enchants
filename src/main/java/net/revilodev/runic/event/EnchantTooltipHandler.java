@@ -96,19 +96,16 @@ public class EnchantTooltipHandler {
             EnhancementRarity rarity = EnhancementRarities.get(holder);
 
             if (isRune) {
-                // Rune item → enchant name always neutral gray
                 Component grayLine = Component.literal(vanilla.getString())
                         .withStyle(Style.EMPTY.withColor(0xAAAAAA).withItalic(false));
                 rebuiltOut.add(grayLine);
 
-                // Then add rarity line in color
                 String key = rarity.key();
                 String rarityName = key.substring(0, 1).toUpperCase() + key.substring(1);
                 Component rarityLine = Component.literal(rarityName)
                         .withStyle(st -> st.withColor(rarity.color()).withItalic(false));
                 rebuiltOut.add(rarityLine);
             } else {
-                // Normal gear → enchant name colored by rarity
                 Component colored = Component.literal(vanilla.getString())
                         .withStyle(st -> st.withColor(rarity.color()).withItalic(false));
                 rebuiltOut.add(colored);
@@ -139,7 +136,7 @@ public class EnchantTooltipHandler {
         }
 
         if (!shift) {
-            tooltip.add(insertAt, Component.literal("Hold \u00A7eShift\u00A7r for details")
+            tooltip.add(insertAt, Component.literal("Hold \u00A7eShift\u00A7r for effects")
                     .withStyle(Style.EMPTY.withColor(0x777777).withItalic(false)));
             return;
         }

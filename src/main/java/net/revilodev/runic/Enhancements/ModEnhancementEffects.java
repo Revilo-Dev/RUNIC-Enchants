@@ -36,6 +36,9 @@ public final class ModEnhancementEffects {
             ENTITY_ENCHANTMENT_EFFECTS.register("curse_of_unluck", () -> Mandela_Aspect.CODEC);
 
 
+
+
+
     public static void register(IEventBus modBus) {
         ENTITY_ENCHANTMENT_EFFECTS.register(modBus);
 

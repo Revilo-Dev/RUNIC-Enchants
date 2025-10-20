@@ -9,7 +9,6 @@ import net.revilodev.runic.RunicMod;
 public final class RuneNetwork {
     @SubscribeEvent
     public static void onRegisterPayloads(RegisterPayloadHandlersEvent event) {
-        // The version string here must match your mod network version
         var registrar = event.registrar("1");
         registrar.playBidirectional(RuneSlotDataSync.TYPE, RuneSlotDataSync.CODEC, RuneSlotDataSync.HANDLER);
     }

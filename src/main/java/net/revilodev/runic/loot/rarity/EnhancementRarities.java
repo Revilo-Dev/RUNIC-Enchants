@@ -43,7 +43,7 @@ public final class EnhancementRarities {
         MAP.putAll(incoming);
         setDefault(def);
     }
+
     public static Map<ResourceLocation, EnhancementRarity> rawMap() { return MAP; }
     public static EnhancementRarity defaultRarity() { return DEFAULT; }
-
 }

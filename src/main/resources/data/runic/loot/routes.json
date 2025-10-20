@@ -11,11 +11,16 @@
         "minecraft:chests/underwater_ruin_small",
         "minecraft:chests/simple_dungeon",
         "minecraft:chests/igloo_chest",
-        "minecraft:chests/pillager_outpost"
+        "minecraft:chests/pillager_outpost",
+        "lootr:*village*",
+        "lootr:*simple_dungeon*",
+        "dungeons_arise:*small*",
+        "when_dungeons_arise:*small*"
       ],
       "rarity_weights": { "common": 70, "uncommon": 20, "rare": 9, "epic": 1 },
       "base_chance": 0.50
     },
+
     {
       "name": "uncommon_structures",
       "tables": [
@@ -26,11 +31,17 @@
         "minecraft:chests/ruined_portal",
         "minecraft:chests/stronghold_corridor",
         "minecraft:chests/stronghold_crossing",
-        "minecraft:chests/shipwreck_treasure"
+        "minecraft:chests/shipwreck_treasure",
+        "lootr:*ruin*",
+        "lootr:*temple*",
+        "lootr:*stronghold*",
+        "dungeons_arise:*ruin*",
+        "when_dungeons_arise:*temple*"
       ],
       "rarity_weights": { "common": 40, "uncommon": 40, "rare": 15, "epic": 5 },
       "base_chance": 0.55
     },
+
     {
       "name": "rare_structures",
       "tables": [
@@ -38,33 +49,50 @@
         "minecraft:chests/woodland_mansion",
         "minecraft:chests/buried_treasure",
         "minecraft:chests/nether_bridge",
-        "minecraft:chests/trial_chambers/corridor"
+        "minecraft:chests/trial_chambers/corridor",
+        "lootr:*mansion*",
+        "lootr:*library*",
+        "dungeons_arise:*tower*",
+        "dungeons_arise:*fortress*",
+        "when_dungeons_arise:*castle*"
       ],
       "rarity_weights": { "common": 20, "uncommon": 40, "rare": 30, "epic": 10 },
       "base_chance": 0.75
     },
+
     {
       "name": "epic_structures",
       "tables": [
         "minecraft:chests/ancient_city_ice_box",
         "minecraft:chests/bastion_bridge",
         "minecraft:chests/bastion_hoglin_stable",
-        "minecraft:chests/bastion_other"
+        "minecraft:chests/bastion_other",
+        "lootr:*ancient*",
+        "lootr:*bastion*",
+        "dungeons_arise:*keep*",
+        "when_dungeons_arise:*temple_large*",
+        "repurposed_structures:*bastion*"
       ],
       "rarity_weights": { "common": 10, "uncommon": 15, "rare": 30, "epic": 40, "legendary": 5 },
       "base_chance": 0.75
     },
+
     {
       "name": "legendary_structures",
       "tables": [
         "minecraft:chests/ancient_city",
         "minecraft:chests/bastion_treasure",
-        "minecraft:chests/end_city_treasure"
+        "minecraft:chests/end_city_treasure",
+        "lootr:*end_city*",
+        "lootr:*treasure*",
+        "dungeons_arise:*end_castle*",
+        "dungeons_arise:*ocean_monument*",
+        "when_dungeons_arise:*final*",
+        "repurposed_structures:*end*"
       ],
       "rarity_weights": { "common": 3, "uncommon": 10, "rare": 32, "epic": 30, "legendary": 25 },
       "base_chance": 0.80
     },
-
 
     {
       "name": "mob_drops_common",
@@ -79,6 +107,7 @@
       "rarity_weights": { "common": 100 },
       "base_chance": 0.05
     },
+
     {
       "name": "mob_drops_uncommon",
       "entities": [
@@ -94,6 +123,7 @@
       "rarity_weights": { "common": 50, "uncommon": 30, "rare": 20 },
       "base_chance": 0.10
     },
+
     {
       "name": "mob_drops_rare",
       "entities": [
@@ -103,9 +133,10 @@
         "minecraft:wither_skeleton",
         "minecraft:shulker"
       ],
-      "rarity_weights": { "common": 40, "uncommon": 20,"rare": 30, "epic": 10 },
+      "rarity_weights": { "common": 40, "uncommon": 20, "rare": 30, "epic": 10 },
       "base_chance": 0.1
     },
+
     {
       "name": "mob_drops_epic",
       "entities": [
@@ -115,9 +146,10 @@
         "minecraft:vex",
         "minecraft:elder_guardian"
       ],
-      "rarity_weights": { "common": 5, "uncommon": 20,"rare": 25, "epic": 30, "legendary": 20 },
+      "rarity_weights": { "common": 5, "uncommon": 20, "rare": 25, "epic": 30, "legendary": 20 },
       "base_chance": 0.2
     },
+
     {
       "name": "mob_drops_legendary",
       "entities": [
@@ -126,7 +158,6 @@
       "rarity_weights": { "legendary": 100 },
       "base_chance": 0.1
     },
-
 
     {
       "name": "external_mob_common",
@@ -139,6 +170,7 @@
       "rarity_weights": { "common": 100 },
       "base_chance": 0.02
     },
+
     {
       "name": "external_mob_uncommon",
       "entities": [
@@ -151,6 +183,7 @@
       "rarity_weights": { "uncommon": 70, "rare": 30 },
       "base_chance": 0.015
     },
+
     {
       "name": "external_mob_rare",
       "entities": [
@@ -161,6 +194,7 @@
       "rarity_weights": { "rare": 60, "epic": 40 },
       "base_chance": 0.01
     },
+
     {
       "name": "external_mob_epic",
       "entities": [
@@ -171,6 +205,7 @@
       "rarity_weights": { "epic": 65, "legendary": 35 },
       "base_chance": 0.005
     },
+
     {
       "name": "external_mob_legendary",
       "entities": [

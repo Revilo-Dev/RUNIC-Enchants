@@ -30,7 +30,6 @@ public class ModEnhancements {
     public static final ResourceKey<Enchantment> HOARD_ASPECT = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "buzzing_aspect"));
     public static final ResourceKey<Enchantment> LEAPING = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "leaping"));
     public static final ResourceKey<Enchantment> REACH = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "reach"));
-    //public static final ResourceKey<Enchantment> SOULBOUND = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "soulbound"));
     public static final ResourceKey<Enchantment> VITALITY = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "vitality"));
     public static final ResourceKey<Enchantment> WITHER_ASPECT = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "wither_aspect"));
     public static final ResourceKey<Enchantment> MANDELA_ASPECT = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "mandela_aspect"));
@@ -147,8 +146,6 @@ public class ModEnhancements {
                 1,
                 EquipmentSlotGroup.FEET
         );
-
-        //register(context, AIR_JUMP, Enchantment.enchantment(airDef));
 
         var bleedDef = Enchantment.definition(
                 items.getOrThrow(ItemTags.WEAPON_ENCHANTABLE),
@@ -312,7 +309,6 @@ public class ModEnhancements {
                                 LevelBasedValue.perLevel(1.0F, 1.0F),
                                 AttributeModifier.Operation.ADD_VALUE)));
 
-        //register(context, SOULBOUND, Enchantment.enchantment(soulboundDef));
     }
 
     private static void register(BootstrapContext<Enchantment> registry, ResourceKey<Enchantment> key, Enchantment.Builder builder) {
