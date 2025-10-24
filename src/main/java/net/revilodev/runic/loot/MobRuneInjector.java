@@ -16,6 +16,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.common.loot.LootModifier;
@@ -28,19 +29,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class RuneInjector extends LootModifier {
-    public static final MapCodec<RuneInjector> CODEC = RecordCodecBuilder.mapCodec(inst ->
+public class MobRuneInjector extends LootModifier {
+    public static final MapCodec<MobRuneInjector> CODEC = RecordCodecBuilder.mapCodec(inst ->
             LootModifier.codecStart(inst).and(inst.group(
-                    Codec.FLOAT.fieldOf("chance").orElse(0.30f).forGetter(m -> m.chance),
+                    Codec.FLOAT.fieldOf("chance").orElse(0.02f).forGetter(m -> m.chance),
                     Codec.INT.fieldOf("min_level").orElse(1).forGetter(m -> m.minLevel),
-                    Codec.INT.fieldOf("max_level").orElse(3).forGetter(m -> m.maxLevel)
-            )).apply(inst, RuneInjector::new));
+                    Codec.INT.fieldOf("max_level").orElse(2).forGetter(m -> m.maxLevel)
+            )).apply(inst, MobRuneInjector::new));
 
     private final float chance;
     private final int minLevel;
     private final int maxLevel;
 
-    public RuneInjector(LootItemCondition[] conditions, float chance, int minLevel, int maxLevel) {
+    public MobRuneInjector(LootItemCondition[] conditions, float chance, int minLevel, int maxLevel) {
         super(conditions);
         this.chance = chance;
         this.minLevel = minLevel;
@@ -54,11 +55,7 @@ public class RuneInjector extends LootModifier {
 
     @Override
     protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generated, LootContext ctx) {
-        var tableId = ctx.getQueriedLootTableId();
-        if (tableId == null) return generated;
-
-        String id = tableId.toString();
-        if (!id.contains("chests/") && !id.contains("barrel")) return generated;
+        if (ctx.getParamOrNull(LootContextParams.THIS_ENTITY) == null) return generated;
 
         RandomSource rand = ctx.getRandom();
         if (rand.nextFloat() >= chance) return generated;
@@ -71,19 +68,14 @@ public class RuneInjector extends LootModifier {
             ResourceKey<Enchantment> key = ResourceKey.create(Registries.ENCHANTMENT, e.getKey());
             reg.getHolder(key).ifPresent(pool::add);
         }
-
-        if (pool.isEmpty()) {
-            pool = reg.holders().collect(Collectors.toList());
-        }
+        if (pool.isEmpty()) pool = reg.holders().collect(Collectors.toList());
         if (pool.isEmpty()) return generated;
 
-        int rolls = 1 + rand.nextInt(3);
-        for (int i = 0; i < rolls; i++) {
-            Holder<Enchantment> ench = pool.get(rand.nextInt(pool.size()));
-            int lvl = Mth.clamp(rand.nextIntBetweenInclusive(minLevel, maxLevel), 1, ench.value().getMaxLevel());
-            ItemStack rune = RuneItem.createForEnchantment(new EnchantmentInstance(ench, lvl));
-            if (!rune.isEmpty()) generated.add(rune);
-        }
+        Holder<Enchantment> ench = pool.get(rand.nextInt(pool.size()));
+        int lvl = Mth.clamp(rand.nextIntBetweenInclusive(minLevel, maxLevel), 1, ench.value().getMaxLevel());
+        ItemStack rune = RuneItem.createForEnchantment(new EnchantmentInstance(ench, lvl));
+        if (!rune.isEmpty()) generated.add(rune);
+
         return generated;
     }
 }

@@ -12,14 +12,17 @@ public class ModLootModifiers {
     public static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> LOOT_MODIFIERS =
             DeferredRegister.create(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, RunicMod.MOD_ID);
 
+    public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<? extends IGlobalLootModifier>> REMOVE_ENCHANTED_BOOKS =
+            LOOT_MODIFIERS.register("remove_enchanted_books", () -> RemoveEnchantedBooksModifier.CODEC);
+
     public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<? extends IGlobalLootModifier>> RUNE_INJECTOR =
             LOOT_MODIFIERS.register("rune_injector", () -> RuneInjector.CODEC);
 
-    public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<? extends IGlobalLootModifier>> ENCHANT_INJECTOR =
-            LOOT_MODIFIERS.register("enchant_injector", () -> EnchantInjector.CODEC);
+    public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<? extends IGlobalLootModifier>> ARMOUR_RUNE_INJECTOR =
+            LOOT_MODIFIERS.register("armour_rune_injector", () -> ArmourRuneInjector.CODEC);
 
-    public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<? extends IGlobalLootModifier>> REMOVE_ENCHANTED_BOOKS =
-            LOOT_MODIFIERS.register("remove_enchanted_books", () -> RemoveEnchantedBooksModifier.CODEC);
+    public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<? extends IGlobalLootModifier>> MOB_RUNE_INJECTOR =
+            LOOT_MODIFIERS.register("mob_rune_injector", () -> MobRuneInjector.CODEC);
 
     public static void register(IEventBus bus) {
         LOOT_MODIFIERS.register(bus);

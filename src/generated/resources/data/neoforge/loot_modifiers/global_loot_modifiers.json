@@ -1,7 +1,9 @@
 {
   "entries": [
     "runic:remove_enchanted_books",
-    "runic:rune_injector"
+    "runic:rune_injector",
+    "runic:mob_rune_injector",
+    "runic:armour_rune_injector"
   ],
   "replace": false
 }
