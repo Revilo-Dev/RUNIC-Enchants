@@ -1,0 +1,8 @@
+{
+  "type": "runic:runic_structure_loot_injector",
+  "armor_chance": 0.3,
+  "conditions": [],
+  "max_level": 3,
+  "min_level": 1,
+  "rune_chance": 0.35
+}

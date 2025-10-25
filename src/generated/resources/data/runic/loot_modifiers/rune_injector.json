@@ -1,7 +1,0 @@
-{
-  "type": "runic:rune_injector",
-  "chance": 0.15,
-  "conditions": [],
-  "max_level": 3,
-  "min_level": 1
-}
