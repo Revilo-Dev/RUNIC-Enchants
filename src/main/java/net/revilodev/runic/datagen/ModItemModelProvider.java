@@ -13,7 +13,6 @@ public class ModItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        basicItem(ModItems.RUNE.get());
         basicItem(ModItems.EXPANSION_RUNE.get());
     }
 }

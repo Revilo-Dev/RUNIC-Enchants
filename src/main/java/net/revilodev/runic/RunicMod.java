@@ -56,7 +56,6 @@ public class RunicMod {
 
     private void addCreative(net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
-            event.accept(net.revilodev.runic.item.ModItems.RUNE.get());
             event.accept(net.revilodev.runic.item.ModItems.EXPANSION_RUNE.get());
         }
         if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {

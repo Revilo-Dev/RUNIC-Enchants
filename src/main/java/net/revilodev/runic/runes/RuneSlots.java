@@ -9,6 +9,8 @@ import net.revilodev.runic.registry.ModDataComponents;
 public final class RuneSlots {
 
     public static int capacity(ItemStack stack) {
+        Integer stored = stack.get(ModDataComponents.RUNE_SLOTS_CAPACITY.get());
+        if (stored != null) return Math.max(0, stored);
         Item item = stack.getItem();
         return RuneSlotCapacityData.capacity(item);
     }
@@ -35,6 +37,17 @@ public final class RuneSlots {
     public static void refundOne(ItemStack stack) {
         int u = used(stack);
         if (u > 0) stack.set(ModDataComponents.RUNE_SLOTS_USED.get(), u - 1);
+    }
+
+    public static void removeOneSlot(ItemStack stack) {
+        int cap = capacity(stack);
+        if (cap <= 0) return;
+        int newCap = Math.max(0, cap - 1);
+        stack.set(ModDataComponents.RUNE_SLOTS_CAPACITY.get(), newCap);
+        int used = used(stack);
+        if (used > newCap) {
+            stack.set(ModDataComponents.RUNE_SLOTS_USED.get(), newCap);
+        }
     }
 
     public static Component bar(ItemStack stack) {

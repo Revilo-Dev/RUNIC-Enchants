@@ -1,4 +1,3 @@
-// ModCreativeModeTabs.java
 package net.revilodev.runic.item;
 
 import net.revilodev.runic.RunicMod;
@@ -16,7 +15,6 @@ import net.revilodev.runic.block.ModBlocks;
 import net.revilodev.runic.item.custom.RuneItem;
 
 public class ModCreativeModeTabs {
-    // ✅ NeoForge creative tab registry
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS =
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, RunicMod.MOD_ID);
 
@@ -25,12 +23,11 @@ public class ModCreativeModeTabs {
                     .icon(() -> new ItemStack(ModBlocks.ETCHING_TABLE.get()))
                     .title(Component.translatable("creativetab.runicmod.runic_items"))
                     .displayItems((params, output) -> {
-                        // Add base items/blocks
                         output.accept(ModBlocks.ETCHING_TABLE.get());
-                        output.accept(ModItems.RUNE.get());
                         output.accept(ModItems.EXPANSION_RUNE.get());
+                        output.accept(ModItems.REPAIR_RUNE.get());
 
-                        // Add runes for every enchantment and level
+                        // Add runes for every enchant
                         params.holders()
                                 .lookup(Registries.ENCHANTMENT)
                                 .ifPresent((HolderLookup.RegistryLookup<Enchantment> enchants) -> {
