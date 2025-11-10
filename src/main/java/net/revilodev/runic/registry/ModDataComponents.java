@@ -9,7 +9,6 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.revilodev.runic.RunicMod;
 
 public final class ModDataComponents {
-    // ✅ Use the generic DeferredRegister with Registries.DATA_COMPONENT_TYPE
     public static final DeferredRegister<DataComponentType<?>> DATA_COMPONENT_TYPES =
             DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, RunicMod.MOD_ID);
 

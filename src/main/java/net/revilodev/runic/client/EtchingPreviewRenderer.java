@@ -24,7 +24,7 @@ public final class EtchingPreviewRenderer {
         ItemRenderer itemRenderer = mc.getItemRenderer();
         Level level = mc.level;
 
-        // clip to the preview box so nothing bleeds outside
+
         gg.enableScissor(absX, absY, absX + w, absY + h);
 
         PoseStack ps = gg.pose();
@@ -54,12 +54,12 @@ public final class EtchingPreviewRenderer {
                 ps,
                 buffers,
                 level,
-                0 // seed
+                0
         );
 
         ps.popPose();
 
-        // flush and unclip
+
         buffers.endBatch();
         gg.disableScissor();
     }

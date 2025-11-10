@@ -15,11 +15,11 @@ import net.revilodev.runic.block.custom.EtchingTable;
 public final class ModBlocks {
     private ModBlocks() {}
 
-    // Register for all blocks
+    // Register
     public static final DeferredRegister<Block> BLOCKS =
             DeferredRegister.create(Registries.BLOCK, RunicMod.MOD_ID);
 
-    // Register for all items (block items, misc items go here if you want)
+
     public static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(Registries.ITEM, RunicMod.MOD_ID);
 
@@ -37,7 +37,7 @@ public final class ModBlocks {
             ITEMS.register("etching_table",
                     () -> new BlockItem(ETCHING_TABLE.get(), new Item.Properties()));
 
-    // ---------- Registry hook ----------
+    // ---------- hook ----------
 
     public static void register(IEventBus bus) {
         BLOCKS.register(bus);

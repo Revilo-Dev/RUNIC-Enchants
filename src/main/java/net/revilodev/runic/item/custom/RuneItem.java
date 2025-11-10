@@ -25,7 +25,7 @@ public class RuneItem extends Item {
 
     @Override
     public boolean isEnchantable(ItemStack stack) {
-        return false; // runes themselves cannot be enchanted
+        return false;
     }
 
     private static boolean isBlacklisted(Holder<Enchantment> enchantHolder) {
@@ -34,7 +34,7 @@ public class RuneItem extends Item {
                 .orElse(false);
     }
 
-    /** Factory: create a rune preloaded with the given enchantment. */
+
     public static ItemStack createForEnchantment(EnchantmentInstance inst) {
         if (isBlacklisted(inst.enchantment)) {
             return ItemStack.EMPTY;
@@ -45,11 +45,6 @@ public class RuneItem extends Item {
         return stack;
     }
 
-    /**
-     * Returns the texture path for this rune based on its enchantment.
-     * Example: runic:item/rune/minecraft/sharpness → maps to
-     *          resources/assets/runic/textures/item/rune/minecraft/sharpness.png
-     */
     public static ResourceLocation getRuneTexture(ItemStack stack) {
         ResourceLocation base = ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "item/rune/enhanced_rune");
 
