@@ -54,10 +54,9 @@ public class EtchingTableMenu extends AbstractContainerMenu {
                 ItemStack rune = input.getItem(1);
 
                 if (rune.is(ModItems.REPAIR_RUNE.get())) {
-                    int cap = RuneSlots.capacity(taken);
-                    if (cap > 1) {
-                        RuneSlots.removeOneSlot(taken);
-                    }
+                    handleRepairRuneResult(taken);
+                } else if (rune.is(ModItems.EXPANSION_RUNE.get())) {
+                    handleExpansionRuneResult(taken);
                 } else {
                     RuneSlots.tryConsumeSlot(taken);
                 }
@@ -120,6 +119,10 @@ public class EtchingTableMenu extends AbstractContainerMenu {
             return applyRepairRune(target);
         }
 
+        if (rune.is(ModItems.EXPANSION_RUNE.get())) {
+            return applyExpansionRunePreview(target);
+        }
+
         if (!rune.is(ModItems.ENHANCED_RUNE.get())) return ItemStack.EMPTY;
         if (RuneSlots.remaining(target) <= 0) return ItemStack.EMPTY;
 
@@ -175,12 +178,10 @@ public class EtchingTableMenu extends AbstractContainerMenu {
             if (!list.isEmpty()) {
                 Holder<Enchantment> toRemove = list.get(RANDOM.nextInt(list.size()));
                 ItemEnchantments.Mutable mut = new ItemEnchantments.Mutable(existing);
-                mut.set(toRemove, 0); // Remove by setting level 0
+                mut.set(toRemove, 0);
                 out.set(DataComponents.ENCHANTMENTS, mut.toImmutable());
             }
         }
-
-        RuneSlots.removeOneSlot(out);
 
         int damage = out.getOrDefault(DataComponents.DAMAGE, 0);
         int heal = Math.max(1, (int) Math.floor(max * 0.25f));
@@ -188,6 +189,53 @@ public class EtchingTableMenu extends AbstractContainerMenu {
         out.set(DataComponents.DAMAGE, newDamage);
 
         return out;
+    }
+
+    // PREVIEW ONLY — no rune slot added, no expansion count incremented
+    private ItemStack applyExpansionRunePreview(ItemStack target) {
+        int max = target.getMaxDamage();
+        if (max <= 0) return ItemStack.EMPTY;
+
+        ItemStack out = target.copy();
+
+        int usedExpansions = RuneSlots.expansionsUsed(out);
+        if (usedExpansions >= 3) return ItemStack.EMPTY;
+
+        int currentMax = out.getMaxDamage();
+        int newMax = (int) Math.floor(currentMax * 0.75f);
+        if (newMax < 1) return ItemStack.EMPTY;
+
+        int currentDamage = out.getOrDefault(DataComponents.DAMAGE, 0);
+        int clampedDamage = Math.min(newMax - 1, currentDamage);
+        out.set(DataComponents.DAMAGE, clampedDamage);
+        out.set(DataComponents.MAX_DAMAGE, newMax);
+
+        return out;
+    }
+
+    private void handleRepairRuneResult(ItemStack taken) {
+        int cap = RuneSlots.capacity(taken);
+        if (cap > 1) {
+            RuneSlots.removeOneSlot(taken);
+        }
+    }
+
+    // REAL application — called only from onTake / shift-click path
+    private void handleExpansionRuneResult(ItemStack taken) {
+        int used = RuneSlots.expansionsUsed(taken);
+        if (used >= 3) return;
+
+        int currentMax = taken.getMaxDamage();
+        int newMax = (int) Math.floor(currentMax * 0.75f);
+        if (newMax < 1) return;
+
+        int currentDamage = taken.getOrDefault(DataComponents.DAMAGE, 0);
+        int clampedDamage = Math.min(newMax - 1, currentDamage);
+        taken.set(DataComponents.DAMAGE, clampedDamage);
+        taken.set(DataComponents.MAX_DAMAGE, newMax);
+
+        RuneSlots.addOneSlot(taken);
+        RuneSlots.incrementExpansion(taken);
     }
 
     @Override
@@ -216,37 +264,27 @@ public class EtchingTableMenu extends AbstractContainerMenu {
 
         final int RESULT_IDX = 2;
         final int INV_START = 3;
-        final int INV_END = INV_START + 27;
-        final int HOTBAR_START = INV_END;
-        final int HOTBAR_END = HOTBAR_START + 9;
+        final int HOTBAR_END = INV_START + 36;
 
         if (index == RESULT_IDX) {
-            ItemStack rune = input.getItem(1);
-            if (rune.is(ModItems.REPAIR_RUNE.get())) {
-                int cap = RuneSlots.capacity(stackInSlot);
-                if (cap > 1) {
-                    RuneSlots.removeOneSlot(stackInSlot);
-                }
-            } else {
-                if (!RuneSlots.tryConsumeSlot(stackInSlot)) return ItemStack.EMPTY;
+            Slot resultSlot = this.slots.get(RESULT_IDX);
+            // delegate to the same logic as normal pickup
+            resultSlot.onTake(player, stackInSlot.copy());
+
+            if (!this.moveItemStackTo(stackInSlot, INV_START, HOTBAR_END, true)) {
+                return ItemStack.EMPTY;
             }
 
-            consumeInputs();
-            this.access.execute((lvl, pos) ->
-                    lvl.playSound(null, pos, SoundEvents.SMITHING_TABLE_USE, SoundSource.BLOCKS, 1.0F, 1.0F)
-            );
-
-            if (!this.moveItemStackTo(stackInSlot, INV_START, HOTBAR_END, true)) return ItemStack.EMPTY;
             slot.set(ItemStack.EMPTY);
-            result.setItem(0, ItemStack.EMPTY);
-            this.updateResult();
             return originalCopy;
         }
 
         if (index < INV_START) {
             if (!this.moveItemStackTo(stackInSlot, INV_START, HOTBAR_END, false)) return ItemStack.EMPTY;
         } else {
-            if (stackInSlot.is(ModItems.ENHANCED_RUNE.get()) || stackInSlot.is(ModItems.REPAIR_RUNE.get())) {
+            if (stackInSlot.is(ModItems.ENHANCED_RUNE.get())
+                    || stackInSlot.is(ModItems.REPAIR_RUNE.get())
+                    || stackInSlot.is(ModItems.EXPANSION_RUNE.get())) {
                 if (!this.moveItemStackTo(stackInSlot, 1, 2, false)) return ItemStack.EMPTY;
             } else {
                 if (!this.moveItemStackTo(stackInSlot, 0, 1, false)) return ItemStack.EMPTY;

@@ -35,6 +35,22 @@ public class ModItems {
                     super.appendHoverText(stack, ctx, tooltip, flag);
                 }
             });
+    public static final DeferredItem<Item> NULLIFICATION_RUNE = ITEMS.register("nullification_rune",
+            () -> new Item(new Item.Properties()) {
+                @Override
+                public void appendHoverText(ItemStack stack, TooltipContext ctx, List<Component> tooltip, TooltipFlag flag) {
+                    tooltip.add(Component.translatable("tooltip.runic.nullification_rune"));
+                    super.appendHoverText(stack, ctx, tooltip, flag);
+                }
+            });
+    public static final DeferredItem<Item> UPGRADE_RUNE = ITEMS.register("upgrade_rune",
+            () -> new Item(new Item.Properties()) {
+                @Override
+                public void appendHoverText(ItemStack stack, TooltipContext ctx, List<Component> tooltip, TooltipFlag flag) {
+                    tooltip.add(Component.translatable("tooltip.runic.upgrade_rune"));
+                    super.appendHoverText(stack, ctx, tooltip, flag);
+                }
+            });
 
 
     public static final DeferredItem<Item> ENHANCED_RUNE = ITEMS.register("enhanced_rune",

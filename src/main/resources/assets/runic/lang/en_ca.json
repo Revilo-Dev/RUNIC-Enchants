@@ -1,11 +1,14 @@
 {
   "creativetab.runicmod.runic_items": "RUNIC",
 
-  "item.runic.rune": "Blank Rune",
+  "item.runic.repair_rune": "Repair Rune",
   "item.runic.expansion_rune": "Expansion Rune",
+  "item.runic.upgrade_rune": "Upgrade Rune",
+  "item.runic.nullification_rune": "Nullification Rune",
   "item.runic.enhanced_rune": "Enhanced Rune",
 
   "block.runic.etching_table": "Etching Table",
+
 
   "minecraft:enchanted_golden_apple": "Enhanced Golden Apple",
   "minecraft:experience_bottle": "Bottle o' Experience",
@@ -36,8 +39,11 @@
   "enchantment.runic.toughness": "Toughness",
   "enchantment.runic.curse_of_unluck": "Curse of Unluckiness",
 
-  "tooltip.runic.blank_rune": "§7Does nothing just yet.",
   "tooltip.runic.expansion_rune": "§7Adds an Additional Rune Slot to your Gear at the cost of 25% max durability",
+  "tooltip.runic.repair_rune": "§7Recovers 25% of the items durability at the cost of a Rune Slot",
+  "tooltip.runic.nullification_rune": "§7Remove A Random Enchant Off A Gear Piece",
+  "tooltip.runic.upgrade_rune": "§7Upgrade The Level Of A Random Enchant On A Gear Piece",
+
 
   "tooltip.runic.aqua_affinity": "Increases underwater mining speed",
   "tooltip.runic.bane_of_arthropods": "Deal more damage to arthropod type enemies",

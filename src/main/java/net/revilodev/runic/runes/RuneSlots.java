@@ -1,10 +1,16 @@
 package net.revilodev.runic.runes;
 
+import com.mojang.serialization.Codec;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.revilodev.runic.registry.ModDataComponents;
+
+import static net.revilodev.runic.registry.ModDataComponents.DATA_COMPONENT_TYPES;
 
 public final class RuneSlots {
 
@@ -25,6 +31,7 @@ public final class RuneSlots {
         return Math.max(0, cap - used(stack));
     }
 
+
     public static boolean tryConsumeSlot(ItemStack stack) {
         int cap = capacity(stack);
         if (cap <= 0) return false;
@@ -38,6 +45,22 @@ public final class RuneSlots {
         int u = used(stack);
         if (u > 0) stack.set(ModDataComponents.RUNE_SLOTS_USED.get(), u - 1);
     }
+
+    public static int expansionsUsed(ItemStack stack) {
+        Integer v = stack.get(ModDataComponents.RUNE_EXPANSIONS_USED.get());
+        return v == null ? 0 : v;
+    }
+
+    public static void incrementExpansion(ItemStack stack) {
+        int used = expansionsUsed(stack);
+        stack.set(ModDataComponents.RUNE_EXPANSIONS_USED.get(), used + 1);
+    }
+
+    public static void addOneSlot(ItemStack stack) {
+        int cap = capacity(stack);
+        stack.set(ModDataComponents.RUNE_SLOTS_CAPACITY.get(), cap + 1);
+    }
+
 
     public static void removeOneSlot(ItemStack stack) {
         int cap = capacity(stack);

@@ -26,6 +26,9 @@ public class ModCreativeModeTabs {
                         output.accept(ModBlocks.ETCHING_TABLE.get());
                         output.accept(ModItems.EXPANSION_RUNE.get());
                         output.accept(ModItems.REPAIR_RUNE.get());
+                        output.accept(ModItems.NULLIFICATION_RUNE.get());
+                        output.accept(ModItems.UPGRADE_RUNE.get());
+
 
                         // Add runes for every enchant
                         params.holders()

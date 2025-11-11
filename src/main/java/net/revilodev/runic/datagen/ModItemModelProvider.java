@@ -14,5 +14,9 @@ public class ModItemModelProvider extends ItemModelProvider {
     @Override
     protected void registerModels() {
         basicItem(ModItems.EXPANSION_RUNE.get());
+        basicItem(ModItems.REPAIR_RUNE.get());
+        basicItem(ModItems.UPGRADE_RUNE.get());
+        basicItem(ModItems.NULLIFICATION_RUNE.get());
+
     }
 }

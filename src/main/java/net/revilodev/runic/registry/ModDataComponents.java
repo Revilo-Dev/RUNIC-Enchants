@@ -19,6 +19,14 @@ public final class ModDataComponents {
                             .networkSynchronized(ByteBufCodecs.VAR_INT)
                             .build());
 
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> RUNE_EXPANSIONS_USED =
+            DATA_COMPONENT_TYPES.register("rune_expansions_used", () ->
+                    DataComponentType.<Integer>builder()
+                            .persistent(Codec.INT)
+                            .networkSynchronized(ByteBufCodecs.VAR_INT)
+                            .build());
+
+
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> RUNE_SLOTS_CAPACITY =
             DATA_COMPONENT_TYPES.register("rune_slots_capacity", () ->
                     DataComponentType.<Integer>builder()

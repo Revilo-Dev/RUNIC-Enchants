@@ -1,3 +1,5 @@
-// 1.21.1	2025-09-05T12:41:58.7029785	Item Models: runic
+// 1.21.1	2025-11-11T18:53:11.043569	Item Models: runic
 0e7022959976946814cef1f7fd614a09d2a0de49 assets/runic/models/item/expansion_rune.json
-9e6be326e089a21034e03745716d66f77364c276 assets/runic/models/item/rune.json
+8463befd7a37655f38854451d1d75b8e2443d085 assets/runic/models/item/nullification_rune.json
+e13ee6645f71adb4b7f82ae27b6b163ba46b1820 assets/runic/models/item/repair_rune.json
+787fbaa5d7f31a20f45ea6c20b63d8956bdcf581 assets/runic/models/item/upgrade_rune.json
