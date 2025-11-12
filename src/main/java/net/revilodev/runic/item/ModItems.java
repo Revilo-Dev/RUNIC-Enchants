@@ -56,6 +56,9 @@ public class ModItems {
                 }
             });
 
+    public static final DeferredItem<Item> ENHANCED_RUNE = ITEMS.register("enhanced_rune",
+            () -> new RuneItem(new Item.Properties()));
+
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);
     }
