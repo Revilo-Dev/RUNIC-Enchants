@@ -10,12 +10,14 @@ import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
+
 import net.revilodev.runic.Enhancements.ModEnhancementEffects;
 import net.revilodev.runic.Enhancements.custom.AirJumpHandler;
 import net.revilodev.runic.Enhancements.custom.StunningHandler;
 import net.revilodev.runic.Enhancements.soulbound.SoulboundConfig;
 import net.revilodev.runic.block.ModBlocks;
 import net.revilodev.runic.client.RunicClientModels;
+import net.revilodev.runic.config.RunicCommonConfig;
 import net.revilodev.runic.effect.ModMobEffects;
 import net.revilodev.runic.item.ModCreativeModeTabs;
 import net.revilodev.runic.item.ModItems;
@@ -23,6 +25,7 @@ import net.revilodev.runic.loot.ModLootModifiers;
 import net.revilodev.runic.registry.ModDataComponents;
 import net.revilodev.runic.screen.ModMenuTypes;
 import net.revilodev.runic.screen.custom.EtchingTableScreen;
+
 import org.slf4j.Logger;
 
 @Mod(RunicMod.MOD_ID)
@@ -31,11 +34,14 @@ public class RunicMod {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public RunicMod(ModContainer modContainer, IEventBus modEventBus) {
+
+        // lifecycle listeners
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::addCreative);
         modEventBus.addListener(ClientModEvents::onRegisterScreens);
         modEventBus.addListener(ClientModEvents::onClientSetup);
 
+        // registrations
         ModCreativeModeTabs.register(modEventBus);
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
@@ -44,29 +50,47 @@ public class RunicMod {
         ModDataComponents.DATA_COMPONENT_TYPES.register(modEventBus);
         ModEnhancementEffects.register(modEventBus);
         ModMobEffects.register(modEventBus);
+
+        // event handlers
         AirJumpHandler.register();
         StunningHandler.register();
 
-        modContainer.registerConfig(net.neoforged.fml.config.ModConfig.Type.COMMON, SoulboundConfig.SPEC);
+        // === CONFIGS ===
+        modContainer.registerConfig(
+                net.neoforged.fml.config.ModConfig.Type.COMMON,
+                RunicCommonConfig.SPEC
+        );
 
+        // keep your existing config if used
+        modContainer.registerConfig(
+                net.neoforged.fml.config.ModConfig.Type.COMMON,
+                SoulboundConfig.SPEC
+        );
+
+        // NeoForge event bus
         NeoForge.EVENT_BUS.register(this);
     }
 
-    private void commonSetup(final net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent event) {}
+    private void commonSetup(final net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent event) {
+        // nothing yet
+    }
 
-    private void addCreative(net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent event) {
+    private void addCreative(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
-            event.accept(net.revilodev.runic.item.ModItems.EXPANSION_RUNE.get());
+            event.accept(ModItems.EXPANSION_RUNE.get());
         }
         if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
-            event.accept(net.revilodev.runic.block.ModBlocks.ETCHING_TABLE.get());
+            event.accept(ModBlocks.ETCHING_TABLE.get());
         }
     }
 
     @net.neoforged.bus.api.SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event) {}
+    public void onServerStarting(ServerStartingEvent event) {
+        // server startup logic here
+    }
 
     public static class ClientModEvents {
+
         public static void onRegisterScreens(RegisterMenuScreensEvent event) {
             event.register(ModMenuTypes.ETCHING_TABLE.get(), EtchingTableScreen::new);
         }

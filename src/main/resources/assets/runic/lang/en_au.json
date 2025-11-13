@@ -18,26 +18,8 @@
 
 
   "enchantment.minecraft.infinity": "Ethereal",
-  "enchantment.minecraft.unbreaking": "Unbreaking",
 
-  "enchantment.runic.lightning_aspect": "Lightning Aspect",
-  "enchantment.runic.poison_aspect": "Poison Aspect",
-  "enchantment.runic.slowness_aspect": "Slowness Aspect",
-  "enchantment.runic.weakness_aspect": "Weakening Aspect",
-  "enchantment.runic.swift_strike": "Swift Strike",
-  "enchantment.runic.swift": "Swift",
-  "enchantment.runic.bleeding_aspect": "Bleeding Aspect",
-  "enchantment.runic.stunning_aspect": "Stunning Aspect",
-  "enchantment.runic.soulbound": "Soulbound",
-  "enchantment.runic.air_jump": "Air Jump",
-  "enchantment.runic.wither_aspect": "Withering Aspect",
-  "enchantment.runic.mandela_aspect": "Mandela",
-  "enchantment.runic.vitality": "Vitality",
-  "enchantment.runic.leaping": "Leaping",
-  "enchantment.runic.reach": "Reach",
-  "enchantment.runic.buzzing_aspect": "Buzzing Aspect",
-  "enchantment.runic.toughness": "Toughness",
-  "enchantment.runic.curse_of_unluck": "Curse of Unluckiness",
+
 
   "tooltip.runic.expansion_rune": "§7Adds an Additional Rune Slot to your Gear at the cost of 25% max durability",
   "tooltip.runic.repair_rune": "§7Recovers 25% of the items durability at the cost of a Rune Slot",
