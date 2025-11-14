@@ -23,16 +23,13 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.common.loot.LootModifier;
 import net.revilodev.runic.RunicMod;
+import net.revilodev.runic.item.ModItems;
 import net.revilodev.runic.item.custom.RuneItem;
 import net.revilodev.runic.loot.rarity.EnhancementRarities;
 import net.revilodev.runic.loot.rarity.EnhancementRarity;
 
 import java.util.*;
 
-/**
- * Unified loot modifier for structure chests — injects runes and enchants armor.
- * Works with both vanilla and modded structures without touching other loot sources.
- */
 public class RunicStructureLootInjector extends LootModifier {
     public static final MapCodec<RunicStructureLootInjector> CODEC = RecordCodecBuilder.mapCodec(inst ->
             LootModifier.codecStart(inst).and(inst.group(
@@ -72,11 +69,8 @@ public class RunicStructureLootInjector extends LootModifier {
         RandomSource rand = ctx.getRandom();
         Registry<Enchantment> reg = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
 
-        // Add rune items
         maybeAddRunes(generated, rand, reg, id);
-
-        // Add enchants to armor
-        maybeEnchantArmor(generated, rand, reg, id);
+        maybeEnchantArmor(generated, rand, reg);
 
         return generated;
     }
@@ -96,27 +90,38 @@ public class RunicStructureLootInjector extends LootModifier {
         if (rand.nextFloat() >= runeChance) return;
 
         List<Holder.Reference<Enchantment>> all = new ArrayList<>();
-        EnhancementRarities.rawMap().forEach((id, rarity) -> {
-            reg.getHolder(ResourceKey.create(Registries.ENCHANTMENT, id)).ifPresent(all::add);
-        });
+        EnhancementRarities.rawMap().forEach((id, rarity) ->
+                reg.getHolder(ResourceKey.create(Registries.ENCHANTMENT, id)).ifPresent(all::add));
         if (all.isEmpty()) reg.holders().forEach(all::add);
         if (all.isEmpty()) return;
 
         int rolls = tableId.contains("bastion") || tableId.contains("ancient_city") ? 2 : 1;
+
         for (int i = 0; i < rolls; i++) {
-            Holder.Reference<Enchantment> ench = all.get(rand.nextInt(all.size()));
-            int lvl = Mth.clamp(rand.nextIntBetweenInclusive(minLevel, maxLevel), 1, ench.value().getMaxLevel());
-            ItemStack rune = RuneItem.createForEnchantment(new EnchantmentInstance(ench, lvl));
-            if (!rune.isEmpty()) generated.add(rune);
+            boolean utilityRune = rand.nextBoolean();
+
+            if (!utilityRune) {
+                Holder.Reference<Enchantment> ench = all.get(rand.nextInt(all.size()));
+                int lvl = Mth.clamp(Mth.randomBetweenInclusive(rand, minLevel, maxLevel), 1, ench.value().getMaxLevel());
+                ItemStack rune = RuneItem.createForEnchantment(new EnchantmentInstance(ench, lvl));
+                if (!rune.isEmpty()) generated.add(rune);
+            } else {
+                int roll = rand.nextInt(12);
+                ItemStack util;
+                if (roll < 6) util = new ItemStack(ModItems.REPAIR_RUNE.get());
+                else if (roll < 9) util = new ItemStack(ModItems.EXPANSION_RUNE.get());
+                else if (roll < 11) util = new ItemStack(ModItems.NULLIFICATION_RUNE.get());
+                else util = new ItemStack(ModItems.UPGRADE_RUNE.get());
+                generated.add(util);
+            }
         }
     }
 
-    private void maybeEnchantArmor(ObjectArrayList<ItemStack> generated, RandomSource rand, Registry<Enchantment> reg, String tableId) {
+    private void maybeEnchantArmor(ObjectArrayList<ItemStack> generated, RandomSource rand, Registry<Enchantment> reg) {
         for (int i = 0; i < generated.size(); i++) {
             ItemStack stack = generated.get(i);
             if (!stack.is(ItemTags.ARMOR_ENCHANTABLE)) continue;
             if (rand.nextFloat() >= armorChance) continue;
-
 
             List<Holder.Reference<Enchantment>> pool = reg.holders()
                     .filter(h -> h.key().location().getNamespace().equals(RunicMod.MOD_ID) && h.value().canEnchant(stack))
@@ -130,7 +135,7 @@ public class RunicStructureLootInjector extends LootModifier {
             );
 
             Holder.Reference<Enchantment> ench = pool.get(rand.nextInt(pool.size()));
-            int lvl = Mth.clamp(rand.nextIntBetweenInclusive(minLevel, maxLevel), 1, ench.value().getMaxLevel());
+            int lvl = Mth.clamp(Mth.randomBetweenInclusive(rand, minLevel, maxLevel), 1, ench.value().getMaxLevel());
             mut.set(ench, lvl);
 
             stack.set(DataComponents.ENCHANTMENTS, mut.toImmutable());

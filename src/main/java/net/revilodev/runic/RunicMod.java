@@ -17,7 +17,6 @@ import net.revilodev.runic.Enhancements.custom.StunningHandler;
 import net.revilodev.runic.Enhancements.soulbound.SoulboundConfig;
 import net.revilodev.runic.block.ModBlocks;
 import net.revilodev.runic.client.RunicClientModels;
-import net.revilodev.runic.config.RunicCommonConfig;
 import net.revilodev.runic.effect.ModMobEffects;
 import net.revilodev.runic.item.ModCreativeModeTabs;
 import net.revilodev.runic.item.ModItems;
@@ -55,17 +54,7 @@ public class RunicMod {
         AirJumpHandler.register();
         StunningHandler.register();
 
-        // === CONFIGS ===
-        modContainer.registerConfig(
-                net.neoforged.fml.config.ModConfig.Type.COMMON,
-                RunicCommonConfig.SPEC
-        );
 
-        // keep your existing config if used
-        modContainer.registerConfig(
-                net.neoforged.fml.config.ModConfig.Type.COMMON,
-                SoulboundConfig.SPEC
-        );
 
         // NeoForge event bus
         NeoForge.EVENT_BUS.register(this);

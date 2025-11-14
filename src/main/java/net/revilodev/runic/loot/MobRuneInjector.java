@@ -20,13 +20,12 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.common.loot.LootModifier;
+import net.revilodev.runic.item.ModItems;
 import net.revilodev.runic.item.custom.RuneItem;
 import net.revilodev.runic.loot.rarity.EnhancementRarities;
 import net.revilodev.runic.loot.rarity.EnhancementRarity;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class MobRuneInjector extends LootModifier {
@@ -72,9 +71,20 @@ public class MobRuneInjector extends LootModifier {
         if (pool.isEmpty()) return generated;
 
         Holder<Enchantment> ench = pool.get(rand.nextInt(pool.size()));
-        int lvl = Mth.clamp(rand.nextIntBetweenInclusive(minLevel, maxLevel), 1, ench.value().getMaxLevel());
+        int lvl = Mth.clamp(Mth.randomBetweenInclusive(rand, minLevel, maxLevel), 1, ench.value().getMaxLevel());
         ItemStack rune = RuneItem.createForEnchantment(new EnchantmentInstance(ench, lvl));
         if (!rune.isEmpty()) generated.add(rune);
+
+        // 25% chance to drop a utility rune
+        if (rand.nextFloat() < 0.25f) {
+            int roll = rand.nextInt(12);
+            ItemStack util;
+            if (roll < 6) util = new ItemStack(ModItems.REPAIR_RUNE.get());
+            else if (roll < 9) util = new ItemStack(ModItems.EXPANSION_RUNE.get());
+            else if (roll < 11) util = new ItemStack(ModItems.NULLIFICATION_RUNE.get());
+            else util = new ItemStack(ModItems.UPGRADE_RUNE.get());
+            generated.add(util);
+        }
 
         return generated;
     }

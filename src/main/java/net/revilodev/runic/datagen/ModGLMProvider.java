@@ -5,6 +5,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.data.GlobalLootModifierProvider;
 import net.revilodev.runic.RunicMod;
+import net.revilodev.runic.loot.MobRuneInjector;
 import net.revilodev.runic.loot.RemoveEnchantedBooksModifier;
 import net.revilodev.runic.loot.RunicStructureLootInjector;
 
@@ -15,6 +16,7 @@ public class ModGLMProvider extends GlobalLootModifierProvider {
         super(output, lookupProvider, RunicMod.MOD_ID);
     }
 
+
     @Override
     protected void start() {
         add("remove_enchanted_books", new RemoveEnchantedBooksModifier(new LootItemCondition[]{}));
@@ -22,5 +24,12 @@ public class ModGLMProvider extends GlobalLootModifierProvider {
         add("runic_structure_loot_injector",
                 new RunicStructureLootInjector(new LootItemCondition[]{},
                         0.35f, 0.30f, 1, 3));
+
+        // NEW: mobs have a small chance to drop a rune (plus occasional utility rune)
+        add("mob_rune_injector",
+                new MobRuneInjector(new LootItemCondition[]{},
+                        0.02f,   // chance
+                        1, 2));  // min/max level for enchanted runes
     }
+
 }
