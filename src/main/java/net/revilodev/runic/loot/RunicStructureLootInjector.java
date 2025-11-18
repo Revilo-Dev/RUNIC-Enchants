@@ -19,6 +19,7 @@ import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.common.loot.LootModifier;
@@ -26,9 +27,10 @@ import net.revilodev.runic.RunicMod;
 import net.revilodev.runic.item.ModItems;
 import net.revilodev.runic.item.custom.RuneItem;
 import net.revilodev.runic.loot.rarity.EnhancementRarities;
-import net.revilodev.runic.loot.rarity.EnhancementRarity;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class RunicStructureLootInjector extends LootModifier {
     public static final MapCodec<RunicStructureLootInjector> CODEC = RecordCodecBuilder.mapCodec(inst ->
@@ -59,6 +61,8 @@ public class RunicStructureLootInjector extends LootModifier {
 
     @Override
     protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generated, LootContext ctx) {
+        if (ctx.getParamOrNull(LootContextParams.BLOCK_STATE) != null) return generated;
+
         ResourceLocation tableId = ctx.getQueriedLootTableId();
         if (tableId == null) return generated;
 
@@ -77,7 +81,7 @@ public class RunicStructureLootInjector extends LootModifier {
 
     private boolean isStructureLootTable(String id) {
         if (id.contains("villager") || id.contains("fishing") || id.contains("entity/") ||
-                id.contains("block/") || id.contains("gameplay/") || id.contains("trades/"))
+                id.contains("block/") || id.contains("blocks/") || id.contains("gameplay/") || id.contains("trades/"))
             return false;
 
         return id.contains("chest") || id.contains("chests/") || id.contains("structures/") ||
