@@ -5,7 +5,6 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.data.GlobalLootModifierProvider;
 import net.revilodev.runic.RunicMod;
-import net.revilodev.runic.loot.MobRuneInjector;
 import net.revilodev.runic.loot.RemoveEnchantedBooksModifier;
 import net.revilodev.runic.loot.RunicStructureLootInjector;
 
@@ -28,11 +27,6 @@ public class ModGLMProvider extends GlobalLootModifierProvider {
                 )
         );
 
-        add("mob_rune_injector",
-                new MobRuneInjector(
-                        new LootItemCondition[]{},
-                        0.02f, 1, 2
-                )
-        );
+
     }
 }

@@ -18,12 +18,8 @@ public class ModLootModifiers {
     public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<? extends IGlobalLootModifier>> RUNIC_STRUCTURE_LOOT_INJECTOR =
             LOOT_MODIFIERS.register("runic_structure_loot_injector", () -> RunicStructureLootInjector.CODEC);
 
-    // NEW: register mob rune injector
-    public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<? extends IGlobalLootModifier>> MOB_RUNE_INJECTOR =
-            LOOT_MODIFIERS.register("mob_rune_injector", () -> MobRuneInjector.CODEC);
-
     public static void register(IEventBus bus) {
         LOOT_MODIFIERS.register(bus);
-        RunicMod.LOGGER.debug("[Runic] Registered all global loot modifier codecs.");
+        RunicMod.LOGGER.debug("[Runic] Registered global loot modifier codecs.");
     }
 }

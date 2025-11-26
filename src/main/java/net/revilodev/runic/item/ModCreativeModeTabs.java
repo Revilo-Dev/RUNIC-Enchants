@@ -1,18 +1,21 @@
 package net.revilodev.runic.item;
 
-import net.revilodev.runic.RunicMod;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.revilodev.runic.RunicMod;
 import net.revilodev.runic.block.ModBlocks;
 import net.revilodev.runic.item.custom.RuneItem;
+import net.revilodev.runic.stat.RuneStatType;
 
 public class ModCreativeModeTabs {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS =
@@ -29,22 +32,27 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.NULLIFICATION_RUNE.get());
                         output.accept(ModItems.UPGRADE_RUNE.get());
 
+                        RandomSource random = RandomSource.create();
 
-                        // Add runes for every enchant
+                        for (RuneStatType type : RuneStatType.values()) {
+                            ItemStack statRune = RuneItem.createStatRune(random, type);
+                            if (!statRune.isEmpty()) {
+                                output.accept(statRune);
+                            }
+                        }
+
                         params.holders()
                                 .lookup(Registries.ENCHANTMENT)
                                 .ifPresent((HolderLookup.RegistryLookup<Enchantment> enchants) -> {
-                                    enchants.listElements().forEach(holder -> {
-                                        Enchantment ench = holder.value();
-                                        int min = Math.max(1, ench.getMinLevel());
-                                        int max = Math.max(min, ench.getMaxLevel());
-                                        for (int lvl = min; lvl <= max; ++lvl) {
-                                            ItemStack s = RuneItem.createForEnchantment(new EnchantmentInstance(holder, lvl));
-                                            if (!s.isEmpty()) {
-                                                output.accept(s);
+                                    for (ResourceLocation id : RuneItem.allowedEffectIds()) {
+                                        ResourceKey<Enchantment> key = ResourceKey.create(Registries.ENCHANTMENT, id);
+                                        enchants.get(key).ifPresent(holder -> {
+                                            ItemStack effectRune = RuneItem.createEffectRune(holder, 1);
+                                            if (!effectRune.isEmpty()) {
+                                                output.accept(effectRune);
                                             }
-                                        }
-                                    });
+                                        });
+                                    }
                                 });
                     })
                     .build()

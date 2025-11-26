@@ -1,17 +1,1 @@
-// 1.21.1	2025-10-20T18:36:03.3613482	Registries
-6209c894c15146a4e8eba4855160e73261131efe data/runic/enchantment/bleeding_aspect.json
-e8b74019ec9f84156c698ab36e8d6ea8d78d2c42 data/runic/enchantment/buzzing_aspect.json
-e20ada0b210465b76824ef8bf58dad5e3e7f5943 data/runic/enchantment/curse_of_unluck.json
-ebea5c1aeeb7733bc5876896d1d72b1e3d133cea data/runic/enchantment/leaping.json
-47f3714180823b2b65514386b45de8043e351d82 data/runic/enchantment/lightning_aspect.json
-ec3b2eb22bf74033210f9c12b71fb9d623ce7255 data/runic/enchantment/mandela_aspect.json
-e2965d761594016daceed32758e25383780cc01b data/runic/enchantment/poison_aspect.json
-b2699e34463610d7db10e4ed530afce40565d454 data/runic/enchantment/reach.json
-879fd78e4a89e434d2a36e318ff062cf20f68827 data/runic/enchantment/slowness_aspect.json
-0f97bd18939896f58822f38976c59b704c6586da data/runic/enchantment/stunning_aspect.json
-31f707051d3cea30b5eeaa1c65e600d3ac463855 data/runic/enchantment/swift.json
-22e016ba1d86b97c2ca2c1071f1d9b49ef178c18 data/runic/enchantment/swift_strike.json
-03b435585cd4013c7aeadf2845db2640c4dfc924 data/runic/enchantment/toughness.json
-e91004399b47fe6d04e47f0f5796793a617eba5f data/runic/enchantment/vitality.json
-bf069186b53d312905667dd41b7cc4cca4cb2042 data/runic/enchantment/weakness_aspect.json
-5ff7e26e728dae884605fecc075c91fa4f49bd0f data/runic/enchantment/wither_aspect.json
+// 1.21.1	2025-11-26T19:57:48.8142679	Registries

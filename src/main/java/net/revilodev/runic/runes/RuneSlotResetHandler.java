@@ -2,12 +2,14 @@ package net.revilodev.runic.runes;
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.GrindstoneEvent;
 import net.revilodev.runic.RunicMod;
 import net.revilodev.runic.registry.ModDataComponents;
+import net.revilodev.runic.stat.RuneStats;
 
 @EventBusSubscriber(modid = RunicMod.MOD_ID)
 public final class RuneSlotResetHandler {
@@ -17,26 +19,38 @@ public final class RuneSlotResetHandler {
         ItemStack top = e.getTopItem();
         ItemStack bottom = e.getBottomItem();
 
-        boolean topHasEnchants =
-                !top.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY).isEmpty() ||
-                        !top.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY).isEmpty();
+        boolean topIsGear = RuneSlots.capacity(top) > 0;
+        boolean bottomIsGear = RuneSlots.capacity(bottom) > 0;
 
-        boolean bottomHasEnchants =
-                !bottom.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY).isEmpty() ||
-                        !bottom.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY).isEmpty();
+        boolean topHasEnhancements =
+                topIsGear &&
+                        (!top.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY).isEmpty() ||
+                                !top.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY).isEmpty() ||
+                                RuneSlots.used(top) > 0 ||
+                                !RuneStats.get(top).isEmpty());
 
-        if (topHasEnchants && bottom.isEmpty()) {
+        boolean bottomHasEnhancements =
+                bottomIsGear &&
+                        (!bottom.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY).isEmpty() ||
+                                !bottom.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY).isEmpty() ||
+                                RuneSlots.used(bottom) > 0 ||
+                                !RuneStats.get(bottom).isEmpty());
+
+        if (topHasEnhancements && bottom.isEmpty()) {
             ItemStack out = top.copy();
-            out.remove(DataComponents.ENCHANTMENTS);
-            out.remove(DataComponents.STORED_ENCHANTMENTS);
-            out.set(ModDataComponents.RUNE_SLOTS_USED.get(), 0);
+            clearEnhancements(out);
             e.setOutput(out);
-        } else if (bottomHasEnchants && top.isEmpty()) {
+        } else if (bottomHasEnhancements && top.isEmpty()) {
             ItemStack out = bottom.copy();
-            out.remove(DataComponents.ENCHANTMENTS);
-            out.remove(DataComponents.STORED_ENCHANTMENTS);
-            out.set(ModDataComponents.RUNE_SLOTS_USED.get(), 0);
+            clearEnhancements(out);
             e.setOutput(out);
         }
+    }
+
+    private static void clearEnhancements(ItemStack stack) {
+        stack.remove(DataComponents.ENCHANTMENTS);
+        stack.remove(DataComponents.STORED_ENCHANTMENTS);
+        stack.set(ModDataComponents.RUNE_SLOTS_USED.get(), 0);
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.remove("runic_stats"));
     }
 }

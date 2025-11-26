@@ -11,10 +11,6 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 
-import net.revilodev.runic.Enhancements.ModEnhancementEffects;
-import net.revilodev.runic.Enhancements.custom.AirJumpHandler;
-import net.revilodev.runic.Enhancements.custom.StunningHandler;
-import net.revilodev.runic.Enhancements.soulbound.SoulboundConfig;
 import net.revilodev.runic.block.ModBlocks;
 import net.revilodev.runic.client.RunicClientModels;
 import net.revilodev.runic.effect.ModMobEffects;
@@ -47,12 +43,7 @@ public class RunicMod {
         ModLootModifiers.LOOT_MODIFIERS.register(modEventBus);
         ModMenuTypes.register(modEventBus);
         ModDataComponents.DATA_COMPONENT_TYPES.register(modEventBus);
-        ModEnhancementEffects.register(modEventBus);
         ModMobEffects.register(modEventBus);
-
-        // event handlers
-        AirJumpHandler.register();
-        StunningHandler.register();
 
 
 
