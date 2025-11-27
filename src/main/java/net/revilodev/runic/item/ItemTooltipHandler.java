@@ -1,6 +1,5 @@
 package net.revilodev.runic.item;
 
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.Holder;
@@ -9,9 +8,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
+import net.minecraft.world.level.block.Blocks;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -24,276 +28,262 @@ import net.revilodev.runic.runes.RuneSlots;
 import net.revilodev.runic.stat.RuneStatType;
 import net.revilodev.runic.stat.RuneStats;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 @EventBusSubscriber(modid = RunicMod.MOD_ID, value = Dist.CLIENT)
 public final class ItemTooltipHandler {
 
+    private static final ResourceLocation ENHANCED_RUNE_ID =
+            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "enhanced_rune");
+
+    private static final String ICON_SWORD = "\uEFE5";
+    private static final String ICON_PICKAXE = "\uEFE6";
+    private static final String ICON_STAR = "\uEEF2";
+
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onTooltip(ItemTooltipEvent event) {
+
         ItemStack stack = event.getItemStack();
         if (stack.isEmpty()) return;
 
         List<Component> tooltip = event.getToolTip();
 
-        stripVanillaAttributes(tooltip);
-        appendStatsAndSections(stack, tooltip);
-        recolorEnchantLines(stack, tooltip);
+        stripVanillaAttributeLines(tooltip);
+        stripTagLines(tooltip);
+
+        boolean isRune = stack.is(ModItems.ENHANCED_RUNE.get());
+
+        appendItemStats(stack, tooltip, isRune);
+        appendRuneStats(stack, tooltip, isRune);
+        appendRuneSlots(stack, tooltip);
+        recolorEnchants(stack, tooltip, isRune);
     }
 
-    private static void stripVanillaAttributes(List<Component> tooltip) {
-        int index = -1;
+    //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // REMOVE VANILLA WEAPON ATTRIBUTES
+    //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    private static void stripVanillaAttributeLines(List<Component> tooltip) {
+        int idx = -1;
+
         for (int i = 0; i < tooltip.size(); i++) {
-            String s = tooltip.get(i).getString();
-            if (s.startsWith("When in ") || s.startsWith("When on ")) {
-                index = i;
+            if (tooltip.get(i).getString().startsWith("When in ")) {
+                idx = i;
                 break;
             }
         }
-        if (index != -1) {
-            while (tooltip.size() > index) {
+        if (idx != -1) {
+            while (tooltip.size() > idx)
                 tooltip.remove(tooltip.size() - 1);
-            }
         }
     }
 
-    private static void appendStatsAndSections(ItemStack stack, List<Component> tooltip) {
-        boolean isRune = stack.is(ModItems.ENHANCED_RUNE.get());
+    //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // REMOVE ITEM & BLOCK TAGS
+    //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    private static void stripTagLines(List<Component> tooltip) {
+        tooltip.removeIf(c -> {
+            String s = c.getString().toLowerCase(Locale.ROOT);
+            return s.startsWith("tags:")
+                    || s.startsWith("item tags:")
+                    || s.startsWith("block tags:")
+                    || s.startsWith("#")
+                    || s.contains("tag:") || s.contains("tags:");
+        });
+    }
+
+    //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // ITEM STATS (NOT ON RUNES, ONLY ON WEAPONS & TOOLS)
+    //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    private static void appendItemStats(ItemStack stack, List<Component> tooltip, boolean isRune) {
+        if (isRune) return;
+
+        Item item = stack.getItem();
+
+        boolean isWeapon =
+                item instanceof SwordItem ||
+                        item instanceof AxeItem ||
+                        item instanceof TridentItem;
+
+        boolean isTool =
+                item instanceof DiggerItem;   // ✔ correct for 1.21.1
+
+
+        if (!isWeapon && !isTool && !(item instanceof TieredItem)) {
+            return; // DO NOT show stats on misc items
+        }
+
+        tooltip.add(Component.literal("Stats:").withStyle(ChatFormatting.GOLD));
+
+        // --- attack damage and speed ---
+        double baseDmg = 1.0;
+        double baseSpd = 4.0;
+
+        double dmg = baseDmg;
+        double spd = baseSpd;
+
+        ItemAttributeModifiers mods =
+                stack.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY);
+
+        for (ItemAttributeModifiers.Entry e : mods.modifiers()) {
+            if (!e.slot().test(EquipmentSlot.MAINHAND)) continue;
+
+            if (e.attribute().is(Attributes.ATTACK_DAMAGE)) {
+                dmg += e.modifier().amount();
+            }
+            if (e.attribute().is(Attributes.ATTACK_SPEED)) {
+                spd += e.modifier().amount();
+            }
+        }
+
+        tooltip.add(statLine(ICON_SWORD + " Attack Damage", dmg));
+        tooltip.add(statLine(ICON_SWORD + " Attack Speed", spd));
+
+        // --- attack range (future expansion) ---
+        tooltip.add(statLine("Attack Range", 3.0));
+
+        // --- only tools get mining speed ---
+        if (isTool) {
+            double mining = stack.getDestroySpeed(Blocks.STONE.defaultBlockState());
+            tooltip.add(statLine(ICON_PICKAXE + " Mining Speed", mining));
+        }
+
+        // --- durability (color-coded) ---
+        int max = stack.getMaxDamage();
+        if (max > 0) {
+            int curr = max - stack.getDamageValue();
+            float pct = (float) curr / max;
+
+            ChatFormatting color =
+                    pct > 0.50f ? ChatFormatting.GREEN :
+                            pct > 0.25f ? ChatFormatting.YELLOW :
+                                    pct > 0.10f ? ChatFormatting.GOLD :
+                                            ChatFormatting.RED;
+
+            tooltip.add(Component.literal("  Durability: " + curr + "/" + max)
+                    .withStyle(color));
+        }
+    }
+
+    private static Component statLine(String name, double val) {
+        String fmt = Math.abs(val - Math.round(val)) < 0.001
+                ? String.format(Locale.ROOT, "%.0f", val)
+                : String.format(Locale.ROOT, "%.2f", val);
+        return Component.literal("  " + name + ": " + fmt)
+                .withStyle(ChatFormatting.GRAY);
+    }
+
+    //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // RUNE STATS (ONLY WHEN PRESENT)
+    //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    private static void appendRuneStats(ItemStack stack, List<Component> tooltip, boolean isRune) {
         RuneStats stats = RuneStats.get(stack);
-        boolean hasStats = stats != null && !stats.isEmpty();
+        if (stats == null || stats.isEmpty()) return;
 
-        int maxDur = stack.getMaxDamage();
-        int currDur = maxDur > 0 ? (maxDur - stack.getDamageValue()) : 0;
-
-        int slotCap = RuneSlots.capacity(stack);
-        boolean hasSlots = slotCap > 0;
-
-        boolean hasEnhancementStats = false;
-        boolean hasRolledItemStats = false;
-
-        if (hasStats) {
-            for (Map.Entry<RuneStatType, Float> e : stats.view().entrySet()) {
-                float v = e.getValue();
-                if (v != 0f) {
-                    if (isRune) {
-                        hasEnhancementStats = true;
-                    } else {
-                        hasRolledItemStats = true;
-                    }
-                }
-            }
-        }
-
-        if (!isRune) {
-            boolean hasItemStatsToShow = false;
-
-            float dmg = hasStats ? stats.get(RuneStatType.ATTACK_DAMAGE) : 0f;
-            float spd = hasStats ? stats.get(RuneStatType.ATTACK_SPEED) : 0f;
-            float mine = hasStats ? stats.get(RuneStatType.MINING_SPEED) : 0f;
-            float sweep = hasStats ? stats.get(RuneStatType.SWEEPING_RANGE) : 0f;
-
-            if (dmg != 0f || spd != 0f || mine != 0f || sweep != 0f || maxDur > 0) {
-                hasItemStatsToShow = true;
-            }
-
-            if (hasItemStatsToShow) {
-                tooltip.add(Component.empty());
-                tooltip.add(Component.literal("Stats:").withStyle(ChatFormatting.GOLD));
-
-                addPercentLine(tooltip, "Attack Damage", dmg);
-                addPercentLine(tooltip, "Attack Speed", spd);
-                addPercentLine(tooltip, "Mining Speed", mine);
-                addPercentLine(tooltip, "Sweeping Range", sweep);
-
-                if (maxDur > 0) {
-                    tooltip.add(Component.literal("  Durability: " + currDur + "/" + maxDur)
-                            .withStyle(ChatFormatting.GRAY));
-                }
-            }
-        }
-
-        if (isRune && hasEnhancementStats) {
+        if (isRune) {
             tooltip.add(Component.empty());
             tooltip.add(Component.literal("Enhancements:").withStyle(ChatFormatting.GRAY));
 
-            for (RuneStatType t : stats.view().keySet()) {
-                if (t == null) continue;
-                String range = t.minPercent() + "–" + t.maxPercent() + "%";
-                tooltip.add(
-                        Component.literal("  ")
-                                .append(Component.translatable("tooltip.runic.stat." + t.id()))
-                                .append(": ")
-                                .append(Component.literal(range).withStyle(ChatFormatting.AQUA))
-                );
+            for (RuneStatType type : stats.view().keySet()) {
+                String range = type.minPercent() + "–" + type.maxPercent() + "%";
+                tooltip.add(Component.literal("  ")
+                        .append(Component.translatable("tooltip.runic.stat." + type.id()))
+                        .append(": ")
+                        .append(Component.literal(range).withStyle(ChatFormatting.AQUA)));
             }
-        }
-
-        if (!isRune && hasRolledItemStats) {
+        } else {
             tooltip.add(Component.empty());
             tooltip.add(Component.literal("Enhanced Stats:").withStyle(ChatFormatting.GRAY));
 
             for (Map.Entry<RuneStatType, Float> e : stats.view().entrySet()) {
-                RuneStatType type = e.getKey();
-                float val = e.getValue();
-                if (val == 0f) continue;
+                float v = e.getValue();
+                if (v == 0) continue;
 
-                String valStr;
-                if (Math.abs(val - Math.round(val)) < 0.001f) {
-                    valStr = "+" + (int) val + "%";
-                } else {
-                    valStr = String.format(Locale.ROOT, "+%.1f%%", val);
-                }
+                String vStr = Math.abs(v - Math.round(v)) < 0.001
+                        ? "+" + (int) v + "%"
+                        : "+" + String.format(Locale.ROOT, "%.1f%%", v);
 
-                tooltip.add(
-                        Component.literal("  ")
-                                .append(Component.translatable("tooltip.runic.stat." + type.id()))
-                                .append(": ")
-                                .append(Component.literal(valStr).withStyle(ChatFormatting.AQUA))
-                );
+                tooltip.add(Component.literal("  ")
+                        .append(Component.translatable("tooltip.runic.stat." + e.getKey().id()))
+                        .append(": ")
+                        .append(Component.literal(vStr).withStyle(ChatFormatting.AQUA)));
             }
         }
-
-        if (hasSlots) {
-            tooltip.add(Component.empty());
-            tooltip.add(Component.literal("Rune Slots:").withStyle(ChatFormatting.GRAY));
-
-            int used = RuneSlots.used(stack);
-            int remaining = Math.max(0, slotCap - used);
-
-            tooltip.add(
-                    RuneSlots.bar(stack).copy()
-                            .withStyle(remaining > 0 ? ChatFormatting.GRAY : ChatFormatting.RED)
-            );
-        }
     }
 
-    private static void addPercentLine(List<Component> tooltip, String name, float value) {
-        if (value == 0f) return;
-        String str;
-        if (Math.abs(value - Math.round(value)) < 0.001f) {
-            str = String.format(Locale.ROOT, "+%d%%", (int) value);
-        } else {
-            str = String.format(Locale.ROOT, "+%.1f%%", value);
-        }
-        tooltip.add(Component.literal("  " + name + ": " + str)
-                .withStyle(ChatFormatting.AQUA));
+    //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // RUNE SLOTS BAR
+    //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    private static void appendRuneSlots(ItemStack stack, List<Component> tooltip) {
+        int cap = RuneSlots.capacity(stack);
+        if (cap <= 0) return;
+
+        int used = RuneSlots.used(stack);
+        int remaining = Math.max(0, cap - used);
+
+        tooltip.add(Component.empty());
+        tooltip.add(Component.literal("Rune Slots:").withStyle(ChatFormatting.GRAY));
+        tooltip.add(
+                RuneSlots.bar(stack).copy()
+                        .withStyle(remaining > 0 ? ChatFormatting.GRAY : ChatFormatting.RED)
+        );
     }
 
-    private static void recolorEnchantLines(ItemStack stack, List<Component> tooltip) {
-        boolean isRune = stack.is(ModItems.ENHANCED_RUNE.get());
-
+    //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // ENCHANT RECOLOR + SHIFT-DESCRIPTIONS
+    //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    private static void recolorEnchants(ItemStack stack, List<Component> tooltip, boolean isRune) {
         ItemEnchantments live = stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
         ItemEnchantments stored = stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
 
-        boolean recolorGear = !live.isEmpty();
-        boolean recolorRune = isRune && (!live.isEmpty() || !stored.isEmpty());
-        if (!recolorGear && !recolorRune) return;
+        boolean recolor = !live.isEmpty() || (isRune && !stored.isEmpty());
+        if (!recolor) return;
 
-        List<Component> vanillaStrings = new ArrayList<>();
-        List<Component> newLines = new ArrayList<>();
+        List<Component> vanilla = new ArrayList<>();
+        List<Component> rebuilt = new ArrayList<>();
 
-        if (recolorGear) collectRebuilt(live, vanillaStrings, newLines, isRune);
-        if (recolorRune && !stored.isEmpty()) collectRebuilt(stored, vanillaStrings, newLines, isRune);
+        collectEnchantDisplay(live, vanilla, rebuilt, isRune);
+        collectEnchantDisplay(stored, vanilla, rebuilt, isRune);
 
-        if (vanillaStrings.isEmpty()) return;
+        if (vanilla.isEmpty()) return;
 
-        int firstIdx = -1;
+        int first = -1;
         for (int i = tooltip.size() - 1; i >= 0; i--) {
             String s = tooltip.get(i).getString();
-            boolean removed = false;
-            for (Component v : vanillaStrings) {
+            for (Component v : vanilla) {
                 if (s.equals(v.getString())) {
-                    firstIdx = i;
+                    first = i;
                     tooltip.remove(i);
-                    removed = true;
                     break;
                 }
             }
-            if (removed && i == 0) break;
         }
 
-        int insertAt = firstIdx;
-        if (insertAt != -1) {
-            tooltip.addAll(insertAt, newLines);
-            insertAt += newLines.size();
-        }
-
-        if (isRune && (recolorGear || !stored.isEmpty())) {
-            appendRuneShiftDescriptions(tooltip, insertAt, live, stored);
+        if (first != -1) {
+            tooltip.addAll(first, rebuilt);
         }
     }
 
-    private static void collectRebuilt(ItemEnchantments enchants,
-                                       List<Component> vanillaOut,
-                                       List<Component> rebuiltOut,
-                                       boolean isRune) {
-        for (Object2IntMap.Entry<Holder<Enchantment>> e : enchants.entrySet()) {
+    private static void collectEnchantDisplay(
+            ItemEnchantments ench, List<Component> vanilla, List<Component> rebuilt, boolean isRune
+    ) {
+        ench.entrySet().forEach(e -> {
             Holder<Enchantment> holder = e.getKey();
-            int level = e.getIntValue();
+            int lvl = e.getIntValue();
 
-            Component vanilla = holder.value().getFullname(holder, level);
-            vanillaOut.add(vanilla);
+            Component vn = holder.value().getFullname(holder, lvl);
+            vanilla.add(vn);
 
             EnhancementRarity rarity = EnhancementRarities.get(holder);
 
             if (isRune) {
-                Component grayLine = Component.literal(vanilla.getString())
-                        .withStyle(Style.EMPTY.withColor(0xAAAAAA).withItalic(false));
-                rebuiltOut.add(grayLine);
-
-                String key = rarity.key();
-                String rarityName = key.substring(0, 1).toUpperCase(Locale.ROOT) + key.substring(1);
-                Component rarityLine = Component.literal(rarityName)
-                        .withStyle(s -> s.withColor(rarity.color()).withItalic(false));
-                rebuiltOut.add(rarityLine);
+                rebuilt.add(vn.copy().withStyle(ChatFormatting.GRAY));
+                rebuilt.add(Component.literal(
+                                rarity.key().substring(0,1).toUpperCase(Locale.ROOT) +
+                                        rarity.key().substring(1))
+                        .withStyle(style -> style.withColor(rarity.color())));
             } else {
-                Component colored = Component.literal(vanilla.getString())
-                        .withStyle(s -> s.withColor(rarity.color()).withItalic(false));
-                rebuiltOut.add(colored);
+                rebuilt.add(vn.copy().withStyle(style -> style.withColor(rarity.color())));
             }
-        }
-    }
-
-    private static void appendRuneShiftDescriptions(List<Component> tooltip,
-                                                    int insertAt,
-                                                    ItemEnchantments... sets) {
-        LinkedHashSet<ResourceKey<Enchantment>> keys = new LinkedHashSet<>();
-        for (ItemEnchantments set : sets) {
-            for (Object2IntMap.Entry<Holder<Enchantment>> e : set.entrySet()) {
-                e.getKey().unwrapKey().ifPresent(keys::add);
-            }
-        }
-        if (keys.isEmpty()) return;
-
-        boolean shift = Screen.hasShiftDown();
-
-        if (insertAt >= 0 && insertAt <= tooltip.size()) {
-            tooltip.add(insertAt, Component.empty());
-            insertAt++;
-        } else {
-            tooltip.add(Component.empty());
-            insertAt = tooltip.size();
-        }
-
-        if (!shift) {
-            tooltip.add(insertAt, Component.literal("Hold \u00A7eShift\u00A7r for effects")
-                    .withStyle(Style.EMPTY.withColor(0x777777).withItalic(false)));
-            return;
-        }
-
-        tooltip.add(insertAt++, Component.literal("Effects")
-                .withStyle(Style.EMPTY.withColor(0xBBBBBB).withItalic(false)));
-
-        for (ResourceKey<Enchantment> key : keys) {
-            ResourceLocation loc = key.location();
-            String langKey = "tooltip.runic." + loc.getPath();
-            Component line = Component.translatable(langKey)
-                    .withStyle(Style.EMPTY.withItalic(false));
-            tooltip.add(insertAt++, line);
-        }
+        });
     }
 }
