@@ -110,7 +110,7 @@
 		},
 		{
 			"type": "bitmap",
-			"file": "minecraft:misc/mace.png",
+			"file": "minecraft:misc/effect.png",
 			"ascent": 8,
 			"height": 16,
 			"chars": [

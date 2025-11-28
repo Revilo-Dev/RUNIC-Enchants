@@ -49,7 +49,6 @@ public final class ItemTooltipHandler {
         List<Component> tooltip = event.getToolTip();
 
         stripVanillaAttributeLines(tooltip);
-        stripTagLines(tooltip);
 
         boolean isRune = stack.is(ModItems.ENHANCED_RUNE.get());
 
@@ -77,19 +76,6 @@ public final class ItemTooltipHandler {
         }
     }
 
-    //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    // REMOVE ITEM & BLOCK TAGS
-    //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    private static void stripTagLines(List<Component> tooltip) {
-        tooltip.removeIf(c -> {
-            String s = c.getString().toLowerCase(Locale.ROOT);
-            return s.startsWith("tags:")
-                    || s.startsWith("item tags:")
-                    || s.startsWith("block tags:")
-                    || s.startsWith("#")
-                    || s.contains("tag:") || s.contains("tags:");
-        });
-    }
 
     //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     // ITEM STATS (NOT ON RUNES, ONLY ON WEAPONS & TOOLS)
@@ -139,7 +125,13 @@ public final class ItemTooltipHandler {
         tooltip.add(statLine(ICON_SWORD + " Attack Speed", spd));
 
         // --- attack range (future expansion) ---
-        tooltip.add(statLine("Attack Range", 3.0));
+        // --- attack range (base 3.0, scaled by rune stats if any) ---
+        double baseRange = 3.0;
+        RuneStats stats = RuneStats.get(stack);
+        float rangePct = stats != null ? stats.get(RuneStatType.ATTACK_RANGE) : 0.0F;
+        double finalRange = baseRange * (1.0 + (rangePct / 100.0));
+        tooltip.add(statLine(ICON_SWORD + " Attack Range", finalRange));
+
 
         // --- only tools get mining speed ---
         if (isTool) {

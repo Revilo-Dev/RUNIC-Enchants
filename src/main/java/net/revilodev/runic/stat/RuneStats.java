@@ -1,17 +1,11 @@
 package net.revilodev.runic.stat;
 
-import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.EquipmentSlotGroup;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
-import net.revilodev.runic.RunicMod;
+import net.revilodev.runic.runes.RuneAttributeApplier;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -19,7 +13,6 @@ import java.util.Map;
 public final class RuneStats {
     public static final String NBT_KEY = "runic_stats";
     private static final RuneStats EMPTY = new RuneStats(new EnumMap<>(RuneStatType.class));
-    private static final String BASE_DURABILITY_KEY = "runic_base_max_damage";
 
     final EnumMap<RuneStatType, Float> values;
 
@@ -145,119 +138,15 @@ public final class RuneStats {
             root.put(NBT_KEY, stats.save());
         }
 
-        clearRunicAttributeModifiers(stack);
-        clearDurabilityBonus(stack, root);
+        // Clear our old attributes & durability, then re-apply from stats
+        RuneAttributeApplier.clearRunicAttributes(stack);
+        RuneAttributeApplier.clearDurability(stack, root);
 
         if (stats != null && !stats.isEmpty()) {
-            rebuildRunicAttributeModifiers(stack, stats);
-            applyDurabilityBonus(stack, stats, root);
+            RuneAttributeApplier.rebuildAttributes(stack, stats);
+            RuneAttributeApplier.applyDurability(stack, stats, root);
         }
 
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(root));
-    }
-
-    private static void clearRunicAttributeModifiers(ItemStack stack) {
-        ItemAttributeModifiers existing =
-                stack.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY);
-        if (existing == ItemAttributeModifiers.EMPTY) {
-            return;
-        }
-
-        ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder();
-        boolean changed = false;
-
-        for (ItemAttributeModifiers.Entry e : existing.modifiers()) {
-            AttributeModifier mod = e.modifier();
-            ResourceLocation id = mod.id();
-            if (id != null && RunicMod.MOD_ID.equals(id.getNamespace())) {
-                changed = true;
-                continue;
-            }
-            builder.add(e.attribute(), mod, e.slot());
-        }
-
-        if (changed) {
-            stack.set(DataComponents.ATTRIBUTE_MODIFIERS, builder.build());
-        }
-    }
-
-    private static void rebuildRunicAttributeModifiers(ItemStack stack, RuneStats stats) {
-        ItemAttributeModifiers existing =
-                stack.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY);
-
-        ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder();
-
-        for (ItemAttributeModifiers.Entry e : existing.modifiers()) {
-            builder.add(e.attribute(), e.modifier(), e.slot());
-        }
-
-        addPercentModifier(builder, stats, RuneStatType.ATTACK_DAMAGE, Attributes.ATTACK_DAMAGE, "stat.attack_damage");
-        addPercentModifier(builder, stats, RuneStatType.ATTACK_SPEED, Attributes.ATTACK_SPEED, "stat.attack_speed");
-
-        stack.set(DataComponents.ATTRIBUTE_MODIFIERS, builder.build());
-    }
-
-    private static void addPercentModifier(ItemAttributeModifiers.Builder builder,
-                                           RuneStats stats,
-                                           RuneStatType type,
-                                           Holder<net.minecraft.world.entity.ai.attributes.Attribute> attribute,
-                                           String pathId) {
-        float percent = stats.get(type);
-        if (percent == 0.0F) return;
-
-        double amount = percent / 100.0D;
-        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, pathId);
-
-        AttributeModifier modifier = new AttributeModifier(
-                id,
-                amount,
-                AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
-        );
-
-        builder.add(attribute, modifier, EquipmentSlotGroup.MAINHAND);
-    }
-
-    private static void clearDurabilityBonus(ItemStack stack, CompoundTag root) {
-        if (!root.contains(BASE_DURABILITY_KEY)) {
-            return;
-        }
-        int base = root.getInt(BASE_DURABILITY_KEY);
-        if (base > 0 && stack.getMaxDamage() != base) {
-            stack.set(DataComponents.MAX_DAMAGE, base);
-            int damage = stack.getDamageValue();
-            if (damage >= base) {
-                stack.set(DataComponents.DAMAGE, Math.max(0, base - 1));
-            }
-        }
-        root.remove(BASE_DURABILITY_KEY);
-    }
-
-    private static void applyDurabilityBonus(ItemStack stack, RuneStats stats, CompoundTag root) {
-        if (!stack.isDamageableItem()) return;
-
-        int base;
-        if (root.contains(BASE_DURABILITY_KEY)) {
-            base = root.getInt(BASE_DURABILITY_KEY);
-        } else {
-            base = stack.getMaxDamage();
-            root.putInt(BASE_DURABILITY_KEY, base);
-        }
-
-        float percent = stats.get(RuneStatType.DURABILITY);
-        if (percent == 0.0F) {
-            return;
-        }
-
-        int newMax = base + Math.round(base * (percent / 100.0F));
-        if (newMax <= 0) {
-            newMax = 1;
-        }
-
-        stack.set(DataComponents.MAX_DAMAGE, newMax);
-
-        int damage = stack.getDamageValue();
-        if (damage >= newMax) {
-            stack.set(DataComponents.DAMAGE, Math.max(0, newMax - 1));
-        }
     }
 }
