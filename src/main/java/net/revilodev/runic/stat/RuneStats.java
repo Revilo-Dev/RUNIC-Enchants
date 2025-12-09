@@ -11,6 +11,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 public final class RuneStats {
+
     public static final String NBT_KEY = "runic_stats";
     private static final RuneStats EMPTY = new RuneStats(new EnumMap<>(RuneStatType.class));
 
@@ -36,6 +37,16 @@ public final class RuneStats {
         return Map.copyOf(values);
     }
 
+    /** ---------------------------------------------------
+     *  FIX FOR -1% TOOLTIP VALUES
+     * --------------------------------------------------- */
+    public RuneStats rolledForTooltip() {
+        return rollForApplication(this, RandomSource.create());
+    }
+
+    /** ---------------------------------------------------
+     *  SAVE / LOAD
+     * --------------------------------------------------- */
     public CompoundTag save() {
         CompoundTag tag = new CompoundTag();
         for (Map.Entry<RuneStatType, Float> e : values.entrySet()) {
@@ -55,16 +66,16 @@ public final class RuneStats {
                 map.put(type, tag.getFloat(key));
             }
         }
-        if (map.isEmpty()) {
-            return EMPTY;
-        }
-        return new RuneStats(map);
+        return map.isEmpty() ? EMPTY : new RuneStats(map);
     }
 
     public static RuneStats empty() {
         return EMPTY;
     }
 
+    /** ---------------------------------------------------
+     *  GENERATION
+     * --------------------------------------------------- */
     public static RuneStats single(RuneStatType type, float value) {
         EnumMap<RuneStatType, Float> map = new EnumMap<>(RuneStatType.class);
         map.put(type, value);
@@ -72,7 +83,7 @@ public final class RuneStats {
     }
 
     public static RuneStats singleUnrolled(RuneStatType type) {
-        return single(type, -1.0F);
+        return single(type, -1.0F); // placeholder for rolled stat
     }
 
     public static RuneStats rollForApplication(RuneStats template, RandomSource random) {
@@ -83,19 +94,20 @@ public final class RuneStats {
         for (Map.Entry<RuneStatType, Float> e : template.values.entrySet()) {
             RuneStatType type = e.getKey();
             float v = e.getValue();
-            if (v < 0.0F) {
+
+            if (v < 0.0F) { // unrolled stat
                 v = type.roll(random);
             }
             if (v != 0.0F) {
                 map.put(type, v);
             }
         }
-        if (map.isEmpty()) {
-            return EMPTY;
-        }
-        return new RuneStats(map);
+        return map.isEmpty() ? EMPTY : new RuneStats(map);
     }
 
+    /** ---------------------------------------------------
+     *  COMBINE
+     * --------------------------------------------------- */
     public static RuneStats combine(RuneStats base, RuneStats add) {
         if ((base == null || base.isEmpty()) && (add == null || add.isEmpty())) {
             return EMPTY;
@@ -109,20 +121,19 @@ public final class RuneStats {
                 map.merge(e.getKey(), e.getValue(), Float::sum);
             }
         }
-        if (map.isEmpty()) {
-            return EMPTY;
-        }
-        return new RuneStats(map);
+        return map.isEmpty() ? EMPTY : new RuneStats(map);
     }
 
+    /** ---------------------------------------------------
+     *  GET / SET ON STACK
+     * --------------------------------------------------- */
     public static RuneStats get(ItemStack stack) {
         CustomData data = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
         CompoundTag root = data.copyTag();
         if (root == null || !root.contains(NBT_KEY)) {
             return EMPTY;
         }
-        CompoundTag statsTag = root.getCompound(NBT_KEY);
-        return load(statsTag);
+        return load(root.getCompound(NBT_KEY));
     }
 
     public static void set(ItemStack stack, RuneStats stats) {
@@ -138,7 +149,6 @@ public final class RuneStats {
             root.put(NBT_KEY, stats.save());
         }
 
-        // Clear our old attributes & durability, then re-apply from stats
         RuneAttributeApplier.clearRunicAttributes(stack);
         RuneAttributeApplier.clearDurability(stack, root);
 

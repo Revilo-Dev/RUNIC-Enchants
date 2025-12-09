@@ -47,6 +47,7 @@ public class RunicMod {
 
 
 
+
         // NeoForge event bus
         NeoForge.EVENT_BUS.register(this);
     }

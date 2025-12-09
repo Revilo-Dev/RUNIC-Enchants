@@ -2,16 +2,29 @@ package net.revilodev.runic.runes;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.BowItem;
+import net.minecraft.world.item.CrossbowItem;
+import net.minecraft.world.item.FishingRodItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ShieldItem;
+import net.minecraft.world.item.TieredItem;
+import net.minecraft.world.item.TridentItem;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.revilodev.runic.RunicMod;
 import net.revilodev.runic.stat.RuneStatType;
 import net.revilodev.runic.stat.RuneStats;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public final class RuneAttributeApplier {
 
@@ -19,11 +32,32 @@ public final class RuneAttributeApplier {
 
     private RuneAttributeApplier() {}
 
-    // ─────────────────────────────────────────────────────────────
-    // ATTRIBUTE MODIFIERS
-    // ─────────────────────────────────────────────────────────────
+    private static boolean isRunicModifier(AttributeModifier mod) {
+        ResourceLocation id = mod.id();
+        return id != null && RunicMod.MOD_ID.equals(id.getNamespace());
+    }
 
-    /** Remove all runic attribute modifiers (namespace = your mod id) */
+    private static String makeKey(Holder<net.minecraft.world.entity.ai.attributes.Attribute> attribute,
+                                  AttributeModifier modifier,
+                                  EquipmentSlotGroup slotGroup) {
+        ResourceLocation attrKey = BuiltInRegistries.ATTRIBUTE.getKey(attribute.value());
+        ResourceLocation modId = modifier.id();
+        String a = attrKey != null ? attrKey.toString() : "null";
+        String m = modId != null ? modId.toString() : "null";
+        return a + "|" + slotGroup.name() + "|" + m;
+    }
+
+    private static void addUnique(ItemAttributeModifiers.Builder builder,
+                                  Set<String> keys,
+                                  Holder<net.minecraft.world.entity.ai.attributes.Attribute> attribute,
+                                  AttributeModifier modifier,
+                                  EquipmentSlotGroup slotGroup) {
+        String key = makeKey(attribute, modifier, slotGroup);
+        if (keys.add(key)) {
+            builder.add(attribute, modifier, slotGroup);
+        }
+    }
+
     public static void clearRunicAttributes(ItemStack stack) {
         ItemAttributeModifiers existing =
                 stack.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY);
@@ -34,86 +68,123 @@ public final class RuneAttributeApplier {
         boolean changed = false;
 
         for (ItemAttributeModifiers.Entry e : existing.modifiers()) {
-            AttributeModifier mod = e.modifier();
-            ResourceLocation id = mod.id();
-            if (id != null && RunicMod.MOD_ID.equals(id.getNamespace())) {
+            if (isRunicModifier(e.modifier())) {
                 changed = true;
-                continue; // drop our old modifier
+                continue;
             }
-            builder.add(e.attribute(), mod, e.slot());
-        }
-
-        if (changed) {
-            stack.set(DataComponents.ATTRIBUTE_MODIFIERS, builder.build());
-        }
-    }
-
-    /** Rebuild runic attribute modifiers from the current stats */
-    public static void rebuildAttributes(ItemStack stack, RuneStats stats) {
-        ItemAttributeModifiers existing =
-                stack.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY);
-
-        ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder();
-
-        // keep non-runic modifiers as-is
-        for (ItemAttributeModifiers.Entry e : existing.modifiers()) {
             builder.add(e.attribute(), e.modifier(), e.slot());
         }
 
-        // Core combat
-        addPercentAttribute(builder, stats, RuneStatType.ATTACK_DAMAGE, Attributes.ATTACK_DAMAGE, "attack_damage");
-        addPercentAttribute(builder, stats, RuneStatType.ATTACK_SPEED, Attributes.ATTACK_SPEED, "attack_speed");
-        addPercentAttribute(builder, stats, RuneStatType.ATTACK_RANGE, Attributes.ENTITY_INTERACTION_RANGE, "attack_range");
-
-        // Movement / defense / health
-        addPercentAttribute(builder, stats, RuneStatType.MOVEMENT_SPEED, Attributes.MOVEMENT_SPEED, "movement_speed");
-        addPercentAttribute(builder, stats, RuneStatType.KNOCKBACK_RESISTANCE, Attributes.KNOCKBACK_RESISTANCE, "knockback_resistance");
-        addPercentAttribute(builder, stats, RuneStatType.HEALTH, Attributes.MAX_HEALTH, "health");
-
-        // Mining & underwater movement
-        addPercentAttribute(builder, stats, RuneStatType.MINING_SPEED, Attributes.BLOCK_BREAK_SPEED, "mining_speed");
-        addPercentAttribute(builder, stats, RuneStatType.SWIMMING_SPEED, Attributes.WATER_MOVEMENT_EFFICIENCY, "swimming_speed");
-
-        // Fall & breathing
-        addPercentAttribute(builder, stats, RuneStatType.FALL_REDUCTION, Attributes.SAFE_FALL_DISTANCE, "safe_fall_distance");
-        addPercentAttribute(builder, stats, RuneStatType.WATER_BREATHING, Attributes.OXYGEN_BONUS, "oxygen_bonus");
-
-        // Souls / sneak speed
-        addPercentAttribute(builder, stats, RuneStatType.SOUL_SPEED, Attributes.MOVEMENT_EFFICIENCY, "soul_speed");
-        addPercentAttribute(builder, stats, RuneStatType.SWIFT_SNEAK, Attributes.SNEAKING_SPEED, "swift_sneak");
-
-        // (FORTUNE is not attribute based; handled via loot/event if you want later.)
-
-        stack.set(DataComponents.ATTRIBUTE_MODIFIERS, builder.build());
+        if (changed) {
+            ItemAttributeModifiers result = builder.build();
+            if (result.modifiers().isEmpty()) {
+                stack.remove(DataComponents.ATTRIBUTE_MODIFIERS);
+            } else {
+                stack.set(DataComponents.ATTRIBUTE_MODIFIERS, result);
+            }
+        }
     }
 
-    /** Helper: ADD_MULTIPLIED_TOTAL style percent buff */
-    private static void addPercentAttribute(ItemAttributeModifiers.Builder builder,
-                                            RuneStats stats,
-                                            RuneStatType type,
-                                            Holder<net.minecraft.world.entity.ai.attributes.Attribute> attribute,
-                                            String pathId) {
+    public static void rebuildAttributes(ItemStack stack, RuneStats stats) {
+        Item item = stack.getItem();
+
+        ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder();
+        Set<String> keys = new HashSet<>();
+
+        ItemAttributeModifiers baseFromItem =
+                stack.getPrototype().getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY);
+
+        for (ItemAttributeModifiers.Entry e : baseFromItem.modifiers()) {
+            addUnique(builder, keys, e.attribute(), e.modifier(), e.slot());
+        }
+
+        if (item instanceof ArmorItem armorItem) {
+            ItemAttributeModifiers armorDefaults = armorItem.getDefaultAttributeModifiers();
+            for (ItemAttributeModifiers.Entry e : armorDefaults.modifiers()) {
+                addUnique(builder, keys, e.attribute(), e.modifier(), e.slot());
+            }
+        }
+
+        ItemAttributeModifiers stackModifiers =
+                stack.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY);
+
+        for (ItemAttributeModifiers.Entry e : stackModifiers.modifiers()) {
+            AttributeModifier mod = e.modifier();
+            if (isRunicModifier(mod)) continue;
+            addUnique(builder, keys, e.attribute(), mod, e.slot());
+        }
+
+        EquipmentSlotGroup slotGroup = resolveSlotGroup(stack);
+
+        if (slotGroup != null && stats != null && !stats.isEmpty()) {
+            add(builder, stats, RuneStatType.ATTACK_DAMAGE, Attributes.ATTACK_DAMAGE, "attack_damage", slotGroup);
+            add(builder, stats, RuneStatType.ATTACK_SPEED, Attributes.ATTACK_SPEED, "attack_speed", slotGroup);
+            add(builder, stats, RuneStatType.ATTACK_RANGE, Attributes.ENTITY_INTERACTION_RANGE, "attack_range", slotGroup);
+
+            add(builder, stats, RuneStatType.MOVEMENT_SPEED, Attributes.MOVEMENT_SPEED, "movement_speed", slotGroup);
+            add(builder, stats, RuneStatType.KNOCKBACK_RESISTANCE, Attributes.KNOCKBACK_RESISTANCE, "knockback_resistance", slotGroup);
+            add(builder, stats, RuneStatType.HEALTH, Attributes.MAX_HEALTH, "health", slotGroup);
+
+            add(builder, stats, RuneStatType.MINING_SPEED, Attributes.BLOCK_BREAK_SPEED, "mining_speed", slotGroup);
+            add(builder, stats, RuneStatType.SWIMMING_SPEED, Attributes.WATER_MOVEMENT_EFFICIENCY, "swimming_speed", slotGroup);
+            add(builder, stats, RuneStatType.FALL_REDUCTION, Attributes.SAFE_FALL_DISTANCE, "fall_reduction", slotGroup);
+            add(builder, stats, RuneStatType.WATER_BREATHING, Attributes.OXYGEN_BONUS, "oxygen_bonus", slotGroup);
+
+            add(builder, stats, RuneStatType.SOUL_SPEED, Attributes.MOVEMENT_EFFICIENCY, "soul_speed", slotGroup);
+            add(builder, stats, RuneStatType.SWIFT_SNEAK, Attributes.SNEAKING_SPEED, "swift_sneak", slotGroup);
+        }
+
+        ItemAttributeModifiers result = builder.build();
+        if (result.modifiers().isEmpty()) {
+            stack.remove(DataComponents.ATTRIBUTE_MODIFIERS);
+        } else {
+            stack.set(DataComponents.ATTRIBUTE_MODIFIERS, result);
+        }
+    }
+
+    private static void add(ItemAttributeModifiers.Builder builder,
+                            RuneStats stats,
+                            RuneStatType type,
+                            Holder<net.minecraft.world.entity.ai.attributes.Attribute> attribute,
+                            String name,
+                            EquipmentSlotGroup slotGroup) {
+
         float percent = stats.get(type);
         if (percent == 0.0F) return;
 
-        double amount = percent / 100.0D;
-        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "stat." + pathId);
+        double amount = percent / 100.0F;
 
-        AttributeModifier modifier = new AttributeModifier(
-                id,
-                amount,
-                AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
-        );
+        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "stat." + name);
 
-        // For simplicity: mainhand; if you want armor stats, you can branch by item later
-        builder.add(attribute, modifier, EquipmentSlotGroup.MAINHAND);
+        AttributeModifier mod = new AttributeModifier(id, amount, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+
+        builder.add(attribute, mod, slotGroup);
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // DURABILITY HANDLING
-    // ─────────────────────────────────────────────────────────────
+    private static EquipmentSlotGroup resolveSlotGroup(ItemStack stack) {
+        Item item = stack.getItem();
 
-    /** Reset item max damage back to stored base, if we had boosted it */
+        if (item instanceof ArmorItem armor) {
+            return switch (armor.getEquipmentSlot()) {
+                case HEAD -> EquipmentSlotGroup.HEAD;
+                case CHEST -> EquipmentSlotGroup.CHEST;
+                case LEGS -> EquipmentSlotGroup.LEGS;
+                case FEET -> EquipmentSlotGroup.FEET;
+                default -> null;
+            };
+        }
+
+        if (item instanceof TieredItem
+                || item instanceof BowItem
+                || item instanceof CrossbowItem
+                || item instanceof TridentItem
+                || item instanceof ShieldItem
+                || item instanceof FishingRodItem)
+            return EquipmentSlotGroup.MAINHAND;
+
+        return null;
+    }
+
     public static void clearDurability(ItemStack stack, CompoundTag root) {
         if (!root.contains(DURABILITY_BASE_KEY)) return;
 
@@ -129,20 +200,17 @@ public final class RuneAttributeApplier {
         root.remove(DURABILITY_BASE_KEY);
     }
 
-    /** Apply DURABILITY% from stats as a real max-damage increase */
     public static void applyDurability(ItemStack stack, RuneStats stats, CompoundTag root) {
         if (!stack.isDamageableItem()) return;
 
         float percent = stats.get(RuneStatType.DURABILITY);
         if (percent == 0.0F) return;
 
-        int base;
-        if (root.contains(DURABILITY_BASE_KEY)) {
-            base = root.getInt(DURABILITY_BASE_KEY);
-        } else {
-            base = stack.getMaxDamage();
-            root.putInt(DURABILITY_BASE_KEY, base);
-        }
+        int base = root.contains(DURABILITY_BASE_KEY)
+                ? root.getInt(DURABILITY_BASE_KEY)
+                : stack.getMaxDamage();
+
+        root.putInt(DURABILITY_BASE_KEY, base);
 
         int newMax = base + Math.round(base * (percent / 100.0F));
         if (newMax <= 0) newMax = 1;

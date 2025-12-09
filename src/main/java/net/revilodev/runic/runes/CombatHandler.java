@@ -3,6 +3,7 @@ package net.revilodev.runic.runes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
@@ -11,9 +12,9 @@ import net.neoforged.fml.common.EventBusSubscriber;
 
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
-import net.neoforged.neoforge.event.entity.living.LivingHealEvent;
 
 import net.revilodev.runic.RunicMod;
+import net.revilodev.runic.effect.ModMobEffects;
 import net.revilodev.runic.stat.RuneStatType;
 import net.revilodev.runic.stat.RuneStats;
 
@@ -24,128 +25,102 @@ public final class CombatHandler {
 
     private static final Random RNG = new Random();
 
-    // ---------------------------------------------------------
-    // DAMAGE BONUSES (UNDEAD, NETHER)
-    // ---------------------------------------------------------
+    private CombatHandler() {}
+
+    /* -----------------------------------------------------------
+       DAMAGE BONUS HANDLING (UNDEAD, NETHER)
+       ----------------------------------------------------------- */
     @SubscribeEvent
     public static void onIncomingDamage(LivingIncomingDamageEvent event) {
 
         DamageSource source = event.getSource();
-        if (!(source.getEntity() instanceof LivingEntity attacker)) return;
-
         LivingEntity target = event.getEntity();
-        ItemStack weapon = attacker.getMainHandItem();
-        RuneStats stats = RuneStats.get(weapon);
 
-        float bonusPercent = 0f;
+        LivingEntity attacker =
+                source.getEntity() instanceof LivingEntity le ? le : null;
 
-        // --- Detect undead by registry name ---
+        if (attacker == null) return;
+
+        RuneStats stats = RuneStats.get(attacker.getMainHandItem());
+        if (stats.isEmpty()) return;
+
+        float bonus = 0f;
+
         ResourceLocation id = target.getType().builtInRegistryHolder().key().location();
         String path = id.getPath();
 
-        boolean isUndead =
+        boolean undead =
                 path.contains("zombie") ||
                         path.contains("skeleton") ||
-                        path.contains("drowned") ||
+                        path.contains("wither") ||
                         path.contains("phantom") ||
-                        path.contains("wither");
+                        path.contains("drowned");
 
-        if (isUndead) {
-            bonusPercent += stats.get(RuneStatType.UNDEAD_DAMAGE);
-        }
+        if (undead) bonus += stats.get(RuneStatType.UNDEAD_DAMAGE);
 
-        // --- Detect nether mobs ---
-        boolean isNether =
+        boolean nether =
                 path.contains("blaze") ||
-                        path.contains("magma") ||
                         path.contains("ghast") ||
+                        path.contains("magma") ||
                         path.contains("piglin") ||
                         path.contains("hoglin");
 
-        if (isNether) {
-            bonusPercent += stats.get(RuneStatType.NETHER_DAMAGE);
-        }
+        if (nether) bonus += stats.get(RuneStatType.NETHER_DAMAGE);
 
-        // Apply bonus
-        if (bonusPercent > 0) {
-            float extra = event.getAmount() * (bonusPercent / 100f);
-            event.setAmount(event.getAmount() + extra);
+        if (bonus > 0f) {
+            event.setAmount(event.getAmount() * (1f + bonus / 100f));
         }
     }
 
-    // ---------------------------------------------------------
-    // ON-HIT EFFECT CHANCES
-    // ---------------------------------------------------------
+    /* -----------------------------------------------------------
+       ON-HIT EFFECTS (Bleed, Stun, Poison, Weakness, Flame)
+       ----------------------------------------------------------- */
     @SubscribeEvent
-    public static void onPreDamage(LivingDamageEvent.Pre event) {
+    public static void onAttack(LivingDamageEvent.Pre event) {
 
         DamageSource source = event.getSource();
-        if (!(source.getEntity() instanceof LivingEntity attacker)) return;
-
         LivingEntity target = event.getEntity();
-        ItemStack weapon = attacker.getMainHandItem();
-        RuneStats stats = RuneStats.get(weapon);
 
-        // ----------------------------------------------------------------
-        // ALL EFFECTS REQUIRE YOU TO ADD THEM (I ADDED TODO MARKERS)
-        // ----------------------------------------------------------------
+        LivingEntity attacker =
+                source.getEntity() instanceof LivingEntity le ? le : null;
 
-        // Bleed
-        tryRoll(stats.get(RuneStatType.BLEEDING_CHANCE), () -> {
-            // TODO: target.addEffect(new MobEffectInstance(ModEffects.BLEEDING, duration, amp));
-        });
+        if (attacker == null) return;
 
-        // Stun
-        tryRoll(stats.get(RuneStatType.STUN_CHANCE), () -> {
-            // TODO: target.addEffect(new MobEffectInstance(ModEffects.STUNNED, duration, 0));
-        });
+        RuneStats stats = RuneStats.get(attacker.getMainHandItem());
+        if (stats.isEmpty()) return;
 
-        // Poison
-        tryRoll(stats.get(RuneStatType.POISON_CHANCE), () -> {
-            // TODO: target.addEffect(new MobEffectInstance(ModEffects.POISONED, duration, 1));
-        });
+        // BLEEDING (custom effect — DeferredHolder = Holder<MobEffect>)
+        if (roll(stats.get(RuneStatType.BLEEDING_CHANCE))) {
+            target.addEffect(new MobEffectInstance(ModMobEffects.BLEEDING, 60, 0));
+        }
 
-        // Weaken
-        tryRoll(stats.get(RuneStatType.WEAKENING_CHANCE), () -> {
-            // TODO: target.addEffect(new MobEffectInstance(ModEffects.WEAKENED, duration, 1));
-        });
+        // STUNNING (custom effect)
+        if (roll(stats.get(RuneStatType.STUN_CHANCE))) {
+            target.addEffect(new MobEffectInstance(ModMobEffects.STUNNING, 40, 0));
+        }
 
-        // Shock
-        tryRoll(stats.get(RuneStatType.SHOCKING_CHANCE), () -> {
-            // TODO: target.addEffect(new MobEffectInstance(ModEffects.SHOCKED, duration, 0));
-        });
+        // POISON (vanilla Holder)
+        if (roll(stats.get(RuneStatType.POISON_CHANCE))) {
+            target.addEffect(new MobEffectInstance(MobEffects.POISON, 100, 0));
+        }
 
-        // Flame
-        tryRoll(stats.get(RuneStatType.FLAME_CHANCE), () -> {
-            target.setRemainingFireTicks(60); // 3 seconds
-        });
-    }
+        // WEAKNESS (vanilla Holder)
+        if (roll(stats.get(RuneStatType.WEAKENING_CHANCE))) {
+            target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 140, 0));
+        }
 
-    // ---------------------------------------------------------
-    // HEALING EFFICIENCY
-    // ---------------------------------------------------------
-    @SubscribeEvent
-    public static void onHeal(LivingHealEvent event) {
+        // SHOCKING — disabled for now as requested
 
-        LivingEntity entity = event.getEntity();
-        if (!(entity instanceof LivingEntity)) return;
-
-        ItemStack held = entity.getMainHandItem();
-        RuneStats stats = RuneStats.get(held);
-
-        float bonus = stats.get(RuneStatType.HEALING_EFFICIENCY);
-        if (bonus > 0) {
-            float extra = event.getAmount() * (bonus / 100f);
-            event.setAmount(event.getAmount() + extra);
+        // FLAME
+        if (roll(stats.get(RuneStatType.FLAME_CHANCE))) {
+            target.setRemainingFireTicks(60);
         }
     }
 
-    // ---------------------------------------------------------
-    // UTILITY
-    // ---------------------------------------------------------
-    private static void tryRoll(float percent, Runnable effect) {
-        if (percent > 0 && RNG.nextFloat() < percent / 100f) {
-            effect.run();
-        }
+    /* -----------------------------------------------------------
+       UTILITY
+       ----------------------------------------------------------- */
+    private static boolean roll(float percent) {
+        return percent > 0 && RNG.nextFloat() < percent / 100f;
     }
 }

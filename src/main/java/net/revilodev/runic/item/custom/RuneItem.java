@@ -63,23 +63,11 @@ public class RuneItem extends Item {
     }
 
     public static ItemStack createStatRune(RandomSource random, RuneStatType type) {
-        EnumMap<RuneStatType, Float> map = new EnumMap<>(RuneStatType.class);
-        map.put(type, type.roll(random));
-        RuneStats stats = new RuneStats(map);
+        RuneStats stats = RuneStats.singleUnrolled(type);
         ItemStack stack = new ItemStack(ModItems.ENHANCED_RUNE.value());
         RuneStats.set(stack, stats);
         return stack;
     }
-
-    @Override
-    public boolean isFoil(ItemStack stack) {
-        if (stack.isEnchanted()) {
-            return true;
-        }
-        RuneStats stats = RuneStats.get(stack);
-        return stats != null && !stats.isEmpty();
-    }
-
 
     public static ItemStack createRandomStatRune(RandomSource random) {
         RuneStatType[] all = RuneStatType.values();
@@ -88,6 +76,26 @@ public class RuneItem extends Item {
         }
         RuneStatType chosen = all[random.nextInt(all.length)];
         return createStatRune(random, chosen);
+    }
+
+    public static RuneStats getRolledStatsForTooltip(ItemStack rune) {
+        RuneStats template = getRuneStats(rune);
+        if (template == null || template.isEmpty()) return RuneStats.empty();
+
+        return RuneStats.rollForApplication(template, RandomSource.create());
+    }
+
+
+
+    @Override
+    public boolean isFoil(ItemStack stack) {
+        if (stack.isEnchanted()) {
+            return true;
+        }
+        RuneStats stats = RuneStats.get(stack);
+        stats = RuneStats.rollForApplication(stats, RandomSource.create());
+
+        return stats != null && !stats.isEmpty();
     }
 
     public static RuneStats getRuneStats(ItemStack stack) {
@@ -153,6 +161,8 @@ public class RuneItem extends Item {
                 return tex;
             }
         }
+
+
 
         RunicMod.LOGGER.debug("[Runic] Falling back to base rune texture for {}", stack);
         return base;
