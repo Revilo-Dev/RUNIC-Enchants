@@ -15,11 +15,11 @@ import net.revilodev.runic.stat.RuneStatType;
 import net.revilodev.runic.stat.RuneStats;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.List;
 import java.util.Set;
 
 public class RuneItem extends Item {
+
     private static final Set<ResourceLocation> EFFECT_ENCHANT_IDS = Set.of(
             ResourceLocation.withDefaultNamespace("silk_touch"),
             ResourceLocation.withDefaultNamespace("frost_walker"),
@@ -27,9 +27,15 @@ public class RuneItem extends Item {
             ResourceLocation.withDefaultNamespace("lure"),
             ResourceLocation.withDefaultNamespace("wind_burst"),
             ResourceLocation.withDefaultNamespace("breach"),
-            ResourceLocation.withDefaultNamespace("flame"),
             ResourceLocation.withDefaultNamespace("binding_curse"),
-            ResourceLocation.withDefaultNamespace("vanishing_curse")
+            ResourceLocation.withDefaultNamespace("vanishing_curse"),
+            ResourceLocation.withDefaultNamespace("soul_speed"),
+            ResourceLocation.withDefaultNamespace("fortune"),
+            ResourceLocation.withDefaultNamespace("thorns"),
+            ResourceLocation.withDefaultNamespace("piercing"),
+            ResourceLocation.withDefaultNamespace("swift_sneak"),
+            ResourceLocation.withDefaultNamespace("punch"),
+            ResourceLocation.withDefaultNamespace("mending")
     );
 
     public RuneItem(Properties props) {
@@ -52,13 +58,13 @@ public class RuneItem extends Item {
                 .orElse(false);
     }
 
-    public static ItemStack createEffectRune(Holder<Enchantment> enchantment, int level) {
+    public static ItemStack createEffectRune(Holder<Enchantment> enchantment, int ignored) {
         if (!isEffectEnchantment(enchantment)) {
             return ItemStack.EMPTY;
         }
-        int clamped = Math.max(1, Math.min(level, enchantment.value().getMaxLevel()));
+        int max = enchantment.value().getMaxLevel();
         ItemStack stack = new ItemStack(ModItems.ENHANCED_RUNE.value());
-        stack.enchant(enchantment, clamped);
+        stack.enchant(enchantment, max);
         return stack;
     }
 
@@ -81,11 +87,8 @@ public class RuneItem extends Item {
     public static RuneStats getRolledStatsForTooltip(ItemStack rune) {
         RuneStats template = getRuneStats(rune);
         if (template == null || template.isEmpty()) return RuneStats.empty();
-
         return RuneStats.rollForApplication(template, RandomSource.create());
     }
-
-
 
     @Override
     public boolean isFoil(ItemStack stack) {
@@ -94,7 +97,6 @@ public class RuneItem extends Item {
         }
         RuneStats stats = RuneStats.get(stack);
         stats = RuneStats.rollForApplication(stats, RandomSource.create());
-
         return stats != null && !stats.isEmpty();
     }
 
@@ -106,18 +108,15 @@ public class RuneItem extends Item {
         ItemEnchantments stored = stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
         ItemEnchantments direct = stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
         ItemEnchantments enchants = !stored.isEmpty() ? stored : direct;
-        if (enchants.isEmpty()) {
-            return null;
+
+        if (enchants.isEmpty()) return null;
+
+        List<Holder<Enchantment>> out = new ArrayList<>();
+        for (Holder<Enchantment> h : enchants.keySet()) {
+            if (isEffectEnchantment(h)) out.add(h);
         }
-        List<Holder<Enchantment>> candidates = new ArrayList<>();
-        for (Holder<Enchantment> holder : enchants.keySet()) {
-            if (isEffectEnchantment(holder)) {
-                candidates.add(holder);
-            }
-        }
-        if (!candidates.isEmpty()) {
-            return candidates.get(0);
-        }
+        if (!out.isEmpty()) return out.get(0);
+
         return enchants.keySet().iterator().next();
     }
 
@@ -127,18 +126,11 @@ public class RuneItem extends Item {
         Holder<Enchantment> effect = getPrimaryEffectEnchantment(stack);
         if (effect != null) {
             return effect.unwrapKey()
-                    .map(k -> {
-                        ResourceLocation tex = ResourceLocation.fromNamespaceAndPath(
-                                RunicMod.MOD_ID,
-                                "item/rune/" + k.location().getNamespace() + "/" + k.location().getPath()
-                        );
-                        RunicMod.LOGGER.debug("[Runic] Resolved effect rune texture for {} -> {}", k.location(), tex);
-                        return tex;
-                    })
-                    .orElseGet(() -> {
-                        RunicMod.LOGGER.warn("[Runic] Could not resolve key for effect enchant on rune: {}", stack);
-                        return base;
-                    });
+                    .map(k -> ResourceLocation.fromNamespaceAndPath(
+                            RunicMod.MOD_ID,
+                            "item/rune/" + k.location().getNamespace() + "/" + k.location().getPath()
+                    ))
+                    .orElse(base);
         }
 
         RuneStats stats = RuneStats.get(stack);
@@ -147,24 +139,19 @@ public class RuneItem extends Item {
             float best = 0.0F;
             for (RuneStatType type : RuneStatType.values()) {
                 float v = stats.get(type);
-                if (Math.abs(v) > Math.abs(best) + 0.001F) {
+                if (Math.abs(v) > Math.abs(best)) {
                     best = v;
                     chosen = type;
                 }
             }
             if (chosen != null) {
-                ResourceLocation tex = ResourceLocation.fromNamespaceAndPath(
+                return ResourceLocation.fromNamespaceAndPath(
                         RunicMod.MOD_ID,
                         "item/rune/stat/" + chosen.id()
                 );
-                RunicMod.LOGGER.debug("[Runic] Resolved stat rune texture for {} -> {}", chosen.id(), tex);
-                return tex;
             }
         }
 
-
-
-        RunicMod.LOGGER.debug("[Runic] Falling back to base rune texture for {}", stack);
         return base;
     }
 }

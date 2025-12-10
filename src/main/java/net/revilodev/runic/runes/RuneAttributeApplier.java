@@ -5,7 +5,6 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -91,6 +90,7 @@ public final class RuneAttributeApplier {
         ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder();
         Set<String> keys = new HashSet<>();
 
+        // 1) Base attributes from prototype
         ItemAttributeModifiers baseFromItem =
                 stack.getPrototype().getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY);
 
@@ -98,6 +98,7 @@ public final class RuneAttributeApplier {
             addUnique(builder, keys, e.attribute(), e.modifier(), e.slot());
         }
 
+        // 2) Armor default attributes
         if (item instanceof ArmorItem armorItem) {
             ItemAttributeModifiers armorDefaults = armorItem.getDefaultAttributeModifiers();
             for (ItemAttributeModifiers.Entry e : armorDefaults.modifiers()) {
@@ -105,6 +106,7 @@ public final class RuneAttributeApplier {
             }
         }
 
+        // 3) Existing stack modifiers (non-runic)
         ItemAttributeModifiers stackModifiers =
                 stack.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY);
 
@@ -116,22 +118,35 @@ public final class RuneAttributeApplier {
 
         EquipmentSlotGroup slotGroup = resolveSlotGroup(stack);
 
+        // 4) Apply runic stats as attributes
         if (slotGroup != null && stats != null && !stats.isEmpty()) {
-            add(builder, stats, RuneStatType.ATTACK_DAMAGE, Attributes.ATTACK_DAMAGE, "attack_damage", slotGroup);
-            add(builder, stats, RuneStatType.ATTACK_SPEED, Attributes.ATTACK_SPEED, "attack_speed", slotGroup);
-            add(builder, stats, RuneStatType.ATTACK_RANGE, Attributes.ENTITY_INTERACTION_RANGE, "attack_range", slotGroup);
 
-            add(builder, stats, RuneStatType.MOVEMENT_SPEED, Attributes.MOVEMENT_SPEED, "movement_speed", slotGroup);
-            add(builder, stats, RuneStatType.KNOCKBACK_RESISTANCE, Attributes.KNOCKBACK_RESISTANCE, "knockback_resistance", slotGroup);
-            add(builder, stats, RuneStatType.HEALTH, Attributes.MAX_HEALTH, "health", slotGroup);
+            // --- Multiplicative “% of base” stats ---
+            addPercent(builder, stats, RuneStatType.ATTACK_DAMAGE,        Attributes.ATTACK_DAMAGE,             "attack_damage",        slotGroup);
+            addPercent(builder, stats, RuneStatType.ATTACK_SPEED,         Attributes.ATTACK_SPEED,              "attack_speed",         slotGroup);
+            addPercent(builder, stats, RuneStatType.ATTACK_RANGE,         Attributes.ENTITY_INTERACTION_RANGE,  "attack_range",         slotGroup);
 
-            add(builder, stats, RuneStatType.MINING_SPEED, Attributes.BLOCK_BREAK_SPEED, "mining_speed", slotGroup);
-            add(builder, stats, RuneStatType.SWIMMING_SPEED, Attributes.WATER_MOVEMENT_EFFICIENCY, "swimming_speed", slotGroup);
-            add(builder, stats, RuneStatType.FALL_REDUCTION, Attributes.SAFE_FALL_DISTANCE, "fall_reduction", slotGroup);
-            add(builder, stats, RuneStatType.WATER_BREATHING, Attributes.OXYGEN_BONUS, "oxygen_bonus", slotGroup);
+            addPercent(builder, stats, RuneStatType.MOVEMENT_SPEED,       Attributes.MOVEMENT_SPEED,            "movement_speed",       slotGroup);
+            addPercent(builder, stats, RuneStatType.KNOCKBACK_RESISTANCE, Attributes.KNOCKBACK_RESISTANCE,      "knockback_resistance", slotGroup);
+            addPercent(builder, stats, RuneStatType.HEALTH,               Attributes.MAX_HEALTH,                "health",               slotGroup);
 
-            add(builder, stats, RuneStatType.SOUL_SPEED, Attributes.MOVEMENT_EFFICIENCY, "soul_speed", slotGroup);
-            add(builder, stats, RuneStatType.SWIFT_SNEAK, Attributes.SNEAKING_SPEED, "swift_sneak", slotGroup);
+            addPercent(builder, stats, RuneStatType.MINING_SPEED,         Attributes.BLOCK_BREAK_SPEED,         "mining_speed",         slotGroup);
+            addPercent(builder, stats, RuneStatType.FALL_REDUCTION,       Attributes.SAFE_FALL_DISTANCE,        "fall_reduction",       slotGroup);
+
+            // --- “Ratio” stats where vanilla expects 0–1 values, not multipliers ---
+            // Swimming speed = Depth Strider style water movement efficiency
+            addRatio(builder, stats, RuneStatType.SWIMMING_SPEED,   Attributes.WATER_MOVEMENT_EFFICIENCY, "swimming_speed",   slotGroup);
+
+            // Water breathing = extra air time via OXYGEN_BONUS
+            addRatio(builder, stats, RuneStatType.WATER_BREATHING,  Attributes.OXYGEN_BONUS,              "water_breathing",  slotGroup);
+
+            // Sweeping range = Sweeping Edge style extra damage to nearby mobs
+            addRatio(builder, stats, RuneStatType.SWEEPING_RANGE,   Attributes.SWEEPING_DAMAGE_RATIO,     "sweeping_range",   slotGroup);
+
+            // --- Draw speed for bows / crossbows: use attack speed so tooltip & feel update ---
+            if (item instanceof BowItem || item instanceof CrossbowItem) {
+                addPercent(builder, stats, RuneStatType.DRAW_SPEED, Attributes.ATTACK_SPEED, "draw_speed", slotGroup);
+            }
         }
 
         ItemAttributeModifiers result = builder.build();
@@ -142,12 +157,12 @@ public final class RuneAttributeApplier {
         }
     }
 
-    private static void add(ItemAttributeModifiers.Builder builder,
-                            RuneStats stats,
-                            RuneStatType type,
-                            Holder<net.minecraft.world.entity.ai.attributes.Attribute> attribute,
-                            String name,
-                            EquipmentSlotGroup slotGroup) {
+    private static void addPercent(ItemAttributeModifiers.Builder builder,
+                                   RuneStats stats,
+                                   RuneStatType type,
+                                   Holder<net.minecraft.world.entity.ai.attributes.Attribute> attribute,
+                                   String name,
+                                   EquipmentSlotGroup slotGroup) {
 
         float percent = stats.get(type);
         if (percent == 0.0F) return;
@@ -155,8 +170,26 @@ public final class RuneAttributeApplier {
         double amount = percent / 100.0F;
 
         ResourceLocation id = ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "stat." + name);
-
         AttributeModifier mod = new AttributeModifier(id, amount, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+
+        builder.add(attribute, mod, slotGroup);
+    }
+
+    private static void addRatio(ItemAttributeModifiers.Builder builder,
+                                 RuneStats stats,
+                                 RuneStatType type,
+                                 Holder<net.minecraft.world.entity.ai.attributes.Attribute> attribute,
+                                 String name,
+                                 EquipmentSlotGroup slotGroup) {
+
+        float percent = stats.get(type);
+        if (percent <= 0.0F) return;
+
+        // Treat percent as 0–100 → 0.0–1.0 ratio
+        double amount = percent / 100.0F;
+
+        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "stat." + name);
+        AttributeModifier mod = new AttributeModifier(id, amount, AttributeModifier.Operation.ADD_VALUE);
 
         builder.add(attribute, mod, slotGroup);
     }
@@ -179,8 +212,9 @@ public final class RuneAttributeApplier {
                 || item instanceof CrossbowItem
                 || item instanceof TridentItem
                 || item instanceof ShieldItem
-                || item instanceof FishingRodItem)
+                || item instanceof FishingRodItem) {
             return EquipmentSlotGroup.MAINHAND;
+        }
 
         return null;
     }

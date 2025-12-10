@@ -37,16 +37,14 @@ public final class RuneStats {
         return Map.copyOf(values);
     }
 
-    /** ---------------------------------------------------
-     *  FIX FOR -1% TOOLTIP VALUES
-     * --------------------------------------------------- */
+    // Optional helper, not critical but harmless
     public RuneStats rolledForTooltip() {
         return rollForApplication(this, RandomSource.create());
     }
 
-    /** ---------------------------------------------------
-     *  SAVE / LOAD
-     * --------------------------------------------------- */
+    /* ---------------------------------------------------
+       SAVE / LOAD
+       --------------------------------------------------- */
     public CompoundTag save() {
         CompoundTag tag = new CompoundTag();
         for (Map.Entry<RuneStatType, Float> e : values.entrySet()) {
@@ -73,17 +71,18 @@ public final class RuneStats {
         return EMPTY;
     }
 
-    /** ---------------------------------------------------
-     *  GENERATION
-     * --------------------------------------------------- */
+    /* ---------------------------------------------------
+       GENERATION
+       --------------------------------------------------- */
     public static RuneStats single(RuneStatType type, float value) {
         EnumMap<RuneStatType, Float> map = new EnumMap<>(RuneStatType.class);
         map.put(type, value);
         return new RuneStats(map);
     }
 
+    // Template: -1 means “roll this when applied”
     public static RuneStats singleUnrolled(RuneStatType type) {
-        return single(type, -1.0F); // placeholder for rolled stat
+        return single(type, -1.0F);
     }
 
     public static RuneStats rollForApplication(RuneStats template, RandomSource random) {
@@ -105,28 +104,42 @@ public final class RuneStats {
         return map.isEmpty() ? EMPTY : new RuneStats(map);
     }
 
-    /** ---------------------------------------------------
-     *  COMBINE
-     * --------------------------------------------------- */
+    /* ---------------------------------------------------
+       COMBINE + CAPPING
+       --------------------------------------------------- */
     public static RuneStats combine(RuneStats base, RuneStats add) {
         if ((base == null || base.isEmpty()) && (add == null || add.isEmpty())) {
             return EMPTY;
         }
+
         EnumMap<RuneStatType, Float> map = new EnumMap<>(RuneStatType.class);
-        if (base != null) {
+
+        if (base != null && !base.isEmpty()) {
             map.putAll(base.values);
         }
-        if (add != null) {
+
+        if (add != null && !add.isEmpty()) {
             for (Map.Entry<RuneStatType, Float> e : add.values.entrySet()) {
-                map.merge(e.getKey(), e.getValue(), Float::sum);
+                RuneStatType type = e.getKey();
+                float existing = map.getOrDefault(type, 0.0F);
+                float added = e.getValue();
+                float sum = existing + added;
+
+                float cap = type.cap();
+                if (cap > 0.0F && sum > cap) {
+                    sum = cap; // e.g. 90 + 20 with cap 100 → 100
+                }
+
+                map.put(type, sum);
             }
         }
+
         return map.isEmpty() ? EMPTY : new RuneStats(map);
     }
 
-    /** ---------------------------------------------------
-     *  GET / SET ON STACK
-     * --------------------------------------------------- */
+    /* ---------------------------------------------------
+       GET / SET ON STACK
+       --------------------------------------------------- */
     public static RuneStats get(ItemStack stack) {
         CustomData data = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
         CompoundTag root = data.copyTag();
@@ -149,6 +162,7 @@ public final class RuneStats {
             root.put(NBT_KEY, stats.save());
         }
 
+        // rebuild attributes + durability from current stats
         RuneAttributeApplier.clearRunicAttributes(stack);
         RuneAttributeApplier.clearDurability(stack, root);
 

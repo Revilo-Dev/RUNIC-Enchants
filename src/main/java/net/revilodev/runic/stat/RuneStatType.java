@@ -11,22 +11,20 @@ import java.util.stream.Collectors;
 public enum RuneStatType implements StringRepresentable {
     ATTACK_SPEED("attack_speed", 10, 30, 0.0F),
     ATTACK_DAMAGE("attack_damage", 5, 15, 0.0F),
-    ATTACK_RANGE("attack_range", 5, 15, 0.0F),
+    ATTACK_RANGE("attack_range", 5, 15, 25.0F),
     MOVEMENT_SPEED("movement_speed", 25, 50, 100.0F),
-    SWEEPING_RANGE("sweeping_range", 20, 60, 0.0F),
+    SWEEPING_RANGE("sweeping_range", 5, 10, 50.0F),
     DURABILITY("durability", 10, 150, 0.0F),
-    RESISTANCE("resistance", 10, 10, 50.0F),
-    FIRE_RESISTANCE("fire_resistance", 10, 25, 100.0F),
-    BLAST_RESISTANCE("blast_resistance", 10, 25, 100.0F),
-    PROJECTILE_RESISTANCE("projectile_resistance", 10, 25, 100.0F),
-    KNOCKBACK_RESISTANCE("knockback_resistance", 10, 25, 100.0F),
+    RESISTANCE("resistance", 5, 10, 25.0F),
+    FIRE_RESISTANCE("fire_resistance", 5, 10, 25.0F),
+    BLAST_RESISTANCE("blast_resistance", 5, 10, 25.0F),
+    PROJECTILE_RESISTANCE("projectile_resistance", 5, 10, 25.0F),
+    KNOCKBACK_RESISTANCE("knockback_resistance", 5, 10, 25.0F),
     MINING_SPEED("mining_speed", 10, 100, 0.0F),
-    FORTUNE("fortune", 10, 50, 0.0F),
     SWIMMING_SPEED("swimming_speed", 10, 80, 0.0F),
     FALL_REDUCTION("fall_reduction", 10, 85, 300.0F),
     UNDEAD_DAMAGE("undead_damage", 10, 50, 0.0F),
     NETHER_DAMAGE("nether_damage", 10, 50, 0.0F),
-    THORNS("thorns", 5, 40, 0.0F),
     HEALTH("health", 5, 10, 0.0F),
     STUN_CHANCE("stun_chance", 5, 10, 0.0F),
     FLAME_CHANCE("flame_chance", 5, 10, 0.0F),
@@ -35,10 +33,8 @@ public enum RuneStatType implements StringRepresentable {
     POISON_CHANCE("poison_chance", 5, 10, 0.0F),
     WEAKENING_CHANCE("weakening_chance", 5, 10, 0.0F),
     HEALING_EFFICIENCY("healing_efficiency", 10, 50, 0.0F),
-    WATER_BREATHING("water_breathing", 10, 100, 0.0F),
-    SOUL_SPEED("soul_speed", 10, 100, 0.0F),
-    DRAW_SPEED("draw_speed", 10, 50, 0.0F),
-    SWIFT_SNEAK("swift_sneak", 10, 100, 0.0F);
+    WATER_BREATHING("water_breathing", 50, 150, 0.0F),
+    DRAW_SPEED("draw_speed", 10, 50, 0.0F);
 
     private static final Map<String, RuneStatType> BY_ID =
             Arrays.stream(values()).collect(Collectors.toMap(RuneStatType::id, t -> t));
