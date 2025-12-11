@@ -16,9 +16,13 @@ public final class ModParticles {
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> STUN_STAR =
             PARTICLES.register("stun_star", () -> new SimpleParticleType(false));
 
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> BLOOD_DROP =
+            PARTICLES.register("blood_drop", () -> new SimpleParticleType(false));
+
     private ModParticles() {}
 
     public static void register(IEventBus bus) {
         PARTICLES.register(bus);
     }
 }
+

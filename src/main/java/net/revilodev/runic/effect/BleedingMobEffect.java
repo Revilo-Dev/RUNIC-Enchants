@@ -20,7 +20,7 @@ public class BleedingMobEffect extends MobEffect {
     @Override
     public boolean applyEffectTick(LivingEntity entity, int amplifier) {
         if (!entity.level().isClientSide) {
-            float percentPerSecond = 0.01f; // 1% of max HP per tick second
+            float percentPerSecond = 0.02f;
             float damage = percentPerSecond * entity.getMaxHealth();
             entity.hurt(entity.damageSources().magic(), damage);
 

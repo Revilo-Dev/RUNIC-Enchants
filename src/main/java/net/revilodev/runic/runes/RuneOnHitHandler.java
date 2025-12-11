@@ -85,6 +85,7 @@ public final class RuneOnHitHandler {
                                                    ResourceLocation id,
                                                    int duration,
                                                    int amplifier) {
+
         ResourceKey<MobEffect> key = ResourceKey.create(Registries.MOB_EFFECT, id);
         var holderOpt = BuiltInRegistries.MOB_EFFECT.getHolder(key);
         if (holderOpt.isEmpty()) {
@@ -92,7 +93,16 @@ public final class RuneOnHitHandler {
         }
 
         Holder<MobEffect> effect = holderOpt.get();
-        target.addEffect(new MobEffectInstance(effect, duration, amplifier));
+
+        target.addEffect(new MobEffectInstance(
+                effect,
+                duration,
+                amplifier,
+                false,
+                false,
+                true
+        ));
+
         return true;
     }
 }
