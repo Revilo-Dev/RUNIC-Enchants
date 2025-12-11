@@ -34,7 +34,13 @@ public enum RuneStatType implements StringRepresentable {
     WEAKENING_CHANCE("weakening_chance", 5, 10, 0.0F),
     HEALING_EFFICIENCY("healing_efficiency", 10, 50, 0.0F),
     WATER_BREATHING("water_breathing", 50, 150, 0.0F),
-    DRAW_SPEED("draw_speed", 10, 50, 0.0F);
+    DRAW_SPEED("draw_speed", 10, 50, 0.0F),
+    TOUGHNESS("toughness", 5, 25, 25.0F),
+    FREEZING_CHANCE("freezing_chance", 5, 10, 0.0F),
+    LEECHING_CHANCE("leeching_chance", 10, 25, 50.0F),
+    LOOTING("looting", 15, 25, 100.0F),
+    BONUS_CHANCE("bonus_chance", 20, 40, 100.0F),
+    POWER("power", 5, 20, 0.0F);
 
     private static final Map<String, RuneStatType> BY_ID =
             Arrays.stream(values()).collect(Collectors.toMap(RuneStatType::id, t -> t));

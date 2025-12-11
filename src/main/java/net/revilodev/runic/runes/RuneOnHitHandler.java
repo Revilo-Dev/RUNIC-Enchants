@@ -25,7 +25,7 @@ public final class RuneOnHitHandler {
     private static final ResourceLocation BLEEDING_ID =
             ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "bleeding");
     private static final ResourceLocation STUN_ID =
-            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "stun");
+            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "stunning");
     private static final ResourceLocation SHOCK_ID =
             ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "shocking");
 
@@ -45,15 +45,12 @@ public final class RuneOnHitHandler {
 
         RandomSource rand = player.getRandom();
 
-        // Bleeding: custom effect (runic:bleeding)
         tryRollEffect(stats, RuneStatType.BLEEDING_CHANCE, rand,
                 () -> applyCustomEffectOrSkip(target, BLEEDING_ID, 140, 0));
 
-        // Stun: custom effect (runic:stun)
         tryRollEffect(stats, RuneStatType.STUN_CHANCE, rand,
                 () -> applyCustomEffectOrSkip(target, STUN_ID, 60, 0));
 
-        // Shock: custom effect (runic:shocking) or fallback to Slowness
         tryRollEffect(stats, RuneStatType.SHOCKING_CHANCE, rand,
                 () -> {
                     if (!applyCustomEffectOrSkip(target, SHOCK_ID, 80, 0)) {
@@ -61,17 +58,14 @@ public final class RuneOnHitHandler {
                     }
                 });
 
-        // Poison chance
         tryRollEffect(stats, RuneStatType.POISON_CHANCE, rand,
                 () -> target.addEffect(new MobEffectInstance(MobEffects.POISON, 100, 0)));
 
-        // Weakening chance
         tryRollEffect(stats, RuneStatType.WEAKENING_CHANCE, rand,
                 () -> target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 120, 0)));
 
-// Flame chance → vanilla-like fire aspect
         tryRollEffect(stats, RuneStatType.FLAME_CHANCE, rand,
-                () -> target.setRemainingFireTicks(80)); // 4 seconds
+                () -> target.setRemainingFireTicks(80));
     }
 
     private static void tryRollEffect(RuneStats stats,
@@ -87,10 +81,6 @@ public final class RuneOnHitHandler {
         }
     }
 
-    /**
-     * Try to apply a custom MobEffect registered under the given id.
-     * Returns true if applied, false if no such effect exists.
-     */
     private static boolean applyCustomEffectOrSkip(LivingEntity target,
                                                    ResourceLocation id,
                                                    int duration,

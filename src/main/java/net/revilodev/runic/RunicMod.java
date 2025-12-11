@@ -2,25 +2,28 @@ package net.revilodev.runic;
 
 import com.mojang.logging.LogUtils;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
-
 import net.revilodev.runic.block.ModBlocks;
 import net.revilodev.runic.client.RunicClientModels;
 import net.revilodev.runic.effect.ModMobEffects;
 import net.revilodev.runic.item.ModCreativeModeTabs;
 import net.revilodev.runic.item.ModItems;
 import net.revilodev.runic.loot.ModLootModifiers;
+import net.revilodev.runic.particle.ModParticles;
+import net.revilodev.runic.particle.StunStarParticle;
 import net.revilodev.runic.registry.ModDataComponents;
 import net.revilodev.runic.screen.ModMenuTypes;
 import net.revilodev.runic.screen.custom.EtchingTableScreen;
-
 import org.slf4j.Logger;
 
 @Mod(RunicMod.MOD_ID)
@@ -30,13 +33,12 @@ public class RunicMod {
 
     public RunicMod(ModContainer modContainer, IEventBus modEventBus) {
 
-        // lifecycle listeners
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::addCreative);
         modEventBus.addListener(ClientModEvents::onRegisterScreens);
         modEventBus.addListener(ClientModEvents::onClientSetup);
+        modEventBus.addListener(ClientModEvents::onRegisterParticles);
 
-        // registrations
         ModCreativeModeTabs.register(modEventBus);
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
@@ -44,16 +46,12 @@ public class RunicMod {
         ModMenuTypes.register(modEventBus);
         ModDataComponents.DATA_COMPONENT_TYPES.register(modEventBus);
         ModMobEffects.register(modEventBus);
+        ModParticles.register(modEventBus);
 
-
-
-
-        // NeoForge event bus
         NeoForge.EVENT_BUS.register(this);
     }
 
     private void commonSetup(final net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent event) {
-        // nothing yet
     }
 
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
@@ -67,7 +65,6 @@ public class RunicMod {
 
     @net.neoforged.bus.api.SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
-        // server startup logic here
     }
 
     public static class ClientModEvents {
@@ -78,6 +75,10 @@ public class RunicMod {
 
         public static void onClientSetup(FMLClientSetupEvent event) {
             RunicClientModels.init();
+        }
+
+        public static void onRegisterParticles(RegisterParticleProvidersEvent event) {
+            event.registerSpriteSet(ModParticles.STUN_STAR.value(), StunStarParticle.Provider::new);
         }
     }
 }

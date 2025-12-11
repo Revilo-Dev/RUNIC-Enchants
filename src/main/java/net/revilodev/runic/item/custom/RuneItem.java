@@ -21,6 +21,7 @@ import java.util.Set;
 public class RuneItem extends Item {
 
     private static final Set<ResourceLocation> EFFECT_ENCHANT_IDS = Set.of(
+            // vanilla
             ResourceLocation.withDefaultNamespace("silk_touch"),
             ResourceLocation.withDefaultNamespace("frost_walker"),
             ResourceLocation.withDefaultNamespace("loyalty"),
@@ -35,8 +36,25 @@ public class RuneItem extends Item {
             ResourceLocation.withDefaultNamespace("piercing"),
             ResourceLocation.withDefaultNamespace("swift_sneak"),
             ResourceLocation.withDefaultNamespace("punch"),
-            ResourceLocation.withDefaultNamespace("mending")
+            ResourceLocation.withDefaultNamespace("mending"),
+
+            // runic custom enchants
+            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "skulk_smite"),
+            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "capacity"),
+            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "soul_siphoner"),
+            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "fire_react"),
+            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "catalysis"),
+            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "destruction"),
+            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "mystical_enlightenment"),
+            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "renewal"),
+            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "chill_aura"),
+            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "potato_recovery"),
+            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "acrobat"),
+            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "longfooted"),
+            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "multi_roll")
     );
+
+
 
     public RuneItem(Properties props) {
         super(props);

@@ -1,5 +1,6 @@
 {
+  "type": "minecraft:simple",
   "textures": [
-    "runic:particle/stun_star"
+    "runic:stun_star"
   ]
 }

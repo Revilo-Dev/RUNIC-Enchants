@@ -37,14 +37,10 @@ public final class RuneStats {
         return Map.copyOf(values);
     }
 
-    // Optional helper, not critical but harmless
     public RuneStats rolledForTooltip() {
         return rollForApplication(this, RandomSource.create());
     }
 
-    /* ---------------------------------------------------
-       SAVE / LOAD
-       --------------------------------------------------- */
     public CompoundTag save() {
         CompoundTag tag = new CompoundTag();
         for (Map.Entry<RuneStatType, Float> e : values.entrySet()) {
@@ -71,16 +67,12 @@ public final class RuneStats {
         return EMPTY;
     }
 
-    /* ---------------------------------------------------
-       GENERATION
-       --------------------------------------------------- */
     public static RuneStats single(RuneStatType type, float value) {
         EnumMap<RuneStatType, Float> map = new EnumMap<>(RuneStatType.class);
         map.put(type, value);
         return new RuneStats(map);
     }
 
-    // Template: -1 means “roll this when applied”
     public static RuneStats singleUnrolled(RuneStatType type) {
         return single(type, -1.0F);
     }
@@ -94,7 +86,7 @@ public final class RuneStats {
             RuneStatType type = e.getKey();
             float v = e.getValue();
 
-            if (v < 0.0F) { // unrolled stat
+            if (v < 0.0F) {
                 v = type.roll(random);
             }
             if (v != 0.0F) {
@@ -104,9 +96,6 @@ public final class RuneStats {
         return map.isEmpty() ? EMPTY : new RuneStats(map);
     }
 
-    /* ---------------------------------------------------
-       COMBINE + CAPPING
-       --------------------------------------------------- */
     public static RuneStats combine(RuneStats base, RuneStats add) {
         if ((base == null || base.isEmpty()) && (add == null || add.isEmpty())) {
             return EMPTY;
@@ -127,7 +116,7 @@ public final class RuneStats {
 
                 float cap = type.cap();
                 if (cap > 0.0F && sum > cap) {
-                    sum = cap; // e.g. 90 + 20 with cap 100 → 100
+                    sum = cap;
                 }
 
                 map.put(type, sum);
@@ -137,9 +126,6 @@ public final class RuneStats {
         return map.isEmpty() ? EMPTY : new RuneStats(map);
     }
 
-    /* ---------------------------------------------------
-       GET / SET ON STACK
-       --------------------------------------------------- */
     public static RuneStats get(ItemStack stack) {
         CustomData data = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
         CompoundTag root = data.copyTag();
@@ -162,7 +148,6 @@ public final class RuneStats {
             root.put(NBT_KEY, stats.save());
         }
 
-        // rebuild attributes + durability from current stats
         RuneAttributeApplier.clearRunicAttributes(stack);
         RuneAttributeApplier.clearDurability(stack, root);
 

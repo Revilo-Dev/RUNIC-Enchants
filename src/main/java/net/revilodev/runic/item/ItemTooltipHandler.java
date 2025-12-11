@@ -4,10 +4,25 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.AxeItem;
+import net.minecraft.world.item.BowItem;
+import net.minecraft.world.item.CrossbowItem;
+import net.minecraft.world.item.DiggerItem;
+import net.minecraft.world.item.FishingRodItem;
+import net.minecraft.world.item.HoeItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.PickaxeItem;
+import net.minecraft.world.item.ShieldItem;
+import net.minecraft.world.item.ShovelItem;
+import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.item.TieredItem;
+import net.minecraft.world.item.TridentItem;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.block.Blocks;
@@ -24,7 +39,10 @@ import net.revilodev.runic.runes.RuneSlots;
 import net.revilodev.runic.stat.RuneStatType;
 import net.revilodev.runic.stat.RuneStats;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 @EventBusSubscriber(modid = RunicMod.MOD_ID, value = Dist.CLIENT)
 public final class ItemTooltipHandler {
@@ -38,7 +56,6 @@ public final class ItemTooltipHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onTooltip(ItemTooltipEvent event) {
-
         ItemStack stack = event.getItemStack();
         if (stack.isEmpty()) return;
 
@@ -59,8 +76,12 @@ public final class ItemTooltipHandler {
         recolorEnchants(stack, tooltip, isRune);
     }
 
-    private static void stripRuneEnchantmentLines(ItemStack stack, List<Component> tooltip) {
+    private static boolean isRunicModifier(AttributeModifier mod) {
+        ResourceLocation id = mod.id();
+        return id != null && RunicMod.MOD_ID.equals(id.getNamespace());
+    }
 
+    private static void stripRuneEnchantmentLines(ItemStack stack, List<Component> tooltip) {
         ItemEnchantments live = stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
         ItemEnchantments stored = stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
 
@@ -79,7 +100,6 @@ public final class ItemTooltipHandler {
     }
 
     private static void appendRuneHeader(ItemStack stack, List<Component> tooltip) {
-
         tooltip.add(Component.literal("Apply in an Etching Table").withStyle(ChatFormatting.DARK_GRAY));
 
         RuneStats stats = RuneStats.get(stack);
@@ -102,8 +122,11 @@ public final class ItemTooltipHandler {
             tooltip.add(
                     Component.literal("Effect: ")
                             .append(effect.value().getFullname(effect, 1))
+                            .withStyle(ChatFormatting.AQUA)
             );
         }
+
+        tooltip.add(Component.empty());
     }
 
     private static void stripVanillaAttributeLines(List<Component> tooltip) {
@@ -128,12 +151,12 @@ public final class ItemTooltipHandler {
 
         boolean isSword = item instanceof SwordItem;
         boolean isShield = item instanceof ShieldItem;
-        boolean bowLike = item instanceof BowItem || item instanceof CrossbowItem;
+        boolean isBowLike = item instanceof BowItem || item instanceof CrossbowItem;
         boolean isWeapon =
                 isSword ||
                         item instanceof AxeItem ||
                         item instanceof TridentItem ||
-                        bowLike ||
+                        isBowLike ||
                         isShield ||
                         item instanceof FishingRodItem;
         boolean isToolForMining =
@@ -154,18 +177,58 @@ public final class ItemTooltipHandler {
             ArmorItem armor = (ArmorItem) item;
             EquipmentSlot slot = armor.getEquipmentSlot();
 
-            class ArmorStats { double armor = 0, toughness = 0, knock = 0, move = 0, soul = 0, health = 0; }
-
+            class ArmorStats {
+                double armor = 0;
+                double toughBase = 0;
+                double toughMult = 0;
+                double knockBase = 0;
+                double knockMult = 0;
+                double move = 0;
+                double soul = 0;
+                double healthBase = 0;
+                double healthMult = 0;
+            }
             ArmorStats a = new ArmorStats();
 
             stack.forEachModifier(slot, (Holder<net.minecraft.world.entity.ai.attributes.Attribute> attr, AttributeModifier mod) -> {
-                if (attr.is(Attributes.ARMOR)) a.armor += mod.amount();
-                else if (attr.is(Attributes.ARMOR_TOUGHNESS)) a.toughness += mod.amount();
-                else if (attr.is(Attributes.KNOCKBACK_RESISTANCE)) a.knock += mod.amount();
-                else if (attr.is(Attributes.MOVEMENT_SPEED)) a.move += mod.operation() == AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL ? mod.amount() * 100 : mod.amount();
-                else if (attr.is(Attributes.MOVEMENT_EFFICIENCY)) a.soul += mod.operation() == AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL ? mod.amount() * 100 : mod.amount();
-                else if (attr.is(Attributes.MAX_HEALTH)) a.health += mod.operation() == AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL ? mod.amount() * 100 : mod.amount();
+                if (attr.is(Attributes.ARMOR)) {
+                    a.armor += mod.amount();
+                } else if (attr.is(Attributes.ARMOR_TOUGHNESS)) {
+                    if (isRunicModifier(mod) && mod.operation() == AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL) {
+                        a.toughMult += mod.amount();
+                    } else {
+                        a.toughBase += mod.amount();
+                    }
+                } else if (attr.is(Attributes.KNOCKBACK_RESISTANCE)) {
+                    if (isRunicModifier(mod) && mod.operation() == AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL) {
+                        a.knockMult += mod.amount();
+                    } else {
+                        a.knockBase += mod.amount();
+                    }
+                } else if (attr.is(Attributes.MOVEMENT_SPEED)) {
+                    if (mod.operation() == AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL) {
+                        a.move += mod.amount() * 100.0;
+                    } else {
+                        a.move += mod.amount();
+                    }
+                } else if (attr.is(Attributes.MOVEMENT_EFFICIENCY)) {
+                    if (mod.operation() == AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL) {
+                        a.soul += mod.amount() * 100.0;
+                    } else {
+                        a.soul += mod.amount();
+                    }
+                } else if (attr.is(Attributes.MAX_HEALTH)) {
+                    if (isRunicModifier(mod) && mod.operation() == AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL) {
+                        a.healthMult += mod.amount();
+                    } else {
+                        a.healthBase += mod.amount();
+                    }
+                }
             });
+
+            double toughness = a.toughBase * (1.0 + a.toughMult);
+            double knock = a.knockBase * (1.0 + a.knockMult);
+            double health = a.healthBase * (1.0 + a.healthMult);
 
             String armorIcon = switch (slot) {
                 case HEAD -> ICON_HELMET;
@@ -175,46 +238,167 @@ public final class ItemTooltipHandler {
                 default -> ICON_HELMET;
             };
 
-            if (a.armor != 0)   tooltip.add(statLine(armorIcon, Component.translatable(Attributes.ARMOR.value().getDescriptionId()), a.armor));
-            if (a.toughness != 0) tooltip.add(statLine(armorIcon, Component.translatable(Attributes.ARMOR_TOUGHNESS.value().getDescriptionId()), a.toughness));
-            if (a.knock != 0)   tooltip.add(statLine(armorIcon, Component.translatable(Attributes.KNOCKBACK_RESISTANCE.value().getDescriptionId()), a.knock));
-            if (a.health != 0)  tooltip.add(statLine(armorIcon, Component.translatable(Attributes.MAX_HEALTH.value().getDescriptionId()), a.health));
-            if (a.move != 0)    tooltip.add(statLine(ICON_BOOTS, Component.translatable(Attributes.MOVEMENT_SPEED.value().getDescriptionId()), a.move));
-            if (a.soul != 0)    tooltip.add(statLine(ICON_BOOTS, Component.translatable(Attributes.MOVEMENT_EFFICIENCY.value().getDescriptionId()), a.soul));
+            if (a.armor != 0) {
+                tooltip.add(statLine(
+                        armorIcon,
+                        Component.translatable(Attributes.ARMOR.value().getDescriptionId()),
+                        a.armor
+                ));
+            }
+            if (toughness != 0) {
+                tooltip.add(statLine(
+                        armorIcon,
+                        Component.translatable(Attributes.ARMOR_TOUGHNESS.value().getDescriptionId()),
+                        toughness
+                ));
+            }
+            if (knock != 0) {
+                tooltip.add(statLine(
+                        armorIcon,
+                        Component.translatable(Attributes.KNOCKBACK_RESISTANCE.value().getDescriptionId()),
+                        knock
+                ));
+            }
+            if (health != 0) {
+                tooltip.add(statLine(
+                        armorIcon,
+                        Component.translatable(Attributes.MAX_HEALTH.value().getDescriptionId()),
+                        health
+                ));
+            }
+            if (a.move != 0) {
+                tooltip.add(statLine(
+                        ICON_BOOTS,
+                        Component.translatable(Attributes.MOVEMENT_SPEED.value().getDescriptionId()),
+                        a.move
+                ));
+            }
+            if (a.soul != 0) {
+                tooltip.add(statLine(
+                        ICON_BOOTS,
+                        Component.translatable(Attributes.MOVEMENT_EFFICIENCY.value().getDescriptionId()),
+                        a.soul
+                ));
+            }
 
-            addDurability(stack, tooltip);
+            int max = stack.getMaxDamage();
+            if (max > 0) {
+                int curr = max - stack.getDamageValue();
+                float pct = (float) curr / max;
+
+                ChatFormatting color =
+                        pct > 0.50f ? ChatFormatting.GREEN :
+                                pct > 0.25f ? ChatFormatting.YELLOW :
+                                        pct > 0.10f ? ChatFormatting.GOLD :
+                                                ChatFormatting.RED;
+
+                tooltip.add(Component.literal("  Durability: " + curr + "/" + max).withStyle(color));
+            }
+
             return;
         }
 
         if (isShield) {
-            addDurability(stack, tooltip);
+            int max = stack.getMaxDamage();
+            if (max > 0) {
+                int curr = max - stack.getDamageValue();
+                float pct = (float) curr / max;
+
+                ChatFormatting color =
+                        pct > 0.50f ? ChatFormatting.GREEN :
+                                pct > 0.25f ? ChatFormatting.YELLOW :
+                                        pct > 0.10f ? ChatFormatting.GOLD :
+                                                ChatFormatting.RED;
+
+                tooltip.add(Component.literal("  Durability: " + curr + "/" + max).withStyle(color));
+            }
             return;
         }
 
-        class WeaponStats { double dmg = 1.0, spd = 4.0; }
+        class WeaponStats {
+            double baseDmg = 0.0;
+            double dmgMult = 0.0;
+            double baseSpd = 0.0;
+            double spdMult = 0.0;
+
+            double damage() {
+                return baseDmg * (1.0 + dmgMult);
+            }
+
+            double speed() {
+                return baseSpd * (1.0 + spdMult);
+            }
+        }
+
         WeaponStats ws = new WeaponStats();
 
         stack.forEachModifier(EquipmentSlot.MAINHAND,
                 (Holder<net.minecraft.world.entity.ai.attributes.Attribute> attr, AttributeModifier mod) -> {
-                    if (attr.is(Attributes.ATTACK_DAMAGE)) ws.dmg += mod.amount();
-                    else if (attr.is(Attributes.ATTACK_SPEED)) ws.spd += mod.amount();
+                    if (attr.is(Attributes.ATTACK_DAMAGE)) {
+                        if (isRunicModifier(mod) && mod.operation() == AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL) {
+                            ws.dmgMult += mod.amount();
+                        } else {
+                            ws.baseDmg += mod.amount();
+                        }
+                    } else if (attr.is(Attributes.ATTACK_SPEED)) {
+                        if (isRunicModifier(mod) && mod.operation() == AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL) {
+                            ws.spdMult += mod.amount();
+                        } else {
+                            ws.baseSpd += mod.amount();
+                        }
+                    }
                 });
 
+        double dmgVal = ws.damage();
+        double spdVal = ws.speed();
+
         double baseRange = 3.0;
-        float rangePct = stats != null ? stats.get(RuneStatType.ATTACK_RANGE) : 0;
+        float rangePct = stats != null ? stats.get(RuneStatType.ATTACK_RANGE) : 0.0F;
         double finalRange = baseRange * (1.0 + (rangePct / 100.0));
 
-        if (bowLike) {
-            tooltip.add(statLine(ICON_SWORD, Component.literal("Draw Speed"), ws.spd));
-            tooltip.add(statLine(ICON_SWORD, Component.literal("Power"), ws.dmg));
-            tooltip.add(statLine(ICON_SWORD, Component.literal("Range"), finalRange));
+        if (isBowLike) {
+            float drawPct = stats != null ? stats.get(RuneStatType.DRAW_SPEED) : 0.0F;
+            double baseDraw = 1.0;
+            double finalDraw = baseDraw * (1.0 + drawPct / 100.0);
+
+            float powerPct = stats != null ? stats.get(RuneStatType.POWER) : 0.0F;
+            double basePower = 1.0;
+            double finalPower = basePower * (1.0 + powerPct / 100.0);
+
+            tooltip.add(statLine(
+                    ICON_SWORD,
+                    Component.literal("Draw Speed"),
+                    finalDraw
+            ));
+            tooltip.add(statLine(
+                    ICON_SWORD,
+                    Component.literal("Power"),
+                    finalPower
+            ));
+            tooltip.add(statLine(
+                    ICON_SWORD,
+                    Component.literal("Range"),
+                    finalRange
+            ));
         } else {
-            tooltip.add(statLine(ICON_SWORD, Component.translatable(Attributes.ATTACK_DAMAGE.value().getDescriptionId()), ws.dmg));
-            tooltip.add(statLine(ICON_SWORD, Component.translatable(Attributes.ATTACK_SPEED.value().getDescriptionId()), ws.spd));
-            tooltip.add(statLine(ICON_SWORD, Component.literal("Range"), finalRange));
+            tooltip.add(statLine(
+                    ICON_SWORD,
+                    Component.translatable(Attributes.ATTACK_DAMAGE.value().getDescriptionId()),
+                    dmgVal
+            ));
+            tooltip.add(statLine(
+                    ICON_SWORD,
+                    Component.translatable(Attributes.ATTACK_SPEED.value().getDescriptionId()),
+                    spdVal
+            ));
+            tooltip.add(statLine(
+                    ICON_SWORD,
+                    Component.literal("Range"),
+                    finalRange
+            ));
         }
 
-        if (isToolForMining && !(item instanceof SwordItem) && !bowLike) {
+        if (isToolForMining && !(item instanceof SwordItem) && !isBowLike) {
             double baseMining;
             if (item instanceof PickaxeItem) baseMining = stack.getDestroySpeed(Blocks.STONE.defaultBlockState());
             else if (item instanceof ShovelItem) baseMining = stack.getDestroySpeed(Blocks.DIRT.defaultBlockState());
@@ -222,33 +406,33 @@ public final class ItemTooltipHandler {
             else if (item instanceof HoeItem) baseMining = stack.getDestroySpeed(Blocks.WHEAT.defaultBlockState());
             else baseMining = stack.getDestroySpeed(Blocks.STONE.defaultBlockState());
 
-            float miningPct = stats != null ? stats.get(RuneStatType.MINING_SPEED) : 0;
+            float miningPct = stats != null ? stats.get(RuneStatType.MINING_SPEED) : 0.0F;
             double finalMining = baseMining * (1.0 + (miningPct / 100.0));
 
-            tooltip.add(statLine(ICON_PICKAXE, Component.translatable(Attributes.BLOCK_BREAK_SPEED.value().getDescriptionId()), finalMining));
+            tooltip.add(statLine(
+                    ICON_PICKAXE,
+                    Component.translatable(Attributes.BLOCK_BREAK_SPEED.value().getDescriptionId()),
+                    finalMining
+            ));
         }
 
-        addDurability(stack, tooltip);
-    }
-
-    private static void addDurability(ItemStack stack, List<Component> tooltip) {
         int max = stack.getMaxDamage();
-        if (max <= 0) return;
+        if (max > 0) {
+            int curr = max - stack.getDamageValue();
+            float pct = (float) curr / max;
 
-        int curr = max - stack.getDamageValue();
-        float pct = curr / (float) max;
+            ChatFormatting color =
+                    pct > 0.50f ? ChatFormatting.GREEN :
+                            pct > 0.25f ? ChatFormatting.YELLOW :
+                                    pct > 0.10f ? ChatFormatting.GOLD :
+                                            ChatFormatting.RED;
 
-        ChatFormatting color =
-                pct > 0.50f ? ChatFormatting.GREEN :
-                        pct > 0.25f ? ChatFormatting.YELLOW :
-                                pct > 0.10f ? ChatFormatting.GOLD :
-                                        ChatFormatting.RED;
-
-        tooltip.add(Component.literal("  Durability: " + curr + "/" + max).withStyle(color));
+            tooltip.add(Component.literal("  Durability: " + curr + "/" + max).withStyle(color));
+        }
     }
 
     private static Component statLine(String icon, Component name, double val) {
-        String fmt = (Math.abs(val - Math.round(val)) < 0.001)
+        String fmt = Math.abs(val - Math.round(val)) < 0.001
                 ? String.format(Locale.ROOT, "%.0f", val)
                 : String.format(Locale.ROOT, "%.2f", val);
 
@@ -259,7 +443,6 @@ public final class ItemTooltipHandler {
     }
 
     private static void appendRuneStats(ItemStack stack, List<Component> tooltip, boolean isRune) {
-
         RuneStats stats = RuneStats.get(stack);
         if (stats == null || stats.isEmpty()) return;
 
@@ -267,22 +450,29 @@ public final class ItemTooltipHandler {
         tooltip.add(Component.literal("Enhanced Stats:").withStyle(ChatFormatting.GRAY));
 
         for (Map.Entry<RuneStatType, Float> e : stats.view().entrySet()) {
-
             RuneStatType type = e.getKey();
             float v = e.getValue();
             if (v == 0) continue;
 
             String vStr;
 
-            if (isRune && v < 0) {
+            if (isRune && v < 0.0F) {
                 int min = type.minPercent();
                 int max = type.maxPercent();
-                vStr = (min == max ? "+" + min + "%" : min + "% - " + max + "%");
+                if (min == max) {
+                    vStr = "+" + min + "%";
+                } else {
+                    vStr = min + "% - " + max + "%";
+                }
             } else {
-                float shown = Math.max(v, 0);
-                vStr = "+" + (shown == Math.round(shown)
-                        ? (int) shown
-                        : String.format(Locale.ROOT, "%.1f", shown)) + "%";
+                float shown = v;
+                if (shown < 0.0F) {
+                    shown = 0.0F;
+                }
+                vStr =
+                        Math.abs(shown - Math.round(shown)) < 0.001
+                                ? "+" + (int) shown + "%"
+                                : "+" + String.format(Locale.ROOT, "%.1f%%", shown);
             }
 
             tooltip.add(Component.literal("  ")
@@ -293,7 +483,6 @@ public final class ItemTooltipHandler {
     }
 
     private static void appendRuneSlots(ItemStack stack, List<Component> tooltip) {
-
         int cap = RuneSlots.capacity(stack);
         if (cap <= 0) return;
 
@@ -309,11 +498,11 @@ public final class ItemTooltipHandler {
     }
 
     private static void recolorEnchants(ItemStack stack, List<Component> tooltip, boolean isRune) {
-
         ItemEnchantments live = stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
         ItemEnchantments stored = stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
 
-        if (live.isEmpty() && stored.isEmpty()) return;
+        boolean recolor = !live.isEmpty() || !stored.isEmpty();
+        if (!recolor) return;
 
         List<Component> vanilla = new ArrayList<>();
         List<Component> rebuilt = new ArrayList<>();
