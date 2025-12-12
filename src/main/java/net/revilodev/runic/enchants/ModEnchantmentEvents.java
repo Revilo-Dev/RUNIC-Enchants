@@ -24,11 +24,22 @@ import net.revilodev.runic.RunicMod;
 public class ModEnchantmentEvents {
 
     private static final ResourceKey<Enchantment> POISON_CLOUD_KEY =
-            ResourceKey.create(Registries.ENCHANTMENT, new ResourceLocation(RunicMod.MOD_ID, "poison_cloud"));
+            ResourceKey.create(
+                    Registries.ENCHANTMENT,
+                    ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "poison_cloud")
+            );
+
     private static final ResourceKey<Enchantment> PAIN_CYCLE_KEY =
-            ResourceKey.create(Registries.ENCHANTMENT, new ResourceLocation(RunicMod.MOD_ID, "pain_cycle"));
+            ResourceKey.create(
+                    Registries.ENCHANTMENT,
+                    ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "pain_cycle")
+            );
+
     private static final ResourceKey<Enchantment> COMMITTED_KEY =
-            ResourceKey.create(Registries.ENCHANTMENT, new ResourceLocation(RunicMod.MOD_ID, "committed"));
+            ResourceKey.create(
+                    Registries.ENCHANTMENT,
+                    ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "committed")
+            );
 
     @SubscribeEvent
     public static void onCrit(CriticalHitEvent event) {
