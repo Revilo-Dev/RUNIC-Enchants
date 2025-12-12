@@ -50,19 +50,16 @@ public class EtchingTableMenu extends AbstractContainerMenu {
         this.access = access;
         this.level = inv.player.level();
 
-        // Target slot
         this.addSlot(new Slot(input, 0, 8, 50) {
             @Override
             public int getMaxStackSize() { return 1; }
         });
 
-        // Rune slot
         this.addSlot(new Slot(input, 1, 44, 50) {
             @Override
             public int getMaxStackSize() { return 64; }
         });
 
-        // Output slot
         this.addSlot(new Slot(result, 0, 98, 50) {
             @Override
             public boolean mayPlace(ItemStack stack) { return false; }
@@ -84,7 +81,6 @@ public class EtchingTableMenu extends AbstractContainerMenu {
             }
         });
 
-        // Player inventory
         int x = 8;
         int y = 84;
 
@@ -130,50 +126,51 @@ public class EtchingTableMenu extends AbstractContainerMenu {
         );
     }
 
-    /* ============================================================
-       RUNE APPLICATION RULES
-       ============================================================ */
-
     private boolean canApplyRuneTo(ItemStack target, ItemStack rune) {
-        // Only matters for ENHANCED_RUNE (stat/effect runes)
         if (!rune.is(ModItems.ENHANCED_RUNE.get())) return false;
 
-        RuneStats rs = RuneItem.getRuneStats(rune);
         RuneStatType stat = getRuneStatType(rune);
         Item item = target.getItem();
 
-        // If rune has a stat, enforce cap + slot restrictions
         if (stat != null) {
             float cap = stat.cap();
             if (cap > 0.0F) {
                 float current = RuneStats.get(target).get(stat);
-                // already at or above cap → cannot apply this rune anymore
                 if (current >= cap - 0.0001F) {
                     return false;
                 }
             }
 
             return switch (stat) {
-                case ATTACK_DAMAGE, ATTACK_SPEED, ATTACK_RANGE, SWEEPING_RANGE ->
+                case ATTACK_DAMAGE, ATTACK_SPEED, ATTACK_RANGE, SWEEPING_RANGE,
+                     UNDEAD_DAMAGE, NETHER_DAMAGE,
+                     STUN_CHANCE, FLAME_CHANCE, BLEEDING_CHANCE, SHOCKING_CHANCE,
+                     POISON_CHANCE, WITHERING_CHANCE, WEAKENING_CHANCE,
+                     FREEZING_CHANCE, LEECHING_CHANCE, LOOTING, BONUS_CHANCE ->
                         item instanceof SwordItem
                                 || item instanceof AxeItem
-                                || item instanceof TridentItem;
+                                || item instanceof TridentItem
+                                || item instanceof MaceItem;
+
+                case POWER, DRAW_SPEED ->
+                        item instanceof BowItem || item instanceof CrossbowItem;
+
+                case MINING_SPEED ->
+                        item instanceof DiggerItem;
 
                 case MOVEMENT_SPEED, HEALTH, RESISTANCE, FIRE_RESISTANCE, BLAST_RESISTANCE,
                      PROJECTILE_RESISTANCE, KNOCKBACK_RESISTANCE,
-                     SWIMMING_SPEED, WATER_BREATHING, FALL_REDUCTION ->
+                     SWIMMING_SPEED, WATER_BREATHING, FALL_REDUCTION,
+                     TOUGHNESS, HEALING_EFFICIENCY, JUMP_HEIGHT ->
                         item instanceof ArmorItem;
 
-
-
-                case DRAW_SPEED ->
-                        item instanceof BowItem || item instanceof CrossbowItem;
+                case DURABILITY ->
+                        target.isDamageableItem();
 
                 default -> true;
             };
         }
 
-        // Effect-only rune (no stats): allow.
         return true;
     }
 
@@ -182,19 +179,14 @@ public class EtchingTableMenu extends AbstractContainerMenu {
         if (stats == null || stats.isEmpty()) return null;
 
         for (RuneStatType t : stats.view().keySet()) {
-            return t; // first stat
+            return t;
         }
         return null;
     }
 
-    /* ============================================================
-       PREVIEW LOGIC
-       ============================================================ */
-
     private ItemStack preview(ItemStack target, ItemStack rune) {
         if (target.isEmpty() || rune.isEmpty()) return ItemStack.EMPTY;
 
-        // Utility runes keep their old behaviour
         if (rune.is(ModItems.REPAIR_RUNE.get())) {
             if (RuneSlots.capacity(target) <= 1) return ItemStack.EMPTY;
             return target.copy();
@@ -219,7 +211,6 @@ public class EtchingTableMenu extends AbstractContainerMenu {
             return list.isEmpty() ? ItemStack.EMPTY : target.copy();
         }
 
-        // Stat/effect runes
         if (!rune.is(ModItems.ENHANCED_RUNE.get())) return ItemStack.EMPTY;
         if (RuneSlots.remaining(target) <= 0) return ItemStack.EMPTY;
         if (!canApplyRuneTo(target, rune)) return ItemStack.EMPTY;
@@ -234,13 +225,7 @@ public class EtchingTableMenu extends AbstractContainerMenu {
         return target.copy();
     }
 
-    /* ============================================================
-       APPLY RUNE
-       ============================================================ */
-
     private void applyRuneOnTake(ItemStack taken, ItemStack rune) {
-        // This is your original logic, just dropped back in.
-
         if (rune.is(ModItems.REPAIR_RUNE.get())) {
             int cap = RuneSlots.capacity(taken);
             if (cap > 1) {
@@ -330,10 +315,6 @@ public class EtchingTableMenu extends AbstractContainerMenu {
             RuneSlots.tryConsumeSlot(taken);
         }
     }
-
-    /* ============================================================
-       MISC
-       ============================================================ */
 
     @Override
     public void removed(Player player) {

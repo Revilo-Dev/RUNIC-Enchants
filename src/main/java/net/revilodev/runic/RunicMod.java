@@ -11,7 +11,6 @@ import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
-import net.revilodev.runic.enchants.ModEnchantments;
 import net.revilodev.runic.block.ModBlocks;
 import net.revilodev.runic.client.RunicClientModels;
 import net.revilodev.runic.effect.ModMobEffects;

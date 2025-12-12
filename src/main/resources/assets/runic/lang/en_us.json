@@ -53,6 +53,10 @@
   "tooltip.runic.stat.bonus_chance": "\uefe5 Bonus Shot Chance",
   "tooltip.runic.stat.power": "\uefe5 Power",
 
+  "enchantment.runic.poison_cloud": "Poison Cloud",
+  "enchantment.runic.pain_cycle": "Pain Cycle",
+  "enchantment.runic.committed": "Committed",
+
 
   "tooltip.runic.expansion_rune": "§7Adds an Additional Rune Slot to your Gear at the cost of 25% max durability",
   "tooltip.runic.repair_rune": "§7Recovers 25% of the items durability at the cost of a Rune Slot",

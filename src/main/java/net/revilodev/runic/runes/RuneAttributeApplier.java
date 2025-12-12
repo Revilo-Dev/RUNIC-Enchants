@@ -14,6 +14,7 @@ import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.FishingRodItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.MaceItem;
 import net.minecraft.world.item.ShieldItem;
 import net.minecraft.world.item.TieredItem;
 import net.minecraft.world.item.TridentItem;
@@ -199,7 +200,8 @@ public final class RuneAttributeApplier {
                 || item instanceof CrossbowItem
                 || item instanceof TridentItem
                 || item instanceof ShieldItem
-                || item instanceof FishingRodItem) {
+                || item instanceof FishingRodItem
+                || item instanceof MaceItem) {
             return EquipmentSlotGroup.MAINHAND;
         }
 
