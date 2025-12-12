@@ -39,10 +39,12 @@
   "tooltip.runic.stat.bleeding_chance": "\ueef4 Bleeding Chance",
   "tooltip.runic.stat.shocking_chance": "\ueef4 Shocking Chance",
   "tooltip.runic.stat.poison_chance": "\ueef4 Poison Chance",
+  "tooltip.runic.stat.withering_chance": "\ueef4 Withering Chance",
   "tooltip.runic.stat.weakening_chance": "\ueef4 Weakening Chance",
   "tooltip.runic.stat.healing_efficiency": "\ueef4 Healing Efficiency",
   "tooltip.runic.stat.water_breathing": "\uefe1 Water Breathing",
   "tooltip.runic.stat.draw_speed": "\uefe8 Draw Speed",
+  "tooltip.runic.stat.jump_height": "\uefe7 Jump Height",
 
   "tooltip.runic.stat.toughness": "\uefe2 Armour Toughness",
   "tooltip.runic.stat.freezing_chance": "\ueef4 Freezing Chance",

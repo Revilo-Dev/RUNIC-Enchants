@@ -21,7 +21,7 @@ import java.util.Set;
 public class RuneItem extends Item {
 
     private static final Set<ResourceLocation> EFFECT_ENCHANT_IDS = Set.of(
-            // vanilla
+            // vanilla enchants
             ResourceLocation.withDefaultNamespace("silk_touch"),
             ResourceLocation.withDefaultNamespace("frost_walker"),
             ResourceLocation.withDefaultNamespace("loyalty"),
@@ -38,7 +38,13 @@ public class RuneItem extends Item {
             ResourceLocation.withDefaultNamespace("punch"),
             ResourceLocation.withDefaultNamespace("mending"),
 
-            // runic custom enchants
+            // Runic Enchants
+            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "poison_cloud"),
+            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "pain_cycle"),
+            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "committed"),
+
+
+            // 3rd party custom enchants
             ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "skulk_smite"),
             ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "capacity"),
             ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "soul_siphoner"),

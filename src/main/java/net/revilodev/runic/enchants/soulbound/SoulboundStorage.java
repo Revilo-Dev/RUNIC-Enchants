@@ -1,4 +1,4 @@
-package net.revilodev.runic.Enhancements.soulbound;
+package net.revilodev.runic.enchants.soulbound;
 
 import net.minecraft.world.item.ItemStack;
 

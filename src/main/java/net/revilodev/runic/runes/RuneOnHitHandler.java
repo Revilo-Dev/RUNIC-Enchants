@@ -66,6 +66,9 @@ public final class RuneOnHitHandler {
 
         tryRollEffect(stats, RuneStatType.FLAME_CHANCE, rand,
                 () -> target.setRemainingFireTicks(80));
+
+        tryRollEffect(stats, RuneStatType.WITHERING_CHANCE, rand,
+                () -> target.addEffect(new MobEffectInstance(MobEffects.WITHER, 100, 0)));
     }
 
     private static void tryRollEffect(RuneStats stats,
@@ -74,11 +77,8 @@ public final class RuneOnHitHandler {
                                       Runnable onSuccess) {
         float pct = stats.get(type);
         if (pct <= 0.0F) return;
-
         float chance = pct / 100.0F;
-        if (rand.nextFloat() <= chance) {
-            onSuccess.run();
-        }
+        if (rand.nextFloat() <= chance) onSuccess.run();
     }
 
     private static boolean applyCustomEffectOrSkip(LivingEntity target,

@@ -39,10 +39,20 @@
   "tooltip.runic.stat.bleeding_chance": "\ueef4 Bleeding Chance",
   "tooltip.runic.stat.shocking_chance": "\ueef4 Shocking Chance",
   "tooltip.runic.stat.poison_chance": "\ueef4 Poison Chance",
+  "tooltip.runic.stat.withering_chance": "\ueef4 Withering Chance",
   "tooltip.runic.stat.weakening_chance": "\ueef4 Weakening Chance",
   "tooltip.runic.stat.healing_efficiency": "\ueef4 Healing Efficiency",
   "tooltip.runic.stat.water_breathing": "\uefe1 Water Breathing",
   "tooltip.runic.stat.draw_speed": "\uefe8 Draw Speed",
+  "tooltip.runic.stat.jump_height": "\uefe8 Jump Height",
+
+  "tooltip.runic.stat.toughness": "\uefe2 Armour Toughness",
+  "tooltip.runic.stat.freezing_chance": "\ueef4 Freezing Chance",
+  "tooltip.runic.stat.leeching_chance": "\ueef4 Leeching Chance",
+  "tooltip.runic.stat.looting": "\ueef3 Looting",
+  "tooltip.runic.stat.bonus_chance": "\uefe5 Bonus Shot Chance",
+  "tooltip.runic.stat.power": "\uefe5 Power",
+
 
   "tooltip.runic.expansion_rune": "§7Adds an Additional Rune Slot to your Gear at the cost of 25% max durability",
   "tooltip.runic.repair_rune": "§7Recovers 25% of the items durability at the cost of a Rune Slot",

@@ -26,12 +26,13 @@ public enum RuneStatType implements StringRepresentable {
     UNDEAD_DAMAGE("undead_damage", 10, 50, 0.0F),
     NETHER_DAMAGE("nether_damage", 10, 50, 0.0F),
     HEALTH("health", 5, 10, 0.0F),
-    STUN_CHANCE("stun_chance", 5, 10, 0.0F),
-    FLAME_CHANCE("flame_chance", 5, 10, 0.0F),
-    BLEEDING_CHANCE("bleeding_chance", 5, 10, 0.0F),
-    SHOCKING_CHANCE("shocking_chance", 5, 10, 0.0F),
-    POISON_CHANCE("poison_chance", 5, 10, 0.0F),
-    WEAKENING_CHANCE("weakening_chance", 5, 10, 0.0F),
+    STUN_CHANCE("stun_chance", 5, 10, 50.0F),
+    FLAME_CHANCE("flame_chance", 5, 10, 50.0F),
+    BLEEDING_CHANCE("bleeding_chance", 5, 10, 100.0F),
+    SHOCKING_CHANCE("shocking_chance", 5, 10, 100.0F),
+    POISON_CHANCE("poison_chance", 5, 10, 100.0F),
+    WITHERING_CHANCE("withering_chance", 5, 10, 100.0F),
+    WEAKENING_CHANCE("weakening_chance", 5, 10, 100.0F),
     HEALING_EFFICIENCY("healing_efficiency", 10, 50, 0.0F),
     WATER_BREATHING("water_breathing", 50, 150, 0.0F),
     DRAW_SPEED("draw_speed", 10, 50, 0.0F),
@@ -40,6 +41,7 @@ public enum RuneStatType implements StringRepresentable {
     LEECHING_CHANCE("leeching_chance", 10, 25, 50.0F),
     LOOTING("looting", 15, 25, 100.0F),
     BONUS_CHANCE("bonus_chance", 20, 40, 100.0F),
+    JUMP_HEIGHT("jump_height", 5, 25, 50.0F),
     POWER("power", 5, 20, 0.0F);
 
     private static final Map<String, RuneStatType> BY_ID =
@@ -81,17 +83,13 @@ public enum RuneStatType implements StringRepresentable {
         return this.minPercent + random.nextInt(bound);
     }
 
-    public float toMultiplier(float percentValue) {
-        return 1.0F + percentValue / 100.0F;
+    @Override
+    public String getSerializedName() {
+        return this.id;
     }
 
     public static RuneStatType byId(String id) {
         return BY_ID.get(id);
-    }
-
-    @Override
-    public String getSerializedName() {
-        return this.id;
     }
 
     public static Map<RuneStatType, Float> emptyMap() {

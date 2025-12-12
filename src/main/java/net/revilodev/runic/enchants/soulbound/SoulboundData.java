@@ -1,4 +1,4 @@
-package net.revilodev.runic.Enhancements.soulbound;
+package net.revilodev.runic.enchants.soulbound;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
