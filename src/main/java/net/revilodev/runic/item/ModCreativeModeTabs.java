@@ -47,7 +47,7 @@ public class ModCreativeModeTabs {
                                     for (ResourceLocation id : RuneItem.allowedEffectIds()) {
                                         ResourceKey<Enchantment> key = ResourceKey.create(Registries.ENCHANTMENT, id);
                                         enchants.get(key).ifPresent(holder -> {
-                                            ItemStack effectRune = RuneItem.createEffectRune(holder, 1);
+                                            ItemStack effectRune = RuneItem.createEffectRune(holder);
                                             if (!effectRune.isEmpty()) {
                                                 output.accept(effectRune);
                                             }

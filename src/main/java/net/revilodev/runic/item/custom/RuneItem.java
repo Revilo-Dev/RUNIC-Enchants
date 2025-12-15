@@ -9,7 +9,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
-import net.revilodev.runic.RunicMod;
 import net.revilodev.runic.item.ModItems;
 import net.revilodev.runic.stat.RuneStatType;
 import net.revilodev.runic.stat.RuneStats;
@@ -21,46 +20,60 @@ import java.util.Set;
 public class RuneItem extends Item {
 
     private static final Set<ResourceLocation> EFFECT_ENCHANT_IDS = Set.of(
-            // vanilla enchants
-            ResourceLocation.withDefaultNamespace("silk_touch"),
+            ResourceLocation.fromNamespaceAndPath("aether", "renewal"),
+
+            ResourceLocation.fromNamespaceAndPath("combat_roll", "acrobat"),
+            ResourceLocation.fromNamespaceAndPath("combat_roll", "longfooted"),
+            ResourceLocation.fromNamespaceAndPath("combat_roll", "multi_roll"),
+
+            ResourceLocation.fromNamespaceAndPath("create", "capacity"),
+            ResourceLocation.fromNamespaceAndPath("create", "potato_recovery"),
+
+            ResourceLocation.fromNamespaceAndPath("deeperdarker", "catalysis"),
+            ResourceLocation.fromNamespaceAndPath("deeperdarker", "discharge"),
+            ResourceLocation.fromNamespaceAndPath("deeperdarker", "sculk_smite"),
+
+            ResourceLocation.fromNamespaceAndPath("dungeons_arise", "discharge"),
+            ResourceLocation.fromNamespaceAndPath("dungeons_arise", "ensnaring"),
+            ResourceLocation.fromNamespaceAndPath("dungeons_arise", "lolths_curse"),
+            ResourceLocation.fromNamespaceAndPath("dungeons_arise", "purification"),
+            ResourceLocation.fromNamespaceAndPath("dungeons_arise", "voltaic_shot"),
+
+            ResourceLocation.fromNamespaceAndPath("expanded_combat", "agility"),
+            ResourceLocation.fromNamespaceAndPath("expanded_combat", "blocking"),
+            ResourceLocation.fromNamespaceAndPath("expanded_combat", "ground_slam"),
+
+            ResourceLocation.fromNamespaceAndPath("farmersdelight", "backstabbing"),
+
+            ResourceLocation.fromNamespaceAndPath("mysticalagriculture", "mystical_enlightenment"),
+            ResourceLocation.fromNamespaceAndPath("mysticalagriculture", "soul_siphoner"),
+
+            ResourceLocation.fromNamespaceAndPath("simplyswords", "catalysis"),
+            ResourceLocation.fromNamespaceAndPath("simplyswords", "fire_react"),
+            ResourceLocation.fromNamespaceAndPath("simplyswords", "soul_siphoner"),
+
+            ResourceLocation.fromNamespaceAndPath("supplementaries", "stasis"),
+
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "chill_aura"),
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "destruction"),
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "fire_react"),
+
+            ResourceLocation.withDefaultNamespace("binding_curse"),
+            ResourceLocation.withDefaultNamespace("breach"),
+            ResourceLocation.withDefaultNamespace("fortune"),
             ResourceLocation.withDefaultNamespace("frost_walker"),
             ResourceLocation.withDefaultNamespace("loyalty"),
             ResourceLocation.withDefaultNamespace("lure"),
-            ResourceLocation.withDefaultNamespace("wind_burst"),
-            ResourceLocation.withDefaultNamespace("breach"),
-            ResourceLocation.withDefaultNamespace("binding_curse"),
-            ResourceLocation.withDefaultNamespace("vanishing_curse"),
-            ResourceLocation.withDefaultNamespace("soul_speed"),
-            ResourceLocation.withDefaultNamespace("fortune"),
-            ResourceLocation.withDefaultNamespace("thorns"),
-            ResourceLocation.withDefaultNamespace("piercing"),
-            ResourceLocation.withDefaultNamespace("swift_sneak"),
-            ResourceLocation.withDefaultNamespace("punch"),
             ResourceLocation.withDefaultNamespace("mending"),
-
-            // Runic Enchants
-            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "poison_cloud"),
-            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "pain_cycle"),
-            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "committed"),
-
-
-            // 3rd party custom enchants
-            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "skulk_smite"),
-            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "capacity"),
-            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "soul_siphoner"),
-            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "fire_react"),
-            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "catalysis"),
-            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "destruction"),
-            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "mystical_enlightenment"),
-            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "renewal"),
-            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "chill_aura"),
-            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "potato_recovery"),
-            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "acrobat"),
-            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "longfooted"),
-            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "multi_roll")
+            ResourceLocation.withDefaultNamespace("piercing"),
+            ResourceLocation.withDefaultNamespace("punch"),
+            ResourceLocation.withDefaultNamespace("silk_touch"),
+            ResourceLocation.withDefaultNamespace("soul_speed"),
+            ResourceLocation.withDefaultNamespace("swift_sneak"),
+            ResourceLocation.withDefaultNamespace("thorns"),
+            ResourceLocation.withDefaultNamespace("vanishing_curse"),
+            ResourceLocation.withDefaultNamespace("wind_burst")
     );
-
-
 
     public RuneItem(Properties props) {
         super(props);
@@ -82,19 +95,22 @@ public class RuneItem extends Item {
                 .orElse(false);
     }
 
-    public static ItemStack createEffectRune(Holder<Enchantment> enchantment, int ignored) {
+    public static int forcedEffectLevel(Holder<Enchantment> holder) {
+        return Math.max(1, holder.value().getMaxLevel());
+    }
+
+    public static ItemStack createEffectRune(Holder<Enchantment> enchantment) {
         if (!isEffectEnchantment(enchantment)) {
             return ItemStack.EMPTY;
         }
-        int max = enchantment.value().getMaxLevel();
-        ItemStack stack = new ItemStack(ModItems.ENHANCED_RUNE.value());
-        stack.enchant(enchantment, max);
+        ItemStack stack = new ItemStack(ModItems.ENHANCED_RUNE.get());
+        stack.enchant(enchantment, forcedEffectLevel(enchantment));
         return stack;
     }
 
     public static ItemStack createStatRune(RandomSource random, RuneStatType type) {
         RuneStats stats = RuneStats.singleUnrolled(type);
-        ItemStack stack = new ItemStack(ModItems.ENHANCED_RUNE.value());
+        ItemStack stack = new ItemStack(ModItems.ENHANCED_RUNE.get());
         RuneStats.set(stack, stats);
         return stack;
     }
@@ -104,24 +120,15 @@ public class RuneItem extends Item {
         if (all.length == 0) {
             return ItemStack.EMPTY;
         }
-        RuneStatType chosen = all[random.nextInt(all.length)];
-        return createStatRune(random, chosen);
+        return createStatRune(random, all[random.nextInt(all.length)]);
     }
 
     public static RuneStats getRolledStatsForTooltip(ItemStack rune) {
-        RuneStats template = getRuneStats(rune);
-        if (template == null || template.isEmpty()) return RuneStats.empty();
-        return RuneStats.rollForApplication(template, RandomSource.create());
-    }
-
-    @Override
-    public boolean isFoil(ItemStack stack) {
-        if (stack.isEnchanted()) {
-            return true;
+        RuneStats template = RuneStats.get(rune);
+        if (template == null || template.isEmpty()) {
+            return RuneStats.empty();
         }
-        RuneStats stats = RuneStats.get(stack);
-        stats = RuneStats.rollForApplication(stats, RandomSource.create());
-        return stats != null && !stats.isEmpty();
+        return RuneStats.rollForApplication(template, RandomSource.create());
     }
 
     public static RuneStats getRuneStats(ItemStack stack) {
@@ -133,49 +140,30 @@ public class RuneItem extends Item {
         ItemEnchantments direct = stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
         ItemEnchantments enchants = !stored.isEmpty() ? stored : direct;
 
-        if (enchants.isEmpty()) return null;
-
-        List<Holder<Enchantment>> out = new ArrayList<>();
-        for (Holder<Enchantment> h : enchants.keySet()) {
-            if (isEffectEnchantment(h)) out.add(h);
+        if (enchants.isEmpty()) {
+            return null;
         }
-        if (!out.isEmpty()) return out.get(0);
+
+        List<Holder<Enchantment>> effects = new ArrayList<>();
+        for (Holder<Enchantment> h : enchants.keySet()) {
+            if (isEffectEnchantment(h)) {
+                effects.add(h);
+            }
+        }
+
+        if (!effects.isEmpty()) {
+            return effects.get(0);
+        }
 
         return enchants.keySet().iterator().next();
     }
 
-    public static ResourceLocation getRuneTexture(ItemStack stack) {
-        ResourceLocation base = ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "item/rune/enhanced_rune");
-
-        Holder<Enchantment> effect = getPrimaryEffectEnchantment(stack);
-        if (effect != null) {
-            return effect.unwrapKey()
-                    .map(k -> ResourceLocation.fromNamespaceAndPath(
-                            RunicMod.MOD_ID,
-                            "item/rune/" + k.location().getNamespace() + "/" + k.location().getPath()
-                    ))
-                    .orElse(base);
+    @Override
+    public boolean isFoil(ItemStack stack) {
+        if (stack.isEnchanted()) {
+            return true;
         }
-
         RuneStats stats = RuneStats.get(stack);
-        if (!stats.isEmpty()) {
-            RuneStatType chosen = null;
-            float best = 0.0F;
-            for (RuneStatType type : RuneStatType.values()) {
-                float v = stats.get(type);
-                if (Math.abs(v) > Math.abs(best)) {
-                    best = v;
-                    chosen = type;
-                }
-            }
-            if (chosen != null) {
-                return ResourceLocation.fromNamespaceAndPath(
-                        RunicMod.MOD_ID,
-                        "item/rune/stat/" + chosen.id()
-                );
-            }
-        }
-
-        return base;
+        return stats != null && !stats.isEmpty();
     }
 }

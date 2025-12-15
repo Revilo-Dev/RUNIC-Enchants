@@ -4,6 +4,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -12,7 +13,6 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.CrossbowItem;
-import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.FishingRodItem;
 import net.minecraft.world.item.HoeItem;
 import net.minecraft.world.item.Item;
@@ -22,7 +22,6 @@ import net.minecraft.world.item.PickaxeItem;
 import net.minecraft.world.item.ShieldItem;
 import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.item.SwordItem;
-import net.minecraft.world.item.TieredItem;
 import net.minecraft.world.item.TridentItem;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
@@ -41,9 +40,13 @@ import net.revilodev.runic.stat.RuneStatType;
 import net.revilodev.runic.stat.RuneStats;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 @EventBusSubscriber(modid = RunicMod.MOD_ID, value = Dist.CLIENT)
 public final class ItemTooltipHandler {
@@ -66,15 +69,19 @@ public final class ItemTooltipHandler {
 
         boolean isRune = stack.getItem() instanceof RuneItem;
 
+        stripAllEnchantmentLines(stack, tooltip);
+
         if (isRune) {
-            stripRuneEnchantmentLines(stack, tooltip);
             appendRuneHeader(stack, tooltip);
         }
 
         appendItemStats(stack, tooltip);
         appendRuneStats(stack, tooltip, isRune);
         appendRuneSlots(stack, tooltip);
-        recolorEnchants(stack, tooltip, isRune);
+
+        if (!isRune) {
+            appendEnhancementsSection(stack, tooltip, isRune);
+        }
     }
 
     private static boolean isRunicModifier(AttributeModifier mod) {
@@ -82,29 +89,25 @@ public final class ItemTooltipHandler {
         return id != null && RunicMod.MOD_ID.equals(id.getNamespace());
     }
 
-    private static void stripRuneEnchantmentLines(ItemStack stack, List<Component> tooltip) {
+    private static void stripAllEnchantmentLines(ItemStack stack, List<Component> tooltip) {
         ItemEnchantments live = stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
         ItemEnchantments stored = stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
 
         if (live.isEmpty() && stored.isEmpty()) return;
 
-        List<String> names = new ArrayList<>();
+        Set<String> vanillaLines = new HashSet<>();
 
-        live.entrySet().forEach(e ->
-                names.add(e.getKey().value().getFullname(e.getKey(), e.getIntValue()).getString())
-        );
-        stored.entrySet().forEach(e ->
-                names.add(e.getKey().value().getFullname(e.getKey(), e.getIntValue()).getString())
-        );
+        live.entrySet().forEach(e -> vanillaLines.add(Enchantment.getFullname(e.getKey(), e.getIntValue()).getString()));
+        stored.entrySet().forEach(e -> vanillaLines.add(Enchantment.getFullname(e.getKey(), e.getIntValue()).getString()));
 
-        tooltip.removeIf(line -> names.contains(line.getString()));
+        tooltip.removeIf(line -> vanillaLines.contains(line.getString()));
     }
 
     private static void appendRuneHeader(ItemStack stack, List<Component> tooltip) {
         tooltip.add(Component.literal("Apply in an Etching Table").withStyle(ChatFormatting.DARK_GRAY));
 
         RuneStats stats = RuneStats.get(stack);
-        boolean hasStats = !stats.isEmpty();
+        boolean hasStats = stats != null && !stats.isEmpty();
 
         ItemEnchantments stored = stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
         ItemEnchantments direct = stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
@@ -124,7 +127,7 @@ public final class ItemTooltipHandler {
         if (effect != null) {
             tooltip.add(
                     Component.literal("  ")
-                            .append(effect.value().getFullname(effect, 1))
+                            .append(effect.value().description().copy())
                             .withStyle(ChatFormatting.AQUA)
             );
         }
@@ -338,11 +341,9 @@ public final class ItemTooltipHandler {
             }
 
             double speed() {
-                double real = (baseSpd + 4.0) * (1.0 + spdMult);
-                return real;
+                return (baseSpd + 4.0) * (1.0 + spdMult);
             }
         }
-
 
         if (isWeapon) {
             WeaponStats ws = new WeaponStats();
@@ -506,6 +507,47 @@ public final class ItemTooltipHandler {
         }
     }
 
+    private static void appendEnhancementsSection(ItemStack stack, List<Component> tooltip, boolean isRune) {
+        ItemEnchantments live = stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
+        ItemEnchantments stored = stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
+
+        boolean has = !live.isEmpty() || !stored.isEmpty();
+        if (!has) return;
+
+        List<String> vanillaNames = new ArrayList<>();
+        List<Component> rebuilt = new ArrayList<>();
+
+        collectForEnhancements(live, vanillaNames, rebuilt);
+        collectForEnhancements(stored, vanillaNames, rebuilt);
+
+        if (!vanillaNames.isEmpty()) {
+            tooltip.removeIf(line -> vanillaNames.contains(line.getString()));
+        }
+
+        if (rebuilt.isEmpty()) return;
+
+        tooltip.add(Component.empty());
+        tooltip.add(Component.literal("Enhancements:").withStyle(ChatFormatting.GRAY));
+        tooltip.addAll(rebuilt);
+    }
+
+    private static void collectForEnhancements(ItemEnchantments ench, List<String> vanillaNames, List<Component> rebuilt) {
+        ench.entrySet().forEach(e -> {
+            Holder<Enchantment> holder = e.getKey();
+            int lvl = e.getIntValue();
+
+            Component vn = holder.value().getFullname(holder, lvl);
+            vanillaNames.add(vn.getString());
+
+            EnhancementRarity rarity = EnhancementRarities.get(holder);
+
+            Component nameOnly = holder.value().description().copy()
+                    .withStyle(style -> style.withColor(rarity.color()));
+
+            rebuilt.add(Component.literal("  ").append(nameOnly));
+        });
+    }
+
     private static void appendRuneSlots(ItemStack stack, List<Component> tooltip) {
         int cap = RuneSlots.capacity(stack);
         if (cap <= 0) return;
@@ -521,47 +563,4 @@ public final class ItemTooltipHandler {
         );
     }
 
-    private static void recolorEnchants(ItemStack stack, List<Component> tooltip, boolean isRune) {
-        ItemEnchantments live = stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
-        ItemEnchantments stored = stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
-
-        boolean recolor = !live.isEmpty() || !stored.isEmpty();
-        if (!recolor) return;
-
-        List<Component> vanilla = new ArrayList<>();
-        List<Component> rebuilt = new ArrayList<>();
-
-        collect(live, vanilla, rebuilt);
-        collect(stored, vanilla, rebuilt);
-
-        if (vanilla.isEmpty()) return;
-
-        int first = -1;
-        for (int i = tooltip.size() - 1; i >= 0; i--) {
-            String s = tooltip.get(i).getString();
-            for (Component v : vanilla) {
-                if (s.equals(v.getString())) {
-                    first = i;
-                    tooltip.remove(i);
-                    break;
-                }
-            }
-        }
-
-        if (first != -1)
-            tooltip.addAll(first, rebuilt);
-    }
-
-    private static void collect(ItemEnchantments ench, List<Component> vanilla, List<Component> rebuilt) {
-        ench.entrySet().forEach(e -> {
-            Holder<Enchantment> holder = e.getKey();
-            int lvl = e.getIntValue();
-
-            Component vn = holder.value().getFullname(holder, lvl);
-            vanilla.add(vn);
-
-            EnhancementRarity rarity = EnhancementRarities.get(holder);
-            rebuilt.add(vn.copy().withStyle(style -> style.withColor(rarity.color())));
-        });
-    }
 }

@@ -1,0 +1,19 @@
+{
+  "single_level_enchantments": [
+    "minecraft:silk_touch",
+    "minecraft:frost_walker",
+    "minecraft:loyalty",
+    "minecraft:lure",
+    "minecraft:wind_burst",
+    "minecraft:breach",
+    "minecraft:binding_curse",
+    "minecraft:vanishing_curse",
+    "minecraft:soul_speed",
+    "minecraft:fortune",
+    "minecraft:thorns",
+    "minecraft:piercing",
+    "minecraft:swift_sneak",
+    "minecraft:punch",
+    "minecraft:mending"
+  ]
+}

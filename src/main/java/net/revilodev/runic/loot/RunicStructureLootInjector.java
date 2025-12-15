@@ -140,6 +140,7 @@ public class RunicStructureLootInjector extends LootModifier {
             return ItemStack.EMPTY;
         }
         Holder<Enchantment> chosen = pool.get(rand.nextInt(pool.size()));
-        return RuneItem.createEffectRune(chosen, 1);
+        return RuneItem.createEffectRune(chosen);
+
     }
 }
