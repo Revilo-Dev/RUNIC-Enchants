@@ -110,35 +110,7 @@ public final class CombatHandler {
             attacker.heal(healAmount);
         }
     }
-
-
-    /* -----------------------------------------------------------
-       LOOTING
-       ----------------------------------------------------------- */
-    @SubscribeEvent
-    public static void onDrops(LivingDropsEvent event) {
-        DamageSource source = event.getSource();
-        Entity srcEntity = source.getEntity();
-        if (!(srcEntity instanceof LivingEntity attacker)) return;
-
-        RuneStats stats = RuneStats.get(attacker.getMainHandItem());
-        if (stats.isEmpty()) return;
-
-        float looting = stats.get(RuneStatType.LOOTING);
-        if (looting <= 0f) return;
-
-        float chance = looting / 100f;
-
-        for (ItemEntity drop : event.getDrops()) {
-            if (RNG.nextFloat() <= chance) {
-                ItemStack s = drop.getItem();
-                if (!s.isEmpty()) {
-                    s.grow(1);
-                    drop.setItem(s);
-                }
-            }
-        }
-    }
+    
 
 
     /* -----------------------------------------------------------

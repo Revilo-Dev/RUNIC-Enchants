@@ -39,7 +39,6 @@ public enum RuneStatType implements StringRepresentable {
     TOUGHNESS("toughness", 5, 25, 25.0F),
     FREEZING_CHANCE("freezing_chance", 5, 10, 0.0F),
     LEECHING_CHANCE("leeching_chance", 10, 25, 50.0F),
-    LOOTING("looting", 15, 25, 100.0F),
     BONUS_CHANCE("bonus_chance", 20, 40, 100.0F),
     JUMP_HEIGHT("jump_height", 5, 25, 50.0F),
     POWER("power", 5, 20, 0.0F);

@@ -39,7 +39,6 @@ public class RuneItem extends Item {
             ResourceLocation.fromNamespaceAndPath("dungeons_arise", "purification"),
             ResourceLocation.fromNamespaceAndPath("dungeons_arise", "voltaic_shot"),
 
-            ResourceLocation.fromNamespaceAndPath("expanded_combat", "agility"),
             ResourceLocation.fromNamespaceAndPath("expanded_combat", "blocking"),
             ResourceLocation.fromNamespaceAndPath("expanded_combat", "ground_slam"),
 
@@ -60,6 +59,16 @@ public class RuneItem extends Item {
 
             ResourceLocation.withDefaultNamespace("binding_curse"),
             ResourceLocation.withDefaultNamespace("breach"),
+            ResourceLocation.withDefaultNamespace("channeling"),
+            ResourceLocation.withDefaultNamespace("density"),
+            ResourceLocation.withDefaultNamespace("flame"),
+            ResourceLocation.withDefaultNamespace("impaling"),
+            ResourceLocation.withDefaultNamespace("infinity"),
+            ResourceLocation.withDefaultNamespace("looting"),
+            ResourceLocation.withDefaultNamespace("luck_of_the_sea"),
+            ResourceLocation.withDefaultNamespace("multishot"),
+            ResourceLocation.withDefaultNamespace("respiration"),
+            ResourceLocation.withDefaultNamespace("riptide"),
             ResourceLocation.withDefaultNamespace("fortune"),
             ResourceLocation.withDefaultNamespace("frost_walker"),
             ResourceLocation.withDefaultNamespace("loyalty"),

@@ -145,7 +145,7 @@ public class EtchingTableMenu extends AbstractContainerMenu {
                      UNDEAD_DAMAGE, NETHER_DAMAGE,
                      STUN_CHANCE, FLAME_CHANCE, BLEEDING_CHANCE, SHOCKING_CHANCE,
                      POISON_CHANCE, WITHERING_CHANCE, WEAKENING_CHANCE,
-                     FREEZING_CHANCE, LEECHING_CHANCE, LOOTING, BONUS_CHANCE ->
+                     FREEZING_CHANCE, LEECHING_CHANCE, BONUS_CHANCE ->
                         item instanceof SwordItem
                                 || item instanceof AxeItem
                                 || item instanceof TridentItem
