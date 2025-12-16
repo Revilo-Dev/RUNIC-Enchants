@@ -9,13 +9,14 @@
 
   "block.runic.etching_table": "Etching Table",
 
-  "minecraft:enchanted_golden_apple": "Enhanced Golden Apple",
   "minecraft:experience_bottle": "Bottle o' Experience",
 
   "effect.runic.bleeding": "Bleeding",
   "effect.runic.stunning": "Stunned",
 
-  "enchantment.minecraft.infinity": "Ethereal",
+  "tooltip.runic.stat.curse_damaged": "\ueef3 Damaged",
+  "tooltip.runic.stat.curse_weakened": "\ueef3 Weakened",
+  "tooltip.runic.stat.curse_heavy": "\ueef3 Heavy",
 
   "tooltip.runic.stat.attack_speed": "\uefe5 Attack Speed",
   "tooltip.runic.stat.attack_damage": "\uefe5 Attack Damage",
@@ -33,7 +34,7 @@
   "tooltip.runic.stat.fall_reduction": "\uefe4 Fall Damage Reduction",
   "tooltip.runic.stat.undead_damage": "\ueef3 Undead Damage",
   "tooltip.runic.stat.nether_damage": "\ueef3 Nether Damage",
-  "tooltip.runic.stat.health": "\ueef4 Max Health",
+  "tooltip.runic.stat.health": "\ueef4 Health Boost",
   "tooltip.runic.stat.stun_chance": "\ueef4 Stun Chance",
   "tooltip.runic.stat.flame_chance": "\ueef4 Flame Chance",
   "tooltip.runic.stat.bleeding_chance": "\ueef4 Bleeding Chance",

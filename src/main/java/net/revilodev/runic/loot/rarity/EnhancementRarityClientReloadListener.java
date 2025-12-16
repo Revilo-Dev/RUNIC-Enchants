@@ -16,28 +16,47 @@ public class EnhancementRarityClientReloadListener extends SimpleJsonResourceRel
     private static final Gson GSON = new GsonBuilder().setLenient().create();
     public static final String FOLDER = "rarities";
 
-    public EnhancementRarityClientReloadListener() { super(GSON, FOLDER); }
+    public EnhancementRarityClientReloadListener() {
+        super(GSON, FOLDER);
+    }
 
     @Override
-    protected void apply(Map<ResourceLocation, JsonElement> objects, ResourceManager rm, ProfilerFiller profiler) {
+    protected void apply(Map<ResourceLocation, JsonElement> objects,
+                         ResourceManager rm,
+                         ProfilerFiller profiler) {
+
         EnhancementRarities.clear();
+
         Map<ResourceLocation, EnhancementRarity> tmp = new HashMap<>();
         EnhancementRarity def = EnhancementRarity.COMMON;
 
-        for (var e : objects.entrySet()) {
-            var root = e.getValue().getAsJsonObject();
-            var defStr = GsonHelper.getAsString(root, "default", null);
-            if (defStr != null) def = EnhancementRarity.fromKey(defStr, EnhancementRarity.COMMON);
-            if (root.has("entries")) {
-                var obj = root.getAsJsonObject("entries");
-                for (var ent : obj.entrySet()) {
-                    var id = ResourceLocation.tryParse(ent.getKey());
-                    if (id == null) continue;
-                    var rar = EnhancementRarity.fromKey(GsonHelper.convertToString(ent.getValue(), "rarity"), null);
-                    if (rar != null) tmp.put(id, rar);
-                }
+        for (JsonElement el : objects.values()) {
+            var root = el.getAsJsonObject();
+
+            if (root.has("default")) {
+                def = EnhancementRarity.fromKey(
+                        GsonHelper.getAsString(root, "default"),
+                        EnhancementRarity.COMMON
+                );
+            }
+
+            if (!root.has("entries")) continue;
+
+            var entries = root.getAsJsonObject("entries");
+            for (var e : entries.entrySet()) {
+                ResourceLocation id = ResourceLocation.tryParse(e.getKey());
+                if (id == null) continue;
+
+                EnhancementRarity r =
+                        EnhancementRarity.fromKey(
+                                GsonHelper.convertToString(e.getValue(), "rarity"),
+                                null
+                        );
+
+                if (r != null) tmp.put(id, r);
             }
         }
+
         EnhancementRarities.replaceAllClient(tmp, def);
     }
 }

@@ -26,6 +26,10 @@ public final class EnhancementRarities {
         if (id != null && rarity != null) MAP.put(id, rarity);
     }
 
+    public static EnhancementRarity get(ResourceLocation id) {
+        return MAP.getOrDefault(id, DEFAULT);
+    }
+
     public static EnhancementRarity get(Holder<Enchantment> holder) {
         if (holder == null) return DEFAULT;
         return holder.unwrapKey()
@@ -33,8 +37,11 @@ public final class EnhancementRarities {
                 .orElse(DEFAULT);
     }
 
-    public static EnhancementRarity get(ResourceLocation id) {
-        return MAP.getOrDefault(id, DEFAULT);
+    public static EnhancementRarity getStat(String statId) {
+        return MAP.getOrDefault(
+                ResourceLocation.fromNamespaceAndPath("runic", "stat/" + statId),
+                DEFAULT
+        );
     }
 
     public static void replaceAllClient(Map<ResourceLocation, EnhancementRarity> incoming,

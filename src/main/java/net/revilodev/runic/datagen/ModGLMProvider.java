@@ -26,7 +26,5 @@ public class ModGLMProvider extends GlobalLootModifierProvider {
                         0.35f, 0.30f, 1, 3
                 )
         );
-
-
     }
 }

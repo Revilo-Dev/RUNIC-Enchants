@@ -115,8 +115,9 @@ public final class RuneAttributeApplier {
         }
 
         EquipmentSlotGroup slotGroup = resolveSlotGroup(stack);
+        boolean hasStats = slotGroup != null && stats != null && !stats.isEmpty();
 
-        if (slotGroup != null && stats != null && !stats.isEmpty()) {
+        if (hasStats) {
             addPercent(builder, stats, RuneStatType.ATTACK_DAMAGE,        Attributes.ATTACK_DAMAGE,             "attack_damage",        slotGroup);
             addPercent(builder, stats, RuneStatType.ATTACK_SPEED,         Attributes.ATTACK_SPEED,              "attack_speed",         slotGroup);
             addPercent(builder, stats, RuneStatType.ATTACK_RANGE,         Attributes.ENTITY_INTERACTION_RANGE,  "attack_range",         slotGroup);
@@ -136,6 +137,8 @@ public final class RuneAttributeApplier {
             if (item instanceof BowItem || item instanceof CrossbowItem) {
                 addPercent(builder, stats, RuneStatType.DRAW_SPEED, Attributes.ATTACK_SPEED, "draw_speed", slotGroup);
             }
+
+            applyCurses(builder, stack, stats, slotGroup);
         }
 
         ItemAttributeModifiers result = builder.build();
@@ -144,6 +147,53 @@ public final class RuneAttributeApplier {
         } else {
             stack.set(DataComponents.ATTRIBUTE_MODIFIERS, result);
         }
+
+        if (hasStats) {
+            stack.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
+        } else {
+            stack.remove(DataComponents.ENCHANTMENT_GLINT_OVERRIDE);
+        }
+    }
+
+    private static void applyCurses(ItemAttributeModifiers.Builder builder, ItemStack stack, RuneStats stats, EquipmentSlotGroup slotGroup) {
+        Item item = stack.getItem();
+
+        float weakened = stats.get(RuneStatType.CURSE_WEAKENED);
+        if (weakened > 0.0F) {
+            double amt = -(weakened / 100.0);
+            if (item instanceof ArmorItem) {
+                addMult(builder, Attributes.ARMOR, "curse_weakened_armor", slotGroup, amt);
+            } else if (item instanceof TieredItem || item instanceof TridentItem || item instanceof MaceItem || item instanceof BowItem || item instanceof CrossbowItem) {
+                addMult(builder, Attributes.ATTACK_DAMAGE, "curse_weakened_damage", slotGroup, amt);
+            } else {
+                addMult(builder, Attributes.BLOCK_BREAK_SPEED, "curse_weakened_mining", slotGroup, amt);
+            }
+        }
+
+        float heavy = stats.get(RuneStatType.CURSE_HEAVY);
+        if (heavy > 0.0F) {
+            double amt = -(heavy / 100.0);
+            if (item instanceof ArmorItem) {
+                addMult(builder, Attributes.MOVEMENT_SPEED, "curse_heavy_slow", slotGroup, amt);
+            } else {
+                addMult(builder, Attributes.ATTACK_SPEED, "curse_heavy_speed", slotGroup, amt);
+            }
+        }
+    }
+
+    private static void addMult(ItemAttributeModifiers.Builder builder,
+                                Holder<net.minecraft.world.entity.ai.attributes.Attribute> attribute,
+                                String name,
+                                EquipmentSlotGroup slotGroup,
+                                double amount) {
+
+        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(
+                RunicMod.MOD_ID,
+                "stat." + name + "." + slotGroup.name().toLowerCase()
+        );
+
+        AttributeModifier mod = new AttributeModifier(id, amount, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+        builder.add(attribute, mod, slotGroup);
     }
 
     private static void addPercent(ItemAttributeModifiers.Builder builder,
@@ -158,9 +208,12 @@ public final class RuneAttributeApplier {
 
         double amount = percent / 100.0F;
 
-        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "stat." + name);
-        AttributeModifier mod = new AttributeModifier(id, amount, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(
+                RunicMod.MOD_ID,
+                "stat." + name + "." + slotGroup.name().toLowerCase()
+        );
 
+        AttributeModifier mod = new AttributeModifier(id, amount, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
         builder.add(attribute, mod, slotGroup);
     }
 
@@ -176,9 +229,12 @@ public final class RuneAttributeApplier {
 
         double amount = percent / 100.0F;
 
-        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "stat." + name);
-        AttributeModifier mod = new AttributeModifier(id, amount, AttributeModifier.Operation.ADD_VALUE);
+        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(
+                RunicMod.MOD_ID,
+                "stat." + name + "." + slotGroup.name().toLowerCase()
+        );
 
+        AttributeModifier mod = new AttributeModifier(id, amount, AttributeModifier.Operation.ADD_VALUE);
         builder.add(attribute, mod, slotGroup);
     }
 
@@ -226,7 +282,9 @@ public final class RuneAttributeApplier {
     public static void applyDurability(ItemStack stack, RuneStats stats, CompoundTag root) {
         if (!stack.isDamageableItem()) return;
 
-        float percent = stats.get(RuneStatType.DURABILITY);
+        float bonus = stats.get(RuneStatType.DURABILITY);
+        float damaged = stats.get(RuneStatType.CURSE_DAMAGED);
+        float percent = bonus - damaged;
         if (percent == 0.0F) return;
 
         int base = root.contains(DURABILITY_BASE_KEY)
@@ -236,7 +294,7 @@ public final class RuneAttributeApplier {
         root.putInt(DURABILITY_BASE_KEY, base);
 
         int newMax = base + Math.round(base * (percent / 100.0F));
-        if (newMax <= 0) newMax = 1;
+        if (newMax <= 1) newMax = 1;
 
         stack.set(DataComponents.MAX_DAMAGE, newMax);
 

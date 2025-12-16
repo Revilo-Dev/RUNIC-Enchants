@@ -6,23 +6,26 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 
 public enum EnhancementRarity {
-    COMMON("common", ChatFormatting.GRAY),
-    UNCOMMON("uncommon", ChatFormatting.GREEN),
-    RARE("rare", ChatFormatting.DARK_AQUA),
-    EPIC("epic", ChatFormatting.GOLD),
-    LEGENDARY("legendary", ChatFormatting.LIGHT_PURPLE),
-    CURSED("cursed", ChatFormatting.DARK_RED);
+    COMMON("common", ChatFormatting.GRAY, 20),
+    UNCOMMON("uncommon", ChatFormatting.GREEN, 12),
+    RARE("rare", ChatFormatting.DARK_AQUA, 6),
+    EPIC("epic", ChatFormatting.GOLD, 3),
+    LEGENDARY("legendary", ChatFormatting.LIGHT_PURPLE, 1),
+    CURSED("cursed", ChatFormatting.DARK_RED, 2);
 
     private final String key;
     private final ChatFormatting color;
+    private final int weight;
 
-    EnhancementRarity(String key, ChatFormatting color) {
+    EnhancementRarity(String key, ChatFormatting color, int weight) {
         this.key = key;
         this.color = color;
+        this.weight = weight;
     }
 
     public String key() { return key; }
     public ChatFormatting color() { return color; }
+    public int weight() { return weight; }
 
     public Style style() {
         return Style.EMPTY.withColor(color);

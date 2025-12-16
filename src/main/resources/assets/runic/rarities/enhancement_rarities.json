@@ -1,0 +1,99 @@
+{
+  "default": "common",
+  "entries": {
+
+    "runic:stat/attack_damage": "common",
+    "runic:stat/attack_speed": "common",
+    "runic:stat/durability": "common",
+    "runic:stat/health": "common",
+    "runic:stat/mining_speed": "common",
+    "runic:stat/movement_speed": "common",
+    "runic:stat/resistance": "common",
+
+    "runic:stat/attack_range": "uncommon",
+    "runic:stat/blast_resistance": "uncommon",
+    "runic:stat/draw_speed": "uncommon",
+    "runic:stat/fall_reduction": "uncommon",
+    "runic:stat/fire_resistance": "uncommon",
+    "runic:stat/healing_efficiency": "uncommon",
+    "runic:stat/jump_height": "uncommon",
+    "runic:stat/knockback_resistance": "uncommon",
+    "runic:stat/nether_damage": "uncommon",
+    "runic:stat/power": "uncommon",
+    "runic:stat/projectile_resistance": "uncommon",
+    "runic:stat/swimming_speed": "uncommon",
+    "runic:stat/toughness": "uncommon",
+    "runic:stat/undead_damage": "uncommon",
+    "runic:stat/water_breathing": "uncommon",
+
+    "runic:stat/bleeding_chance": "rare",
+    "runic:stat/bonus_chance": "rare",
+    "runic:stat/flame_chance": "rare",
+    "runic:stat/freezing_chance": "rare",
+    "runic:stat/leeching_chance": "rare",
+    "runic:stat/poison_chance": "rare",
+    "runic:stat/shocking_chance": "rare",
+    "runic:stat/stun_chance": "rare",
+    "runic:stat/weakening_chance": "rare",
+    "runic:stat/withering_chance": "rare",
+
+    "minecraft:respiration": "common",
+
+    "minecraft:fortune": "uncommon",
+    "minecraft:lure": "uncommon",
+    "minecraft:looting": "uncommon",
+    "minecraft:punch": "uncommon",
+    "minecraft:silk_touch": "uncommon",
+    "minecraft:thorns": "uncommon",
+
+    "minecraft:flame": "rare",
+    "minecraft:impaling": "rare",
+    "minecraft:luck_of_the_sea": "rare",
+    "minecraft:piercing": "rare",
+    "minecraft:riptide": "rare",
+    "minecraft:frost_walker": "rare",
+
+    "minecraft:channeling": "epic",
+    "minecraft:multishot": "epic",
+    "minecraft:soul_speed": "epic",
+    "minecraft:swift_sneak": "epic",
+    "minecraft:wind_burst": "epic",
+
+    "minecraft:breach": "legendary",
+    "minecraft:density": "legendary",
+    "minecraft:infinity": "legendary",
+    "minecraft:loyalty": "legendary",
+
+    "minecraft:binding_curse": "cursed",
+    "minecraft:vanishing_curse": "cursed",
+
+    "combatroll:acrobat": "uncommon",
+    "combatroll:longfooted": "uncommon",
+    "combatroll:multi_roll": "epic",
+
+    "create:capacity": "uncommon",
+    "create:potato_recovery": "uncommon",
+
+    "deeperdarker:skulk_smite": "epic",
+
+    "simplyswords:fire_react": "rare",
+    "simplyswords:catalysis": "epic",
+    "simplyswords:soul_siphoner": "epic",
+
+    "twilightforest:chill_aura": "epic",
+    "twilightforest:destruction": "legendary",
+
+    "mysticalagriculture:mystical_enlightenment": "epic",
+    "aether:renewal": "epic",
+
+    "backstabbing": "rare",
+    "blocking": "uncommon",
+    "ground_slam": "epic",
+    "discharge": "epic",
+    "ensnaring": "rare",
+    "purification": "legendary",
+    "voltaic_shot": "epic",
+    "stasis": "rare",
+    "lolths_curse": "cursed"
+  }
+}

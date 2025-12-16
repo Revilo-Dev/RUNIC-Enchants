@@ -108,7 +108,7 @@ public class EtchingTableMenu extends AbstractContainerMenu {
 
     private void updateResult() {
         ItemStack target = input.getItem(0);
-        ItemStack rune   = input.getItem(1);
+        ItemStack rune = input.getItem(1);
         result.setItem(0, preview(target, rune));
         broadcastChanges();
     }
@@ -132,6 +132,8 @@ public class EtchingTableMenu extends AbstractContainerMenu {
         Item item = target.getItem();
 
         if (stat != null) {
+            if (stat.isCurse()) return false;
+
             float cap = stat.cap();
             if (cap > 0.0F) {
                 float current = RuneStats.get(target).get(stat);
@@ -194,6 +196,75 @@ public class EtchingTableMenu extends AbstractContainerMenu {
         return EnchantmentHelper.isEnchantmentCompatible(existing, effect);
     }
 
+    private List<RuneStatType> applicableCursesFor(ItemStack target) {
+        Item item = target.getItem();
+        List<RuneStatType> list = new ArrayList<>(3);
+
+        if (target.isDamageableItem()) {
+            list.add(RuneStatType.CURSE_DAMAGED);
+        }
+
+        if (item instanceof ArmorItem
+                || item instanceof DiggerItem
+                || item instanceof SwordItem
+                || item instanceof AxeItem
+                || item instanceof TridentItem
+                || item instanceof MaceItem) {
+            list.add(RuneStatType.CURSE_WEAKENED);
+        }
+
+        if (item instanceof ArmorItem
+                || item instanceof TieredItem
+                || item instanceof TridentItem
+                || item instanceof MaceItem) {
+            list.add(RuneStatType.CURSE_HEAVY);
+        }
+
+        return list;
+    }
+
+    private boolean hasUpgradeableStat(ItemStack target, RuneStats current) {
+        for (Map.Entry<RuneStatType, Float> e : current.view().entrySet()) {
+            RuneStatType t = e.getKey();
+            float v = e.getValue();
+            if (t.isCurse()) continue;
+            if (v <= 0.0F) continue;
+
+            float cap = t.cap();
+            if (cap > 0.0F && v >= cap - 0.0001F) continue;
+
+            return true;
+        }
+        return false;
+    }
+
+    private boolean hasUpgradeableEnchant(ItemStack target) {
+        ItemEnchantments ex = target.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
+        if (ex.isEmpty()) return false;
+
+        for (Object2IntMap.Entry<Holder<Enchantment>> e : ex.entrySet()) {
+            if (RuneItem.isEffectEnchantment(e.getKey())) continue;
+            if (e.getIntValue() < e.getKey().value().getMaxLevel()) return true;
+        }
+        return false;
+    }
+
+    private boolean canApplyNullification(ItemStack target) {
+        RuneStats current = RuneStats.get(target);
+        if (current == null || current.isEmpty()) return false;
+        if (!hasUpgradeableStat(target, current)) return false;
+        return !applicableCursesFor(target).isEmpty();
+    }
+
+    private boolean canApplyUpgrade(ItemStack target) {
+        if (applicableCursesFor(target).isEmpty()) return false;
+
+        RuneStats st = RuneStats.get(target);
+        if (st != null && !st.isEmpty() && hasUpgradeableStat(target, st)) return true;
+
+        return hasUpgradeableEnchant(target);
+    }
+
     private ItemStack preview(ItemStack target, ItemStack rune) {
         if (target.isEmpty() || rune.isEmpty()) return ItemStack.EMPTY;
 
@@ -204,23 +275,16 @@ public class EtchingTableMenu extends AbstractContainerMenu {
 
         if (rune.is(ModItems.EXPANSION_RUNE.get())) {
             if (RuneSlots.expansionsUsed(target) >= 3) return ItemStack.EMPTY;
+            if (applicableCursesFor(target).isEmpty()) return ItemStack.EMPTY;
             return target.copy();
         }
 
         if (rune.is(ModItems.NULLIFICATION_RUNE.get())) {
-            ItemEnchantments ex = target.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
-            return ex.isEmpty() ? ItemStack.EMPTY : target.copy();
+            return canApplyNullification(target) ? target.copy() : ItemStack.EMPTY;
         }
 
         if (rune.is(ModItems.UPGRADE_RUNE.get())) {
-            ItemEnchantments ex = target.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
-            if (ex.isEmpty()) return ItemStack.EMPTY;
-            List<Holder<Enchantment>> list = new ArrayList<>();
-            for (Object2IntMap.Entry<Holder<Enchantment>> e : ex.entrySet()) {
-                if (RuneItem.isEffectEnchantment(e.getKey())) continue;
-                if (e.getIntValue() < e.getKey().value().getMaxLevel()) list.add(e.getKey());
-            }
-            return list.isEmpty() ? ItemStack.EMPTY : target.copy();
+            return canApplyUpgrade(target) ? target.copy() : ItemStack.EMPTY;
         }
 
         if (!rune.is(ModItems.ENHANCED_RUNE.get())) return ItemStack.EMPTY;
@@ -233,10 +297,164 @@ public class EtchingTableMenu extends AbstractContainerMenu {
         boolean hasEffect = effect != null && RuneItem.isEffectEnchantment(effect);
 
         if (!hasStats && !hasEffect) return ItemStack.EMPTY;
-
         if (hasEffect && !canApplyEffectEnchant(target, effect)) return ItemStack.EMPTY;
 
         return target.copy();
+    }
+
+    private RuneStatType pickRandomUpgradeableStat(RuneStats current) {
+        List<RuneStatType> options = new ArrayList<>();
+        for (Map.Entry<RuneStatType, Float> e : current.view().entrySet()) {
+            RuneStatType t = e.getKey();
+            float v = e.getValue();
+            if (t.isCurse()) continue;
+            if (v <= 0.0F) continue;
+
+            float cap = t.cap();
+            if (cap > 0.0F && v >= cap - 0.0001F) continue;
+
+            options.add(t);
+        }
+        if (options.isEmpty()) return null;
+        return options.get(RNG.nextInt(options.size()));
+    }
+
+    private Holder<Enchantment> pickRandomEffectEnchant(ItemEnchantments ex) {
+        List<Holder<Enchantment>> list = new ArrayList<>();
+        for (Object2IntMap.Entry<Holder<Enchantment>> e : ex.entrySet()) {
+            if (RuneItem.isEffectEnchantment(e.getKey())) list.add(e.getKey());
+        }
+        if (list.isEmpty()) return null;
+        return list.get(RNG.nextInt(list.size()));
+    }
+
+    private void addRandomCurse(ItemStack stack, EnumMap<RuneStatType, Float> map) {
+        List<RuneStatType> curses = applicableCursesFor(stack);
+        if (curses.isEmpty()) return;
+
+        RuneStatType curse = curses.get(RNG.nextInt(curses.size()));
+        float amount = curse.roll(level.random);
+
+        map.put(curse, map.getOrDefault(curse, 0.0F) + amount);
+    }
+
+    private void updateGlintAfter(ItemStack stack) {
+        RuneStats stats = RuneStats.get(stack);
+        ItemEnchantments ex = stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
+        if ((stats == null || stats.isEmpty()) && ex.isEmpty()) {
+            stack.remove(DataComponents.ENCHANTMENT_GLINT_OVERRIDE);
+        }
+    }
+
+    private void applyNullification(ItemStack taken) {
+        RuneStats current = RuneStats.get(taken);
+        if (current == null || current.isEmpty()) return;
+
+        RuneStatType upgrade = pickRandomUpgradeableStat(current);
+        if (upgrade == null) return;
+
+        EnumMap<RuneStatType, Float> map = new EnumMap<>(RuneStatType.class);
+        map.putAll(current.view());
+
+        ItemEnchantments ex = taken.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
+        Holder<Enchantment> effectToRemove = pickRandomEffectEnchant(ex);
+
+        if (effectToRemove != null) {
+            ItemEnchantments.Mutable mut = new ItemEnchantments.Mutable(ex);
+            mut.set(effectToRemove, 0);
+            taken.set(DataComponents.ENCHANTMENTS, mut.toImmutable());
+        } else {
+            List<RuneStatType> removable = new ArrayList<>();
+            for (RuneStatType t : map.keySet()) {
+                if (t.isCurse()) continue;
+                if (t != upgrade) removable.add(t);
+            }
+            if (!removable.isEmpty()) {
+                RuneStatType remove = removable.get(RNG.nextInt(removable.size()));
+                map.remove(remove);
+            }
+        }
+
+        float old = map.getOrDefault(upgrade, 0.0F);
+        float boosted = old * 1.10f;
+
+        float cap = upgrade.cap();
+        if (cap > 0.0F && boosted > cap) boosted = cap;
+
+        map.put(upgrade, boosted);
+
+        addRandomCurse(taken, map);
+
+        RuneStats.set(taken, new RuneStats(map));
+        RuneSlots.tryConsumeSlot(taken);
+        updateGlintAfter(taken);
+    }
+
+    private void applyExpansion(ItemStack taken) {
+        if (RuneSlots.expansionsUsed(taken) >= 3) return;
+
+        RuneStats base = RuneStats.get(taken);
+        EnumMap<RuneStatType, Float> map = new EnumMap<>(RuneStatType.class);
+        if (base != null && !base.isEmpty()) map.putAll(base.view());
+
+        addRandomCurse(taken, map);
+
+        RuneStats.set(taken, map.isEmpty() ? RuneStats.empty() : new RuneStats(map));
+        RuneSlots.addOneSlot(taken);
+        RuneSlots.incrementExpansion(taken);
+    }
+
+    private boolean applyUpgrade(ItemStack taken) {
+        boolean changed = false;
+
+        RuneStats current = RuneStats.get(taken);
+        if (current != null && !current.isEmpty() && hasUpgradeableStat(taken, current)) {
+            RuneStatType t = pickRandomUpgradeableStat(current);
+            if (t != null) {
+                EnumMap<RuneStatType, Float> map = new EnumMap<>(RuneStatType.class);
+                map.putAll(current.view());
+
+                float v = map.getOrDefault(t, 0.0F);
+                float upgraded = v * 1.15f;
+
+                float cap = t.cap();
+                if (cap > 0.0F && upgraded > cap) upgraded = cap;
+
+                map.put(t, upgraded);
+
+                addRandomCurse(taken, map);
+
+                RuneStats.set(taken, new RuneStats(map));
+                changed = true;
+            }
+        } else {
+            ItemEnchantments ex = taken.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
+            if (ex.isEmpty()) return false;
+
+            List<Holder<Enchantment>> up = new ArrayList<>();
+            for (Object2IntMap.Entry<Holder<Enchantment>> e : ex.entrySet()) {
+                if (RuneItem.isEffectEnchantment(e.getKey())) continue;
+                if (e.getIntValue() < e.getKey().value().getMaxLevel()) up.add(e.getKey());
+            }
+            if (up.isEmpty()) return false;
+
+            Holder<Enchantment> chosen = up.get(RNG.nextInt(up.size()));
+            ItemEnchantments.Mutable mut = new ItemEnchantments.Mutable(ex);
+            mut.set(chosen, ex.getLevel(chosen) + 1);
+            taken.set(DataComponents.ENCHANTMENTS, mut.toImmutable());
+            changed = true;
+
+            RuneStats base = RuneStats.get(taken);
+            EnumMap<RuneStatType, Float> map = new EnumMap<>(RuneStatType.class);
+            if (base != null && !base.isEmpty()) map.putAll(base.view());
+
+            addRandomCurse(taken, map);
+
+            RuneStats.set(taken, map.isEmpty() ? RuneStats.empty() : new RuneStats(map));
+        }
+
+        updateGlintAfter(taken);
+        return changed;
     }
 
     private void applyRuneOnTake(ItemStack taken, ItemStack rune) {
@@ -244,65 +462,26 @@ public class EtchingTableMenu extends AbstractContainerMenu {
             int cap = RuneSlots.capacity(taken);
             if (cap > 1) {
                 RuneSlots.removeOneSlot(taken);
-                ItemEnchantments ex = taken.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
-                if (!ex.isEmpty()) {
-                    List<Holder<Enchantment>> keys = new ArrayList<>(ex.keySet());
-                    Holder<Enchantment> remove = keys.get(RNG.nextInt(keys.size()));
-                    ItemEnchantments.Mutable mut = new ItemEnchantments.Mutable(ex);
-                    mut.set(remove, 0);
-                    taken.set(DataComponents.ENCHANTMENTS, mut.toImmutable());
-                }
-                int max = taken.getMaxDamage();
-                int dmg = taken.getOrDefault(DataComponents.DAMAGE, 0);
-                int heal = Math.max(1, (int) Math.floor(max * 0.25f));
-                taken.set(DataComponents.DAMAGE, Math.max(0, dmg - heal));
+                taken.set(DataComponents.DAMAGE, 0);
+                updateGlintAfter(taken);
             }
             return;
         }
 
         if (rune.is(ModItems.EXPANSION_RUNE.get())) {
-            int used = RuneSlots.expansionsUsed(taken);
-            if (used < 3) {
-                int current = taken.getMaxDamage();
-                int newMax = (int) Math.floor(current * 0.75f);
-                if (newMax >= 1) {
-                    int dmg = taken.getOrDefault(DataComponents.DAMAGE, 0);
-                    taken.set(DataComponents.DAMAGE, Math.min(newMax - 1, dmg));
-                    taken.set(DataComponents.MAX_DAMAGE, newMax);
-                    RuneSlots.addOneSlot(taken);
-                    RuneSlots.incrementExpansion(taken);
-                }
-            }
+            applyExpansion(taken);
             return;
         }
 
         if (rune.is(ModItems.NULLIFICATION_RUNE.get())) {
-            ItemEnchantments ex = taken.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
-            if (!ex.isEmpty()) {
-                List<Holder<Enchantment>> keys = new ArrayList<>(ex.keySet());
-                Holder<Enchantment> remove = keys.get(RNG.nextInt(keys.size()));
-                ItemEnchantments.Mutable mut = new ItemEnchantments.Mutable(ex);
-                mut.set(remove, 0);
-                taken.set(DataComponents.ENCHANTMENTS, mut.toImmutable());
-            }
+            applyNullification(taken);
             return;
         }
 
         if (rune.is(ModItems.UPGRADE_RUNE.get())) {
-            ItemEnchantments ex = taken.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
-            if (ex.isEmpty()) return;
-
-            List<Holder<Enchantment>> up = new ArrayList<>();
-            for (Object2IntMap.Entry<Holder<Enchantment>> e : ex.entrySet()) {
-                if (RuneItem.isEffectEnchantment(e.getKey())) continue;
-                if (e.getIntValue() < e.getKey().value().getMaxLevel()) up.add(e.getKey());
+            if (applyUpgrade(taken)) {
+                RuneSlots.tryConsumeSlot(taken);
             }
-            if (up.isEmpty()) return;
-
-            Holder<Enchantment> chosen = up.get(RNG.nextInt(up.size()));
-            ItemEnchantments.Mutable mut = new ItemEnchantments.Mutable(ex);
-            mut.set(chosen, ex.getLevel(chosen) + 1);
-            taken.set(DataComponents.ENCHANTMENTS, mut.toImmutable());
             return;
         }
 
@@ -344,15 +523,10 @@ public class EtchingTableMenu extends AbstractContainerMenu {
         for (var entry : enchants.entrySet()) {
             Holder<Enchantment> h = entry.getKey();
             if (!RuneItem.isEffectEnchantment(h)) continue;
-
-            if (current.getLevel(h) > 0) {
-                continue;
-            }
+            if (current.getLevel(h) > 0) continue;
 
             List<Holder<Enchantment>> existing = new ArrayList<>(mut.keySet());
-            if (!EnchantmentHelper.isEnchantmentCompatible(existing, h)) {
-                continue;
-            }
+            if (!EnchantmentHelper.isEnchantmentCompatible(existing, h)) continue;
 
             mut.set(h, RuneItem.forcedEffectLevel(h));
             changed = true;

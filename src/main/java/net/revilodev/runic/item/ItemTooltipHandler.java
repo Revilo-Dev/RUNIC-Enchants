@@ -4,7 +4,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -40,9 +39,7 @@ import net.revilodev.runic.stat.RuneStatType;
 import net.revilodev.runic.stat.RuneStats;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -472,13 +469,23 @@ public final class ItemTooltipHandler {
 
                 int min = type.minPercent();
                 int max = type.maxPercent();
-                String vStr = min == max ? "+" + min + "%" : min + "% - " + max + "%";
+
+                String vStr;
+                ChatFormatting color;
+
+                if (type.isCurse()) {
+                    vStr = min == max ? "-" + min + "%" : "-" + min + "% - " + max + "%";
+                    color = ChatFormatting.RED;
+                } else {
+                    vStr = min == max ? "+" + min + "%" : min + "% - " + max + "%";
+                    color = ChatFormatting.AQUA;
+                }
 
                 tooltip.add(
                         Component.literal("  ")
                                 .append(Component.translatable("tooltip.runic.stat." + type.id()))
                                 .append(": ")
-                                .append(Component.literal(vStr).withStyle(ChatFormatting.AQUA))
+                                .append(Component.literal(vStr).withStyle(color))
                 );
             }
             return;
@@ -492,17 +499,23 @@ public final class ItemTooltipHandler {
             float v = e.getValue();
             if (v == 0) continue;
 
-            float shown = Math.max(v, 0.0F);
-            String vStr =
-                    Math.abs(shown - Math.round(shown)) < 0.001
-                            ? "+" + (int) shown + "%"
-                            : "+" + String.format(Locale.ROOT, "%.1f%%", shown);
+            boolean curse = type.isCurse();
+
+            float shown = v;
+            float abs = Math.abs(shown);
+
+            String num =
+                    Math.abs(abs - Math.round(abs)) < 0.001
+                            ? String.format(Locale.ROOT, "%.0f", abs)
+                            : String.format(Locale.ROOT, "%.1f", abs);
+
+            String vStr = (curse ? "-" : "+") + num + "%";
 
             tooltip.add(
                     Component.literal("  ")
                             .append(Component.translatable("tooltip.runic.stat." + type.id()))
                             .append(": ")
-                            .append(Component.literal(vStr).withStyle(ChatFormatting.AQUA))
+                            .append(Component.literal(vStr).withStyle(curse ? ChatFormatting.RED : ChatFormatting.AQUA))
             );
         }
     }
@@ -562,5 +575,4 @@ public final class ItemTooltipHandler {
                         .withStyle(remain > 0 ? ChatFormatting.GRAY : ChatFormatting.RED)
         );
     }
-
 }
