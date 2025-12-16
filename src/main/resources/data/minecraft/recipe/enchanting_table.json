@@ -9,7 +9,7 @@
     "###"
   ],
   "key": {
-    "#": { "item": "minecraft:stone" }
+    "#": { "item": "minecraft:air" }
   },
-  "result": { "id": "minecraft:enchanting_table" }
+  "result": { "id": "minecraft:air" }
 }

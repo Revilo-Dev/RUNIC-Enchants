@@ -1,0 +1,209 @@
+{
+  "items": {
+
+    "nights_quest:paladin_sword": 6,
+    "nights_quest:khopesh": 4,
+    "nights_quest:cleaver": 5,
+    "nights_quest:kukri": 4,
+    "nights_quest:uchigatana": 5,
+    "nights_quest:nail": 4,
+
+    "nights_quest:steel_sword": 4,
+    "nights_quest:steel_axe": 4,
+
+    "nights_quest:knightmetal_sword": 6,
+    "nights_quest:knightmetal_axe": 6,
+    "nights_quest:knightmetal_pickaxe": 5,
+    "nights_quest:knightmetal_shield": 4,
+
+    "nights_quest:knight_helmet": 5,
+    "nights_quest:knight_chestplate": 4,
+    "nights_quest:knight_leggings": 4,
+    "nights_quest:knight_boots": 5,
+
+    "nights_quest:squire_helmet": 4,
+    "nights_quest:squire_chestplate": 3,
+    "nights_quest:squire_leggings": 3,
+    "nights_quest:squire_boots": 4,
+
+    "nights_quest:apple_helmet": 4,
+    "nights_quest:apple_chestplate": 3,
+    "nights_quest:apple_leggings": 3,
+    "nights_quest:apple_boots": 4,
+
+    "nights_quest:bamboo_helmet": 4,
+    "nights_quest:bamboo_chestplate": 3,
+    "nights_quest:bamboo_leggings": 3,
+    "nights_quest:bamboo_boots": 4,
+
+    "nights_quest:blue_bamboo_helmet": 4,
+    "nights_quest:blue_bamboo_chestplate": 3,
+    "nights_quest:blue_bamboo_leggings": 3,
+    "nights_quest:blue_bamboo_boots": 4,
+
+    "nights_quest:green_bamboo_helmet": 4,
+    "nights_quest:green_bamboo_chestplate": 3,
+    "nights_quest:green_bamboo_leggings": 3,
+    "nights_quest:green_bamboo_boots": 4,
+
+    "nights_quest:bat_helmet": 4,
+    "nights_quest:bat_chestplate": 3,
+    "nights_quest:bat_leggings": 3,
+    "nights_quest:bat_boots": 4,
+
+    "nights_quest:blaze_helmet": 6,
+    "nights_quest:blaze_chestplate": 5,
+    "nights_quest:blaze_leggings": 5,
+    "nights_quest:blaze_boots": 6,
+
+    "nights_quest:bow_helmet": 4,
+    "nights_quest:bow_chestplate": 3,
+    "nights_quest:bow_leggings": 3,
+    "nights_quest:bow_boots": 4,
+
+    "nights_quest:horn_helmet": 4,
+    "nights_quest:horn_chestplate": 3,
+    "nights_quest:horn_leggings": 3,
+    "nights_quest:horn_boots": 4,
+
+    "nights_quest:creeper_helmet": 4,
+    "nights_quest:creeper_chestplate": 3,
+    "nights_quest:creeper_leggings": 3,
+    "nights_quest:creeper_boots": 4,
+
+    "nights_quest:deepslate_helmet": 4,
+    "nights_quest:deepslate_chestplate": 3,
+    "nights_quest:deepslate_leggings": 3,
+    "nights_quest:deepslate_boots": 4,
+
+    "nights_quest:dragon_helmet": 6,
+    "nights_quest:dragon_chestplate": 5,
+    "nights_quest:dragon_leggings": 5,
+    "nights_quest:dragon_boots": 6,
+
+    "nights_quest:enderman_helmet": 4,
+    "nights_quest:enderman_chestplate": 3,
+    "nights_quest:enderman_leggings": 3,
+    "nights_quest:enderman_boots": 4,
+
+    "nights_quest:evoker_helmet": 4,
+    "nights_quest:evoker_chestplate": 3,
+    "nights_quest:evoker_leggings": 3,
+    "nights_quest:evoker_boots": 4,
+
+    "nights_quest:hollow_helmet": 4,
+    "nights_quest:hollow_chestplate": 3,
+    "nights_quest:hollow_leggings": 3,
+    "nights_quest:hollow_boots": 4,
+
+    "nights_quest:nether_helmet": 4,
+    "nights_quest:nether_chestplate": 3,
+    "nights_quest:nether_leggings": 3,
+    "nights_quest:nether_boots": 4,
+
+    "nights_quest:veteran_helmet": 4,
+    "nights_quest:veteran_chestplate": 3,
+    "nights_quest:veteran_leggings": 3,
+    "nights_quest:veteran_boots": 4,
+
+    "nights_quest:path_helmet": 4,
+    "nights_quest:path_chestplate": 3,
+    "nights_quest:path_leggings": 3,
+    "nights_quest:path_boots": 4,
+
+    "nights_quest:phantom_helmet": 4,
+    "nights_quest:phantom_chestplate": 3,
+    "nights_quest:phantom_leggings": 3,
+    "nights_quest:phantom_boots": 4,
+
+    "nights_quest:sea_helmet": 4,
+    "nights_quest:sea_chestplate": 3,
+    "nights_quest:sea_leggings": 3,
+    "nights_quest:sea_boots": 4,
+
+    "nights_quest:silver_helmet": 4,
+    "nights_quest:silver_chestplate": 3,
+    "nights_quest:silver_leggings": 3,
+    "nights_quest:silver_boots": 4,
+
+    "nights_quest:silverfish_helmet": 4,
+    "nights_quest:silverfish_chestplate": 3,
+    "nights_quest:silverfish_leggings": 3,
+    "nights_quest:silverfish_boots": 4,
+
+    "nights_quest:skeleton_helmet": 4,
+    "nights_quest:skeleton_chestplate": 3,
+    "nights_quest:skeleton_leggings": 3,
+    "nights_quest:skeleton_boots": 4,
+
+    "nights_quest:spider_helmet": 4,
+    "nights_quest:spider_chestplate": 3,
+    "nights_quest:spider_leggings": 3,
+    "nights_quest:spider_boots": 4,
+
+    "nights_quest:warlorn_helmet": 4,
+    "nights_quest:warlorn_chestplate": 3,
+    "nights_quest:warlorn_leggings": 3,
+    "nights_quest:warlorn_boots": 4,
+
+    "nights_quest:straw_hat_helmet": 4,
+    "nights_quest:straw_hat_chestplate": 3,
+    "nights_quest:straw_hat_leggings": 3,
+    "nights_quest:straw_hat_boots": 4,
+
+    "nights_quest:pirate_helmet": 4,
+    "nights_quest:pirate_chestplate": 3,
+    "nights_quest:pirate_leggings": 3,
+    "nights_quest:pirate_boots": 4,
+
+    "nights_quest:wither_helmet": 6,
+    "nights_quest:wither_chestplate": 5,
+    "nights_quest:wither_leggings": 5,
+    "nights_quest:wither_boots": 6,
+
+    "nights_quest:skulk_helmet": 6,
+    "nights_quest:skulk_chestplate": 5,
+    "nights_quest:skulk_leggings": 5,
+    "nights_quest:skulk_boots": 6,
+
+    "nights_quest:shinobi_helmet": 4,
+    "nights_quest:shinobi_chestplate": 3,
+    "nights_quest:shinobi_leggings": 3,
+    "nights_quest:shinobi_boots": 4,
+
+    "nights_quest:polar_helmet": 4,
+    "nights_quest:polar_chestplate": 3,
+    "nights_quest:polar_leggings": 3,
+    "nights_quest:polar_boots": 4,
+
+    "nights_quest:witch_helmet": 4,
+    "nights_quest:witch_chestplate": 3,
+    "nights_quest:witch_leggings": 3,
+    "nights_quest:witch_boots": 4,
+
+    "nights_quest:husk_helmet": 4,
+    "nights_quest:husk_chestplate": 3,
+    "nights_quest:husk_leggings": 3,
+    "nights_quest:husk_boots": 4,
+
+    "nights_quest:knightmetal_helmet": 6,
+    "nights_quest:knightmetal_chestplate": 5,
+    "nights_quest:knightmetal_leggings": 5,
+    "nights_quest:knightmetal_boots": 6,
+
+    "nights_quest:freebooter_helmet": 5,
+    "nights_quest:freebooter_chestplate": 4,
+    "nights_quest:freebooter_leggings": 4,
+    "nights_quest:freebooter_boots": 5,
+
+    "nights_quest:conquistador_helmet": 5,
+    "nights_quest:conquistador_chestplate": 4,
+    "nights_quest:conquistador_leggings": 4,
+    "nights_quest:conquistador_boots": 5,
+
+    "nights_quest:corsair_helmet": 5,
+    "nights_quest:corsair_chestplate": 4,
+    "nights_quest:corsair_leggings": 4,
+    "nights_quest:corsair_boots": 5
+  }
+}

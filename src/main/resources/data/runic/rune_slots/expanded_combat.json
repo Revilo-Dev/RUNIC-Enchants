@@ -1,0 +1,142 @@
+{
+  "items": {
+
+    "expanded_combat:wooden_battle_staff": 2,
+    "expanded_combat:wooden_broad_sword": 2,
+    "expanded_combat:wooden_claymore": 2,
+    "expanded_combat:wooden_cutlass": 2,
+    "expanded_combat:wooden_dancer_sword": 2,
+    "expanded_combat:wooden_flail": 2,
+    "expanded_combat:wooden_glaive": 2,
+    "expanded_combat:wooden_great_hammer": 2,
+    "expanded_combat:wooden_katana": 2,
+    "expanded_combat:wooden_mace": 2,
+    "expanded_combat:wooden_scythe": 2,
+    "expanded_combat:wooden_spear": 2,
+
+    "expanded_combat:wooden_dagger": 1,
+    "expanded_combat:wooden_sickle": 1,
+
+
+    "expanded_combat:stone_battle_staff": 3,
+    "expanded_combat:stone_broad_sword": 3,
+    "expanded_combat:stone_claymore": 3,
+    "expanded_combat:stone_cutlass": 3,
+    "expanded_combat:stone_dancer_sword": 3,
+    "expanded_combat:stone_flail": 3,
+    "expanded_combat:stone_glaive": 3,
+    "expanded_combat:stone_great_hammer": 3,
+    "expanded_combat:stone_katana": 3,
+    "expanded_combat:stone_mace": 3,
+    "expanded_combat:stone_scythe": 3,
+    "expanded_combat:stone_spear": 3,
+
+    "expanded_combat:stone_dagger": 2,
+    "expanded_combat:stone_sickle": 2,
+
+
+    "expanded_combat:iron_battle_staff": 4,
+    "expanded_combat:iron_broad_sword": 4,
+    "expanded_combat:iron_claymore": 4,
+    "expanded_combat:iron_cutlass": 4,
+    "expanded_combat:iron_dancer_sword": 4,
+    "expanded_combat:iron_flail": 4,
+    "expanded_combat:iron_glaive": 4,
+    "expanded_combat:iron_great_hammer": 4,
+    "expanded_combat:iron_katana": 4,
+    "expanded_combat:iron_mace": 4,
+    "expanded_combat:iron_scythe": 4,
+    "expanded_combat:iron_spear": 4,
+
+    "expanded_combat:iron_dagger": 3,
+    "expanded_combat:iron_sickle": 3,
+
+
+    "expanded_combat:golden_battle_staff": 5,
+    "expanded_combat:golden_broad_sword": 5,
+    "expanded_combat:golden_claymore": 5,
+    "expanded_combat:golden_cutlass": 5,
+    "expanded_combat:golden_dancer_sword": 5,
+    "expanded_combat:golden_flail": 5,
+    "expanded_combat:golden_glaive": 5,
+    "expanded_combat:golden_great_hammer": 5,
+    "expanded_combat:golden_katana": 5,
+    "expanded_combat:golden_mace": 5,
+    "expanded_combat:golden_scythe": 5,
+    "expanded_combat:golden_spear": 5,
+
+    "expanded_combat:golden_dagger": 4,
+    "expanded_combat:golden_sickle": 4,
+
+
+    "expanded_combat:diamond_battle_staff": 5,
+    "expanded_combat:diamond_broad_sword": 5,
+    "expanded_combat:diamond_claymore": 5,
+    "expanded_combat:diamond_cutlass": 5,
+    "expanded_combat:diamond_dancer_sword": 5,
+    "expanded_combat:diamond_flail": 5,
+    "expanded_combat:diamond_glaive": 5,
+    "expanded_combat:diamond_great_hammer": 5,
+    "expanded_combat:diamond_katana": 5,
+    "expanded_combat:diamond_mace": 5,
+    "expanded_combat:diamond_scythe": 5,
+    "expanded_combat:diamond_spear": 5,
+
+    "expanded_combat:diamond_dagger": 4,
+    "expanded_combat:diamond_sickle": 4,
+
+
+    "expanded_combat:netherite_battle_staff": 6,
+    "expanded_combat:netherite_broad_sword": 6,
+    "expanded_combat:netherite_claymore": 6,
+    "expanded_combat:netherite_cutlass": 6,
+    "expanded_combat:netherite_dancer_sword": 6,
+    "expanded_combat:netherite_flail": 6,
+    "expanded_combat:netherite_glaive": 6,
+    "expanded_combat:netherite_great_hammer": 6,
+    "expanded_combat:netherite_katana": 6,
+    "expanded_combat:netherite_mace": 6,
+    "expanded_combat:netherite_scythe": 6,
+    "expanded_combat:netherite_spear": 6,
+
+    "expanded_combat:netherite_dagger": 5,
+    "expanded_combat:netherite_sickle": 5,
+    "expanded_combat:leather_gauntlets": 2,
+    "expanded_combat:iron_gauntlets": 4,
+    "expanded_combat:golden_gauntlets": 5,
+    "expanded_combat:diamond_gauntlets": 5,
+
+    "expanded_combat:fighters_gauntlet": 4,
+    "expanded_combat:brawlers_gauntlet": 4,
+    "expanded_combat:berserk_gauntlet": 5,
+    "expanded_combat:soul_fist": 6,
+
+    "expanded_combat:iron_bow": 4,
+    "expanded_combat:golden_bow": 5,
+    "expanded_combat:diamond_bow": 5,
+    "expanded_combat:netherite_bow": 6,
+
+    "expanded_combat:iron_crossbow": 4,
+    "expanded_combat:golden_crossbow": 5,
+    "expanded_combat:diamond_crossbow": 5,
+    "expanded_combat:netherite_crossbow": 6,
+    "expanded_combat:heart_stealer": 6,
+    "expanded_combat:sun_masters_katana": 6,
+    "expanded_combat:suns_firebrand": 6,
+    "expanded_combat:suns_grace": 5,
+    "expanded_combat:grave_bane": 5,
+
+    "expanded_combat:fang_of_frost": 5,
+    "expanded_combat:frost_scythe": 5,
+    "expanded_combat:frost_slayer": 5,
+
+    "expanded_combat:void_touched_claymore": 6,
+    "expanded_combat:void_touched_blade": 6,
+    "expanded_combat:void_touched_great_hammer": 6,
+
+    "expanded_combat:nameless_blade": 5,
+    "expanded_combat:dark_katana": 5,
+    "expanded_combat:eternal_soul_knife": 4,
+    "expanded_combat:soul_scythe": 6
+  }
+}

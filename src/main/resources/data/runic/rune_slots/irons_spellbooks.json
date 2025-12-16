@@ -1,0 +1,86 @@
+{
+  "items": {
+    "irons_spellbooks:blood_staff": 4,
+    "irons_spellbooks:graybeard_staff": 4,
+    "irons_spellbooks:ice_staff": 4,
+    "irons_spellbooks:artificers_cane": 3,
+    "irons_spellbooks:rod_of_lightning": 5,
+    "irons_spellbooks:pyrium_staff": 5,
+
+    "irons_spellbooks:mage_hunter": 5,
+    "irons_spellbooks:spellbreaker": 6,
+    "irons_spellbooks:amethyst_rapier": 4,
+    "irons_spellbooks:boreal_blade": 5,
+    "irons_spellbooks:twilight_gale": 5,
+    "irons_spellbooks:decrepit_flamberge": 6,
+    "irons_spellbooks:legionnaire_flamberge": 6,
+    "irons_spellbooks:decrepit_scythe": 6,
+    "irons_spellbooks:hellrazor": 7,
+    "irons_spellbooks:autoloader_crossbow": 5,
+
+    "irons_spellbooks:scarecrow_hat": 3,
+    "irons_spellbooks:scarecrow_coat": 2,
+    "irons_spellbooks:scarecrow_leggings": 2,
+    "irons_spellbooks:scarecrow_boots": 3,
+
+    "irons_spellbooks:wandering_merchant_hood": 3,
+    "irons_spellbooks:wandering_merchant_robe": 2,
+    "irons_spellbooks:wandering_merchant_pants": 2,
+    "irons_spellbooks:wandering_merchant_shoes": 3,
+
+    "irons_spellbooks:pyromancer_hat": 5,
+    "irons_spellbooks:pyromancer_robe": 4,
+    "irons_spellbooks:pyromancer_leggings": 4,
+    "irons_spellbooks:pyromancer_boots": 5,
+
+    "irons_spellbooks:electromancer_hat": 5,
+    "irons_spellbooks:electromancer_robe": 4,
+    "irons_spellbooks:electromancer_leggings": 4,
+    "irons_spellbooks:electromancer_boots": 5,
+
+    "irons_spellbooks:archevoker_hat": 5,
+    "irons_spellbooks:archevoker_robe": 4,
+    "irons_spellbooks:archevoker_leggings": 4,
+    "irons_spellbooks:archevoker_boots": 5,
+
+    "irons_spellbooks:cultist_hood": 5,
+    "irons_spellbooks:cultist_armor": 4,
+    "irons_spellbooks:cultist_leggings": 4,
+    "irons_spellbooks:cultist_boots": 5,
+
+    "irons_spellbooks:cryomancer_hood": 5,
+    "irons_spellbooks:cryomancer_coat": 4,
+    "irons_spellbooks:cryomancer_leggings": 4,
+    "irons_spellbooks:cryomancer_boots": 5,
+
+    "irons_spellbooks:shadowalker_mask": 6,
+    "irons_spellbooks:shadowalker_armor": 5,
+    "irons_spellbooks:shadowalker_leggings": 5,
+    "irons_spellbooks:shadowalker_boots": 6,
+
+    "irons_spellbooks:priest_mask": 5,
+    "irons_spellbooks:priest_robes": 4,
+    "irons_spellbooks:priest_leggings": 4,
+    "irons_spellbooks:priest_boots": 5,
+
+    "irons_spellbooks:plagued_mask": 5,
+    "irons_spellbooks:plagued_coat": 4,
+    "irons_spellbooks:plagued_leggings": 4,
+    "irons_spellbooks:plagued_boots": 5,
+
+    "irons_spellbooks:netherite_battlemage_hat": 7,
+    "irons_spellbooks:netherite_battlemage_robes": 6,
+    "irons_spellbooks:netherite_battlemage_leggings": 6,
+    "irons_spellbooks:netherite_battlemage_boots": 7,
+
+    "irons_spellbooks:wizard_hood": 5,
+    "irons_spellbooks:wizard_hat": 5,
+    "irons_spellbooks:wizard_robes": 4,
+    "irons_spellbooks:wizard_leggings": 4,
+    "irons_spellbooks:wizard_boots": 5,
+
+    "irons_spellbooks:infernal_sorcerer_chestplate": 6,
+    "irons_spellbooks:lightbringer_chestplate": 6,
+    "irons_spellbooks:boots_of_speed": 5
+  }
+}
