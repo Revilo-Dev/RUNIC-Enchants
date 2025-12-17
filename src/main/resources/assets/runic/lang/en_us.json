@@ -59,10 +59,10 @@
   "enchantment.runic.committed": "Committed",
 
 
-  "tooltip.runic.expansion_rune": "§7Adds an Additional Rune Slot to your Gear at the cost of 25% max durability",
-  "tooltip.runic.repair_rune": "§7Recovers 25% of the items durability at the cost of a Rune Slot",
-  "tooltip.runic.nullification_rune": "§7Remove A Random Enchant Off A Gear Piece",
-  "tooltip.runic.upgrade_rune": "§7Upgrade The Level Of A Random Enchant On A Gear Piece",
+  "tooltip.runic.expansion_rune": "§7Add an additional Rune slot to an item, Adds a curse, can be used 3 times",
+  "tooltip.runic.repair_rune": "§7Completely Repair an item in an etching table ",
+  "tooltip.runic.nullification_rune": "§7Completely Reset a gear piece, removing all enhancements ",
+  "tooltip.runic.upgrade_rune": "§7Upgrade the stats of a random stat enhancement",
 
   "tooltip.runic.aqua_affinity": "Increases underwater mining speed",
   "tooltip.runic.bane_of_arthropods": "Deal more damage to arthropod type enemies",

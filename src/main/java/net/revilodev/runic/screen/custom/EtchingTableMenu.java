@@ -22,6 +22,7 @@ import net.minecraft.world.level.Level;
 import net.revilodev.runic.block.ModBlocks;
 import net.revilodev.runic.item.ModItems;
 import net.revilodev.runic.item.custom.RuneItem;
+import net.revilodev.runic.registry.ModDataComponents;
 import net.revilodev.runic.runes.RuneSlots;
 import net.revilodev.runic.stat.RuneStatType;
 import net.revilodev.runic.stat.RuneStats;
@@ -115,7 +116,12 @@ public class EtchingTableMenu extends AbstractContainerMenu {
 
     private void consumeInputs() {
         if (!input.getItem(0).isEmpty()) input.getItem(0).shrink(1);
-        if (!input.getItem(1).isEmpty()) input.getItem(1).shrink(1);
+
+        ItemStack runeIn = input.getItem(1);
+        if (!runeIn.isEmpty() && !runeIn.is(ModItems.REPAIR_RUNE.get())) {
+            runeIn.shrink(1);
+        }
+
         input.setChanged();
     }
 
@@ -250,10 +256,24 @@ public class EtchingTableMenu extends AbstractContainerMenu {
     }
 
     private boolean canApplyNullification(ItemStack target) {
+        boolean hasAnyEnchants =
+                !target.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY).isEmpty()
+                        || !target.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY).isEmpty();
+
+        boolean hasUsedSlots = RuneSlots.used(target) > 0 || target.has(DataComponents.ENCHANTMENT_GLINT_OVERRIDE);
+
+        boolean hasNonCurseStats = false;
         RuneStats current = RuneStats.get(target);
-        if (current == null || current.isEmpty()) return false;
-        if (!hasUpgradeableStat(target, current)) return false;
-        return !applicableCursesFor(target).isEmpty();
+        if (current != null && !current.isEmpty()) {
+            for (Map.Entry<RuneStatType, Float> e : current.view().entrySet()) {
+                if (!e.getKey().isCurse() && e.getValue() != 0.0F) {
+                    hasNonCurseStats = true;
+                    break;
+                }
+            }
+        }
+
+        return hasAnyEnchants || hasUsedSlots || hasNonCurseStats;
     }
 
     private boolean canApplyUpgrade(ItemStack target) {
@@ -347,46 +367,27 @@ public class EtchingTableMenu extends AbstractContainerMenu {
     }
 
     private void applyNullification(ItemStack taken) {
+        taken.remove(DataComponents.ENCHANTMENTS);
+        taken.remove(DataComponents.STORED_ENCHANTMENTS);
+        taken.remove(DataComponents.ENCHANTMENT_GLINT_OVERRIDE);
+
         RuneStats current = RuneStats.get(taken);
-        if (current == null || current.isEmpty()) return;
-
-        RuneStatType upgrade = pickRandomUpgradeableStat(current);
-        if (upgrade == null) return;
-
         EnumMap<RuneStatType, Float> map = new EnumMap<>(RuneStatType.class);
-        map.putAll(current.view());
 
-        ItemEnchantments ex = taken.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
-        Holder<Enchantment> effectToRemove = pickRandomEffectEnchant(ex);
-
-        if (effectToRemove != null) {
-            ItemEnchantments.Mutable mut = new ItemEnchantments.Mutable(ex);
-            mut.set(effectToRemove, 0);
-            taken.set(DataComponents.ENCHANTMENTS, mut.toImmutable());
-        } else {
-            List<RuneStatType> removable = new ArrayList<>();
-            for (RuneStatType t : map.keySet()) {
-                if (t.isCurse()) continue;
-                if (t != upgrade) removable.add(t);
-            }
-            if (!removable.isEmpty()) {
-                RuneStatType remove = removable.get(RNG.nextInt(removable.size()));
-                map.remove(remove);
+        if (current != null && !current.isEmpty()) {
+            for (Map.Entry<RuneStatType, Float> e : current.view().entrySet()) {
+                RuneStatType t = e.getKey();
+                float v = e.getValue();
+                if (t.isCurse() && v != 0.0F) {
+                    map.put(t, v);
+                }
             }
         }
 
-        float old = map.getOrDefault(upgrade, 0.0F);
-        float boosted = old * 1.10f;
+        RuneStats.set(taken, map.isEmpty() ? RuneStats.empty() : new RuneStats(map));
 
-        float cap = upgrade.cap();
-        if (cap > 0.0F && boosted > cap) boosted = cap;
+        taken.set(ModDataComponents.RUNE_SLOTS_USED.get(), 0);
 
-        map.put(upgrade, boosted);
-
-        addRandomCurse(taken, map);
-
-        RuneStats.set(taken, new RuneStats(map));
-        RuneSlots.tryConsumeSlot(taken);
         updateGlintAfter(taken);
     }
 

@@ -1,22 +1,18 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "pattern": [
     " G ",
     "SRS",
     "SSS"
   ],
   "key": {
-    "G": {
-      "item": "minecraft:gold_ingot"
-    },
-    "S": {
-      "item": "minecraft:stone"
-    },
-    "R": {
-      "item": "runic:utility_rune"
-    }
+    "G": { "item": "minecraft:gold_ingot" },
+    "S": { "item": "minecraft:stone" },
+    "R": { "item": "runic:utility_rune" }
   },
   "result": {
-    "item": "runic:expansion_rune"
+    "count": 1,
+    "id": "runic:expansion_rune"
   }
 }
