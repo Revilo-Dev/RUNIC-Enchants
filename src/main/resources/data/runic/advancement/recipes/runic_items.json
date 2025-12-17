@@ -1,0 +1,17 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_diamond": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": { "items": [{ "items": "minecraft:diamond" }] }
+    }
+  },
+  "rewards": {
+    "recipes": [
+      "runic:repair_rune",
+      "runic:nullification_rune",
+      "runic:expansion_rune",
+      "runic:upgrade_rune"
+    ]
+  }
+}

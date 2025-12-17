@@ -1,0 +1,11 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:false"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "pattern": [ " " ],
+  "key": {},
+  "result": { "id": "minecraft:air" }
+}
