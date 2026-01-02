@@ -21,6 +21,7 @@ import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 import net.revilodev.runic.block.ModBlocks;
 import net.revilodev.runic.item.ModItems;
+import net.revilodev.runic.item.custom.EtchingItem;
 import net.revilodev.runic.item.custom.RuneItem;
 import net.revilodev.runic.registry.ModDataComponents;
 import net.revilodev.runic.runes.RuneSlots;
@@ -131,66 +132,84 @@ public class EtchingTableMenu extends AbstractContainerMenu {
         );
     }
 
-    private boolean canApplyRuneTo(ItemStack target, ItemStack rune) {
-        if (!rune.is(ModItems.ENHANCED_RUNE.get())) return false;
-
-        RuneStatType stat = getRuneStatType(rune);
-        Item item = target.getItem();
-
-        if (stat != null) {
-            if (RuneStats.get(target).has(stat)) return false;
-
-            return switch (stat) {
-                case ATTACK_DAMAGE, ATTACK_SPEED, ATTACK_RANGE, SWEEPING_RANGE,
-                     UNDEAD_DAMAGE, NETHER_DAMAGE,
-                     STUN_CHANCE, FLAME_CHANCE, BLEEDING_CHANCE, SHOCKING_CHANCE,
-                     POISON_CHANCE, WITHERING_CHANCE, WEAKENING_CHANCE,
-                     FREEZING_CHANCE, LEECHING_CHANCE, BONUS_CHANCE ->
-                        item instanceof SwordItem
-                                || item instanceof AxeItem
-                                || item instanceof TridentItem
-                                || item instanceof MaceItem;
-
-                case POWER, DRAW_SPEED ->
-                        item instanceof BowItem || item instanceof CrossbowItem;
-
-                case MINING_SPEED ->
-                        item instanceof DiggerItem;
-
-                case MOVEMENT_SPEED, HEALTH, RESISTANCE, FIRE_RESISTANCE, BLAST_RESISTANCE,
-                     PROJECTILE_RESISTANCE, KNOCKBACK_RESISTANCE,
-                     TOUGHNESS, HEALING_EFFICIENCY, JUMP_HEIGHT ->
-                        item instanceof ArmorItem;
-
-                case DURABILITY ->
-                        target.isDamageableItem();
-
-                default -> true;
-            };
-        }
-
-        return true;
+    private static ItemEnchantments getEnhancementEnchantments(ItemStack stack) {
+        ItemEnchantments stored = stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
+        ItemEnchantments direct = stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
+        return !stored.isEmpty() ? stored : direct;
     }
 
-    private RuneStatType getRuneStatType(ItemStack rune) {
-        RuneStats stats = RuneItem.getRuneStats(rune);
-        if (stats == null || stats.isEmpty()) return null;
+    private static boolean isEnhancementItem(ItemStack stack) {
+        return stack.getItem() instanceof RuneItem || stack.getItem() instanceof EtchingItem;
+    }
 
-        for (RuneStatType t : stats.view().keySet()) {
-            return t;
-        }
+    private static boolean isEtching(ItemStack stack) {
+        return stack.getItem() instanceof EtchingItem;
+    }
+
+    private RuneStatType getEnhancementStatType(ItemStack enhancement) {
+        RuneStats stats = RuneStats.get(enhancement);
+        if (stats == null || stats.isEmpty()) return null;
+        for (RuneStatType t : stats.view().keySet()) return t;
         return null;
     }
 
-    private boolean canApplyEffectEnchant(ItemStack target, Holder<Enchantment> effect) {
-        if (effect == null) return false;
-        if (!RuneItem.isEffectEnchantment(effect)) return false;
+    private boolean canApplyStatTo(ItemStack target, RuneStatType stat) {
+        if (stat == null) return false;
+        if (RuneStats.get(target).has(stat)) return false;
 
-        ItemEnchantments ex = target.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
-        if (ex.getLevel(effect) > 0) return false;
+        Item item = target.getItem();
 
-        List<Holder<Enchantment>> existing = new ArrayList<>(ex.keySet());
-        return EnchantmentHelper.isEnchantmentCompatible(existing, effect);
+        return switch (stat) {
+            case ATTACK_DAMAGE, ATTACK_SPEED, ATTACK_RANGE, SWEEPING_RANGE,
+                 UNDEAD_DAMAGE, NETHER_DAMAGE,
+                 STUN_CHANCE, FLAME_CHANCE, BLEEDING_CHANCE, SHOCKING_CHANCE,
+                 POISON_CHANCE, WITHERING_CHANCE, WEAKENING_CHANCE,
+                 FREEZING_CHANCE, LEECHING_CHANCE, BONUS_CHANCE ->
+                    item instanceof SwordItem
+                            || item instanceof AxeItem
+                            || item instanceof TridentItem
+                            || item instanceof MaceItem;
+
+            case POWER, DRAW_SPEED ->
+                    item instanceof BowItem || item instanceof CrossbowItem;
+
+            case MINING_SPEED ->
+                    item instanceof DiggerItem;
+
+            case MOVEMENT_SPEED, HEALTH, RESISTANCE, FIRE_RESISTANCE, BLAST_RESISTANCE,
+                 PROJECTILE_RESISTANCE, KNOCKBACK_RESISTANCE,
+                 TOUGHNESS, HEALING_EFFICIENCY, JUMP_HEIGHT ->
+                    item instanceof ArmorItem;
+
+            case DURABILITY ->
+                    target.isDamageableItem();
+
+            default -> true;
+        };
+    }
+
+    private boolean canApplyAnyEffectEnchant(ItemStack target, ItemEnchantments enchants) {
+        if (enchants == null || enchants.isEmpty()) return false;
+
+        ItemEnchantments current = target.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
+
+        for (Object2IntMap.Entry<Holder<Enchantment>> e : enchants.entrySet()) {
+            Holder<Enchantment> h = e.getKey();
+            if (!RuneItem.isEffectEnchantment(h)) continue;
+
+            int desired = RuneItem.clampEffectLevel(h, e.getIntValue());
+            int have = current.getLevel(h);
+            if (have >= desired) continue;
+
+            if (have == 0) {
+                List<Holder<Enchantment>> existing = new ArrayList<>(current.keySet());
+                if (!EnchantmentHelper.isEnchantmentCompatible(existing, h)) continue;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     private boolean hasUpgradeableStat(ItemStack target, RuneStats current) {
@@ -245,38 +264,38 @@ public class EtchingTableMenu extends AbstractContainerMenu {
         return hasUpgradeableEnchant(target);
     }
 
-    private ItemStack preview(ItemStack target, ItemStack rune) {
-        if (target.isEmpty() || rune.isEmpty()) return ItemStack.EMPTY;
+    private ItemStack preview(ItemStack target, ItemStack enhancement) {
+        if (target.isEmpty() || enhancement.isEmpty()) return ItemStack.EMPTY;
 
-        if (rune.is(ModItems.REPAIR_RUNE.get())) {
+        if (enhancement.is(ModItems.REPAIR_RUNE.get())) {
             if (RuneSlots.capacity(target) <= 1) return ItemStack.EMPTY;
             return target.copy();
         }
 
-        if (rune.is(ModItems.EXPANSION_RUNE.get())) {
+        if (enhancement.is(ModItems.EXPANSION_RUNE.get())) {
             if (RuneSlots.expansionsUsed(target) >= 3) return ItemStack.EMPTY;
             return target.copy();
         }
 
-        if (rune.is(ModItems.NULLIFICATION_RUNE.get())) {
+        if (enhancement.is(ModItems.NULLIFICATION_RUNE.get())) {
             return canApplyNullification(target) ? target.copy() : ItemStack.EMPTY;
         }
 
-        if (rune.is(ModItems.UPGRADE_RUNE.get())) {
+        if (enhancement.is(ModItems.UPGRADE_RUNE.get())) {
             return canApplyUpgrade(target) ? target.copy() : ItemStack.EMPTY;
         }
 
-        if (!rune.is(ModItems.ENHANCED_RUNE.get())) return ItemStack.EMPTY;
+        if (!isEnhancementItem(enhancement)) return ItemStack.EMPTY;
         if (RuneSlots.remaining(target) <= 0) return ItemStack.EMPTY;
-        if (!canApplyRuneTo(target, rune)) return ItemStack.EMPTY;
 
-        RuneStats stats = RuneItem.getRuneStats(rune);
-        Holder<Enchantment> effect = RuneItem.getPrimaryEffectEnchantment(rune);
-        boolean hasStats = stats != null && !stats.isEmpty();
-        boolean hasEffect = effect != null && RuneItem.isEffectEnchantment(effect);
+        RuneStats stats = RuneStats.get(enhancement);
+        RuneStatType stat = (stats != null && !stats.isEmpty()) ? getEnhancementStatType(enhancement) : null;
+        boolean statApplicable = stat != null && canApplyStatTo(target, stat);
 
-        if (!hasStats && !hasEffect) return ItemStack.EMPTY;
-        if (hasEffect && !canApplyEffectEnchant(target, effect)) return ItemStack.EMPTY;
+        ItemEnchantments enchants = getEnhancementEnchantments(enhancement);
+        boolean effectApplicable = canApplyAnyEffectEnchant(target, enchants);
+
+        if (!statApplicable && !effectApplicable) return ItemStack.EMPTY;
 
         return target.copy();
     }
@@ -365,8 +384,8 @@ public class EtchingTableMenu extends AbstractContainerMenu {
         return changed;
     }
 
-    private void applyRuneOnTake(ItemStack taken, ItemStack rune) {
-        if (rune.is(ModItems.REPAIR_RUNE.get())) {
+    private void applyRuneOnTake(ItemStack taken, ItemStack enhancement) {
+        if (enhancement.is(ModItems.REPAIR_RUNE.get())) {
             int cap = RuneSlots.capacity(taken);
             if (cap > 1) {
                 RuneSlots.removeOneSlot(taken);
@@ -376,38 +395,37 @@ public class EtchingTableMenu extends AbstractContainerMenu {
             return;
         }
 
-        if (rune.is(ModItems.EXPANSION_RUNE.get())) {
+        if (enhancement.is(ModItems.EXPANSION_RUNE.get())) {
             applyExpansion(taken);
             return;
         }
 
-        if (rune.is(ModItems.NULLIFICATION_RUNE.get())) {
+        if (enhancement.is(ModItems.NULLIFICATION_RUNE.get())) {
             applyNullification(taken);
             return;
         }
 
-        if (rune.is(ModItems.UPGRADE_RUNE.get())) {
+        if (enhancement.is(ModItems.UPGRADE_RUNE.get())) {
             if (applyUpgrade(taken)) {
                 RuneSlots.tryConsumeSlot(taken);
             }
             return;
         }
 
-        if (!rune.is(ModItems.ENHANCED_RUNE.get())) return;
+        if (!isEnhancementItem(enhancement)) return;
 
-        RuneStats runeStats = RuneItem.getRuneStats(rune);
-        ItemEnchantments stored = rune.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
-        ItemEnchantments direct = rune.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
-        ItemEnchantments enchants = !stored.isEmpty() ? stored : direct;
+        RuneStats templateStats = RuneStats.get(enhancement);
+        RuneStatType stat = (templateStats != null && !templateStats.isEmpty()) ? getEnhancementStatType(enhancement) : null;
 
-        boolean hasEnch = !enchants.isEmpty();
-        boolean hasStats = runeStats != null && !runeStats.isEmpty();
+        ItemEnchantments enchants = getEnhancementEnchantments(enhancement);
+        boolean hasEnch = enchants != null && !enchants.isEmpty();
+        boolean hasStats = stat != null;
 
         boolean applied = false;
 
-        if (hasStats) {
+        if (hasStats && canApplyStatTo(taken, stat)) {
             RuneStats base = RuneStats.get(taken);
-            RuneStats rolled = RuneStats.rollForApplication(runeStats, this.level.random);
+            RuneStats rolled = RuneStats.rollForApplication(templateStats, this.level.random, isEtching(enhancement));
 
             boolean changedStats = false;
             if (rolled != null && !rolled.isEmpty()) {
@@ -444,12 +462,17 @@ public class EtchingTableMenu extends AbstractContainerMenu {
         for (var entry : enchants.entrySet()) {
             Holder<Enchantment> h = entry.getKey();
             if (!RuneItem.isEffectEnchantment(h)) continue;
-            if (current.getLevel(h) > 0) continue;
 
-            List<Holder<Enchantment>> existing = new ArrayList<>(mut.keySet());
-            if (!EnchantmentHelper.isEnchantmentCompatible(existing, h)) continue;
+            int desired = RuneItem.clampEffectLevel(h, entry.getIntValue());
+            int have = mut.getLevel(h);
+            if (have >= desired) continue;
 
-            mut.set(h, RuneItem.forcedEffectLevel(h));
+            if (have == 0) {
+                List<Holder<Enchantment>> existing = new ArrayList<>(mut.keySet());
+                if (!EnchantmentHelper.isEnchantmentCompatible(existing, h)) continue;
+            }
+
+            mut.set(h, desired);
             changed = true;
         }
 
@@ -485,12 +508,12 @@ public class EtchingTableMenu extends AbstractContainerMenu {
         ItemStack copy = stack.copy();
 
         if (index == resultIdx) {
-            ItemStack rune = input.getItem(1).copy();
+            ItemStack enhancement = input.getItem(1).copy();
             ItemStack taken = stack.copy();
             result.setItem(0, ItemStack.EMPTY);
             slot.set(ItemStack.EMPTY);
 
-            applyRuneOnTake(taken, rune);
+            applyRuneOnTake(taken, enhancement);
             consumeInputs();
             playUseSound();
             this.updateResult();
@@ -502,11 +525,12 @@ public class EtchingTableMenu extends AbstractContainerMenu {
         if (index < invStart) {
             if (!this.moveItemStackTo(stack, invStart, invEnd, false)) return ItemStack.EMPTY;
         } else {
-            if (stack.is(ModItems.ENHANCED_RUNE.get()) ||
-                    stack.is(ModItems.REPAIR_RUNE.get()) ||
-                    stack.is(ModItems.EXPANSION_RUNE.get()) ||
-                    stack.is(ModItems.NULLIFICATION_RUNE.get()) ||
-                    stack.is(ModItems.UPGRADE_RUNE.get())) {
+            if (stack.getItem() instanceof RuneItem
+                    || stack.getItem() instanceof EtchingItem
+                    || stack.is(ModItems.REPAIR_RUNE.get())
+                    || stack.is(ModItems.EXPANSION_RUNE.get())
+                    || stack.is(ModItems.NULLIFICATION_RUNE.get())
+                    || stack.is(ModItems.UPGRADE_RUNE.get())) {
                 if (!this.moveItemStackTo(stack, 1, 2, false)) return ItemStack.EMPTY;
             } else {
                 if (!this.moveItemStackTo(stack, 0, 1, false)) return ItemStack.EMPTY;

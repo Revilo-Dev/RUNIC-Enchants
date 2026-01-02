@@ -1,5 +1,6 @@
 package net.revilodev.runic.item;
 
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -14,6 +15,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.revilodev.runic.RunicMod;
 import net.revilodev.runic.block.ModBlocks;
+import net.revilodev.runic.item.custom.EtchingItem;
 import net.revilodev.runic.item.custom.RuneItem;
 import net.revilodev.runic.stat.RuneStatType;
 
@@ -36,9 +38,10 @@ public class ModCreativeModeTabs {
 
                         for (RuneStatType type : RuneStatType.values()) {
                             ItemStack statRune = RuneItem.createStatRune(random, type);
-                            if (!statRune.isEmpty()) {
-                                output.accept(statRune);
-                            }
+                            if (!statRune.isEmpty()) output.accept(statRune);
+
+                            ItemStack statEtching = EtchingItem.createStatEtching(random, type);
+                            if (!statEtching.isEmpty()) output.accept(statEtching);
                         }
 
                         params.holders()
@@ -46,11 +49,12 @@ public class ModCreativeModeTabs {
                                 .ifPresent((HolderLookup.RegistryLookup<Enchantment> enchants) -> {
                                     for (ResourceLocation id : RuneItem.allowedEffectIds()) {
                                         ResourceKey<Enchantment> key = ResourceKey.create(Registries.ENCHANTMENT, id);
-                                        enchants.get(key).ifPresent(holder -> {
+                                        enchants.get(key).ifPresent((Holder<Enchantment> holder) -> {
                                             ItemStack effectRune = RuneItem.createEffectRune(holder);
-                                            if (!effectRune.isEmpty()) {
-                                                output.accept(effectRune);
-                                            }
+                                            if (!effectRune.isEmpty()) output.accept(effectRune);
+
+                                            ItemStack effectEtching = EtchingItem.createEffectEtching(holder);
+                                            if (!effectEtching.isEmpty()) output.accept(effectEtching);
                                         });
                                     }
                                 });

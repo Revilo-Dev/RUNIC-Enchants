@@ -1,65 +1,40 @@
 package net.revilodev.runic.item;
 
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredItem;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.revilodev.runic.RunicMod;
+import net.revilodev.runic.item.custom.EtchingItem;
 import net.revilodev.runic.item.custom.RuneItem;
 
-import java.util.List;
+public final class ModItems {
 
-public class ModItems {
-    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(RunicMod.MOD_ID);
+    public static final DeferredRegister<Item> ITEMS =
+            DeferredRegister.create(Registries.ITEM, RunicMod.MOD_ID);
 
-    public static final DeferredItem<Item> EXPANSION_RUNE = ITEMS.register("expansion_rune",
-            () -> new Item(new Item.Properties()) {
-                @Override
-                public void appendHoverText(ItemStack stack, TooltipContext ctx, List<Component> tooltip, TooltipFlag flag) {
-                    tooltip.add(Component.translatable("tooltip.runic.expansion_rune"));
-                    tooltip.add(Component.literal(ChatFormatting.DARK_AQUA + "Rare"));
-                    super.appendHoverText(stack, ctx, tooltip, flag);
-                }
-            });
+    public static final DeferredHolder<Item, RuneItem> ENHANCED_RUNE =
+            ITEMS.register("enhanced_rune", () -> new RuneItem(new Item.Properties().stacksTo(1)));
 
-    public static final DeferredItem<Item> REPAIR_RUNE = ITEMS.register("repair_rune",
-            () -> new Item(new Item.Properties()) {
-                @Override
-                public void appendHoverText(ItemStack stack, TooltipContext ctx, List<Component> tooltip, TooltipFlag flag) {
-                    tooltip.add(Component.translatable("tooltip.runic.repair_rune"));
-                    tooltip.add(Component.literal(ChatFormatting.DARK_AQUA + "Rare"));
-                    super.appendHoverText(stack, ctx, tooltip, flag);
-                }
-            });
+    public static final DeferredHolder<Item, EtchingItem> ETCHING =
+            ITEMS.register("etching", () -> new EtchingItem(new Item.Properties().stacksTo(1)));
 
-    public static final DeferredItem<Item> NULLIFICATION_RUNE = ITEMS.register("nullification_rune",
-            () -> new Item(new Item.Properties()) {
-                @Override
-                public void appendHoverText(ItemStack stack, TooltipContext ctx, List<Component> tooltip, TooltipFlag flag) {
-                    tooltip.add(Component.translatable("tooltip.runic.nullification_rune"));
-                    tooltip.add(Component.literal(ChatFormatting.GOLD + "Epic"));
-                    super.appendHoverText(stack, ctx, tooltip, flag);
-                }
-            });
+    public static final DeferredHolder<Item, Item> REPAIR_RUNE =
+            ITEMS.register("repair_rune", () -> new Item(new Item.Properties().stacksTo(16)));
 
-    public static final DeferredItem<Item> UPGRADE_RUNE = ITEMS.register("upgrade_rune",
-            () -> new Item(new Item.Properties()) {
-                @Override
-                public void appendHoverText(ItemStack stack, TooltipContext ctx, List<Component> tooltip, TooltipFlag flag) {
-                    tooltip.add(Component.translatable("tooltip.runic.upgrade_rune"));
-                    tooltip.add(Component.literal(ChatFormatting.LIGHT_PURPLE + "Legendary"));
-                    super.appendHoverText(stack, ctx, tooltip, flag);
-                }
-            });
+    public static final DeferredHolder<Item, Item> EXPANSION_RUNE =
+            ITEMS.register("expansion_rune", () -> new Item(new Item.Properties().stacksTo(16)));
 
-    public static final DeferredItem<Item> ENHANCED_RUNE = ITEMS.register("enhanced_rune",
-            () -> new RuneItem(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> NULLIFICATION_RUNE =
+            ITEMS.register("nullification_rune", () -> new Item(new Item.Properties().stacksTo(16)));
 
-    public static void register(IEventBus eventBus) {
-        ITEMS.register(eventBus);
+    public static final DeferredHolder<Item, Item> UPGRADE_RUNE =
+            ITEMS.register("upgrade_rune", () -> new Item(new Item.Properties().stacksTo(16)));
+
+    private ModItems() {}
+
+    public static void register(IEventBus bus) {
+        ITEMS.register(bus);
     }
 }

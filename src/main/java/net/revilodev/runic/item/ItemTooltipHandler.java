@@ -31,6 +31,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.revilodev.runic.RunicMod;
+import net.revilodev.runic.item.custom.EtchingItem;
 import net.revilodev.runic.item.custom.RuneItem;
 import net.revilodev.runic.loot.rarity.EnhancementRarities;
 import net.revilodev.runic.loot.rarity.EnhancementRarity;
@@ -65,19 +66,21 @@ public final class ItemTooltipHandler {
         stripVanillaAttributeLines(tooltip);
 
         boolean isRune = stack.getItem() instanceof RuneItem;
+        boolean isEtching = stack.getItem() instanceof EtchingItem;
+        boolean isEnhancement = isRune || isEtching;
 
         stripAllEnchantmentLines(stack, tooltip);
 
-        if (isRune) {
-            appendRuneHeader(stack, tooltip);
+        if (isEnhancement) {
+            appendRuneHeader(stack, tooltip, isEtching);
         }
 
         appendItemStats(stack, tooltip);
-        appendRuneStats(stack, tooltip, isRune);
+        appendRuneStats(stack, tooltip, isEnhancement, isEtching);
         appendRuneSlots(stack, tooltip);
 
-        if (!isRune) {
-            appendEnhancementsSection(stack, tooltip, isRune);
+        if (!isEnhancement) {
+            appendEnhancementsSection(stack, tooltip, false);
         }
     }
 
@@ -100,7 +103,7 @@ public final class ItemTooltipHandler {
         tooltip.removeIf(line -> vanillaLines.contains(line.getString()));
     }
 
-    private static void appendRuneHeader(ItemStack stack, List<Component> tooltip) {
+    private static void appendRuneHeader(ItemStack stack, List<Component> tooltip, boolean isEtching) {
         tooltip.add(Component.literal("Apply in an Etching Table").withStyle(ChatFormatting.DARK_GRAY));
 
         RuneStats stats = RuneStats.get(stack);
@@ -111,16 +114,16 @@ public final class ItemTooltipHandler {
         boolean hasEffect = !stored.isEmpty() || !direct.isEmpty();
 
         if (hasEffect && !hasStats) {
-            tooltip.add(Component.literal("Effect Rune").withStyle(ChatFormatting.AQUA));
+            tooltip.add(Component.literal(isEtching ? "Effect Etching" : "Effect Rune").withStyle(ChatFormatting.AQUA));
         } else if (hasStats && !hasEffect) {
-            tooltip.add(Component.literal("Stat Rune").withStyle(ChatFormatting.GOLD));
+            tooltip.add(Component.literal(isEtching ? "Stat Etching" : "Stat Rune").withStyle(ChatFormatting.GOLD));
         } else {
-            tooltip.add(Component.literal("Mixed Rune").withStyle(ChatFormatting.LIGHT_PURPLE));
+            tooltip.add(Component.literal(isEtching ? "Mixed Etching" : "Mixed Rune").withStyle(ChatFormatting.LIGHT_PURPLE));
         }
 
         tooltip.add(Component.literal("Enhancement:").withStyle(ChatFormatting.GRAY));
 
-        Holder<Enchantment> effect = RuneItem.getPrimaryEffectEnchantment(stack);
+        Holder<Enchantment> effect = isEtching ? EtchingItem.getPrimaryEffectEnchantment(stack) : RuneItem.getPrimaryEffectEnchantment(stack);
         if (effect != null) {
             tooltip.add(
                     Component.literal("  ")
@@ -268,22 +271,46 @@ public final class ItemTooltipHandler {
             };
 
             if (a.armor != 0) {
-                tooltip.add(statLine(armorIcon, Component.translatable(Attributes.ARMOR.value().getDescriptionId()), a.armor));
+                tooltip.add(statLine(
+                        armorIcon,
+                        Component.translatable(Attributes.ARMOR.value().getDescriptionId()),
+                        a.armor
+                ));
             }
             if (toughness != 0) {
-                tooltip.add(statLine(armorIcon, Component.translatable(Attributes.ARMOR_TOUGHNESS.value().getDescriptionId()), toughness));
+                tooltip.add(statLine(
+                        armorIcon,
+                        Component.translatable(Attributes.ARMOR_TOUGHNESS.value().getDescriptionId()),
+                        toughness
+                ));
             }
             if (knock != 0) {
-                tooltip.add(statLine(armorIcon, Component.translatable(Attributes.KNOCKBACK_RESISTANCE.value().getDescriptionId()), knock));
+                tooltip.add(statLine(
+                        armorIcon,
+                        Component.translatable(Attributes.KNOCKBACK_RESISTANCE.value().getDescriptionId()),
+                        knock
+                ));
             }
             if (health != 0) {
-                tooltip.add(statLine(armorIcon, Component.translatable(Attributes.MAX_HEALTH.value().getDescriptionId()), health));
+                tooltip.add(statLine(
+                        armorIcon,
+                        Component.translatable(Attributes.MAX_HEALTH.value().getDescriptionId()),
+                        health
+                ));
             }
             if (a.move != 0) {
-                tooltip.add(statLine(ICON_BOOTS, Component.translatable(Attributes.MOVEMENT_SPEED.value().getDescriptionId()), a.move));
+                tooltip.add(statLine(
+                        ICON_BOOTS,
+                        Component.translatable(Attributes.MOVEMENT_SPEED.value().getDescriptionId()),
+                        a.move
+                ));
             }
             if (a.soul != 0) {
-                tooltip.add(statLine(ICON_BOOTS, Component.translatable(Attributes.MOVEMENT_EFFICIENCY.value().getDescriptionId()), a.soul));
+                tooltip.add(statLine(
+                        ICON_BOOTS,
+                        Component.translatable(Attributes.MOVEMENT_EFFICIENCY.value().getDescriptionId()),
+                        a.soul
+                ));
             }
 
             int max = stack.getMaxDamage();
@@ -348,18 +375,44 @@ public final class ItemTooltipHandler {
 
             if (isBowLike) {
                 float drawPct = rs != null ? rs.get(RuneStatType.DRAW_SPEED) : 0.0F;
-                double finalDraw = 1.0 * (1.0 + drawPct / 100.0);
+                double baseDraw = 1.0;
+                double finalDraw = baseDraw * (1.0 + drawPct / 100.0);
 
                 float powerPct = rs != null ? rs.get(RuneStatType.POWER) : 0.0F;
-                double finalPower = 1.0 * (1.0 + powerPct / 100.0);
+                double basePower = 1.0;
+                double finalPower = basePower * (1.0 + powerPct / 100.0);
 
-                tooltip.add(statLine(ICON_SWORD, Component.literal("Draw Speed"), finalDraw));
-                tooltip.add(statLine(ICON_SWORD, Component.literal("Power"), finalPower));
-                tooltip.add(statLine(ICON_SWORD, Component.literal("Range"), finalRange));
+                tooltip.add(statLine(
+                        ICON_SWORD,
+                        Component.literal("Draw Speed"),
+                        finalDraw
+                ));
+                tooltip.add(statLine(
+                        ICON_SWORD,
+                        Component.literal("Power"),
+                        finalPower
+                ));
+                tooltip.add(statLine(
+                        ICON_SWORD,
+                        Component.literal("Range"),
+                        finalRange
+                ));
             } else {
-                tooltip.add(statLine(ICON_SWORD, Component.translatable(Attributes.ATTACK_DAMAGE.value().getDescriptionId()), dmgVal));
-                tooltip.add(statLine(ICON_SWORD, Component.translatable(Attributes.ATTACK_SPEED.value().getDescriptionId()), spdVal));
-                tooltip.add(statLine(ICON_SWORD, Component.literal("Range"), finalRange));
+                tooltip.add(statLine(
+                        ICON_SWORD,
+                        Component.translatable(Attributes.ATTACK_DAMAGE.value().getDescriptionId()),
+                        dmgVal
+                ));
+                tooltip.add(statLine(
+                        ICON_SWORD,
+                        Component.translatable(Attributes.ATTACK_SPEED.value().getDescriptionId()),
+                        spdVal
+                ));
+                tooltip.add(statLine(
+                        ICON_SWORD,
+                        Component.literal("Range"),
+                        finalRange
+                ));
             }
         }
 
@@ -374,7 +427,11 @@ public final class ItemTooltipHandler {
             float miningPct = stats != null ? stats.get(RuneStatType.MINING_SPEED) : 0.0F;
             double finalMining = baseMining * (1.0 + (miningPct / 100.0));
 
-            tooltip.add(statLine(ICON_PICKAXE, Component.translatable(Attributes.BLOCK_BREAK_SPEED.value().getDescriptionId()), finalMining));
+            tooltip.add(statLine(
+                    ICON_PICKAXE,
+                    Component.translatable(Attributes.BLOCK_BREAK_SPEED.value().getDescriptionId()),
+                    finalMining
+            ));
         }
 
         int max = stack.getMaxDamage();
@@ -403,18 +460,18 @@ public final class ItemTooltipHandler {
                 .withStyle(ChatFormatting.WHITE);
     }
 
-    private static void appendRuneStats(ItemStack stack, List<Component> tooltip, boolean isRune) {
+    private static void appendRuneStats(ItemStack stack, List<Component> tooltip, boolean isEnhancement, boolean isEtching) {
         RuneStats stats = RuneStats.get(stack);
         if (stats == null || stats.isEmpty()) return;
 
-        if (isRune) {
+        if (isEnhancement) {
             for (Map.Entry<RuneStatType, Float> e : stats.view().entrySet()) {
                 RuneStatType type = e.getKey();
                 float v = e.getValue();
                 if (v == 0) continue;
 
-                int min = type.minPercent();
-                int max = type.maxPercent();
+                int min = isEtching ? type.etchingMinPercent() : type.minPercent();
+                int max = isEtching ? type.etchingMaxPercent() : type.maxPercent();
 
                 String vStr = min == max ? "+" + min + "%" : min + "% - " + max + "%";
 

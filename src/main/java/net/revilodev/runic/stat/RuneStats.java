@@ -78,6 +78,10 @@ public final class RuneStats {
     }
 
     public static RuneStats rollForApplication(RuneStats template, RandomSource random) {
+        return rollForApplication(template, random, false);
+    }
+
+    public static RuneStats rollForApplication(RuneStats template, RandomSource random, boolean etching) {
         if (template == null || template.isEmpty()) {
             return EMPTY;
         }
@@ -87,11 +91,9 @@ public final class RuneStats {
             float v = e.getValue();
 
             if (v < 0.0F) {
-                v = type.roll(random);
+                v = etching ? type.rollEtching(random) : type.roll(random);
             }
             if (v != 0.0F) {
-                float cap = type.cap();
-                if (cap > 0.0F && v > cap) v = cap;
                 map.put(type, v);
             }
         }
@@ -112,15 +114,16 @@ public final class RuneStats {
         if (add != null && !add.isEmpty()) {
             for (Map.Entry<RuneStatType, Float> e : add.values.entrySet()) {
                 RuneStatType type = e.getKey();
-                if (map.containsKey(type)) continue;
+                float existing = map.getOrDefault(type, 0.0F);
+                float added = e.getValue();
+                float sum = existing + added;
 
-                float v = e.getValue();
                 float cap = type.cap();
-                if (cap > 0.0F && v > cap) v = cap;
-
-                if (v != 0.0F) {
-                    map.put(type, v);
+                if (cap > 0.0F && sum > cap) {
+                    sum = cap;
                 }
+
+                map.put(type, sum);
             }
         }
 

@@ -19,6 +19,9 @@ import java.util.Set;
 
 public class RuneItem extends Item {
 
+    public static final int EFFECT_LEVEL_ETCHING = 1;
+    public static final int EFFECT_LEVEL_RUNE = 2;
+
     private static final Set<ResourceLocation> EFFECT_ENCHANT_IDS = Set.of(
             ResourceLocation.fromNamespaceAndPath("aether", "renewal"),
 
@@ -108,8 +111,17 @@ public class RuneItem extends Item {
                 .orElse(false);
     }
 
+    public static int clampEffectLevel(Holder<Enchantment> holder, int requested) {
+        int desired = Math.max(1, Math.min(EFFECT_LEVEL_RUNE, requested));
+        return Math.min(holder.value().getMaxLevel(), desired);
+    }
+
     public static int forcedEffectLevel(Holder<Enchantment> holder) {
-        return Math.max(1, holder.value().getMaxLevel());
+        return clampEffectLevel(holder, EFFECT_LEVEL_RUNE);
+    }
+
+    public static int forcedEtchingEffectLevel(Holder<Enchantment> holder) {
+        return clampEffectLevel(holder, EFFECT_LEVEL_ETCHING);
     }
 
     public static ItemStack createEffectRune(Holder<Enchantment> enchantment) {
@@ -117,7 +129,7 @@ public class RuneItem extends Item {
             return ItemStack.EMPTY;
         }
         ItemStack stack = new ItemStack(ModItems.ENHANCED_RUNE.get());
-        stack.enchant(enchantment, forcedEffectLevel(enchantment));
+        stack.enchant(enchantment, forcedEffectLevel(enchantment)); // Level 2 (clamped)
         return stack;
     }
 
