@@ -90,6 +90,8 @@ public final class RuneStats {
                 v = type.roll(random);
             }
             if (v != 0.0F) {
+                float cap = type.cap();
+                if (cap > 0.0F && v > cap) v = cap;
                 map.put(type, v);
             }
         }
@@ -110,16 +112,15 @@ public final class RuneStats {
         if (add != null && !add.isEmpty()) {
             for (Map.Entry<RuneStatType, Float> e : add.values.entrySet()) {
                 RuneStatType type = e.getKey();
-                float existing = map.getOrDefault(type, 0.0F);
-                float added = e.getValue();
-                float sum = existing + added;
+                if (map.containsKey(type)) continue;
 
+                float v = e.getValue();
                 float cap = type.cap();
-                if (cap > 0.0F && sum > cap) {
-                    sum = cap;
-                }
+                if (cap > 0.0F && v > cap) v = cap;
 
-                map.put(type, sum);
+                if (v != 0.0F) {
+                    map.put(type, v);
+                }
             }
         }
 

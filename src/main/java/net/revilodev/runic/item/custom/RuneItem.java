@@ -57,6 +57,10 @@ public class RuneItem extends Item {
             ResourceLocation.fromNamespaceAndPath("twilightforest", "destruction"),
             ResourceLocation.fromNamespaceAndPath("twilightforest", "fire_react"),
 
+            ResourceLocation.withDefaultNamespace("aqua_affinity"),
+            ResourceLocation.withDefaultNamespace("depth_strider"),
+            ResourceLocation.withDefaultNamespace("feather_falling"),
+
             ResourceLocation.withDefaultNamespace("binding_curse"),
             ResourceLocation.withDefaultNamespace("breach"),
             ResourceLocation.withDefaultNamespace("channeling"),

@@ -8,16 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.BowItem;
-import net.minecraft.world.item.CrossbowItem;
-import net.minecraft.world.item.FishingRodItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.MaceItem;
-import net.minecraft.world.item.ShieldItem;
-import net.minecraft.world.item.TieredItem;
-import net.minecraft.world.item.TridentItem;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.revilodev.runic.RunicMod;
 import net.revilodev.runic.stat.RuneStatType;
@@ -42,9 +33,7 @@ public final class RuneAttributeApplier {
                                   EquipmentSlotGroup slotGroup) {
         ResourceLocation attrKey = BuiltInRegistries.ATTRIBUTE.getKey(attribute.value());
         ResourceLocation modId = modifier.id();
-        String a = attrKey != null ? attrKey.toString() : "null";
-        String m = modId != null ? modId.toString() : "null";
-        return a + "|" + slotGroup.name() + "|" + m;
+        return (attrKey != null ? attrKey : "null") + "|" + slotGroup.name() + "|" + (modId != null ? modId : "null");
     }
 
     private static void addUnique(ItemAttributeModifiers.Builder builder,
@@ -52,8 +41,7 @@ public final class RuneAttributeApplier {
                                   Holder<net.minecraft.world.entity.ai.attributes.Attribute> attribute,
                                   AttributeModifier modifier,
                                   EquipmentSlotGroup slotGroup) {
-        String key = makeKey(attribute, modifier, slotGroup);
-        if (keys.add(key)) {
+        if (keys.add(makeKey(attribute, modifier, slotGroup))) {
             builder.add(attribute, modifier, slotGroup);
         }
     }
@@ -91,54 +79,46 @@ public final class RuneAttributeApplier {
         ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder();
         Set<String> keys = new HashSet<>();
 
-        ItemAttributeModifiers baseFromItem =
+        ItemAttributeModifiers proto =
                 stack.getPrototype().getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY);
 
-        for (ItemAttributeModifiers.Entry e : baseFromItem.modifiers()) {
+        for (ItemAttributeModifiers.Entry e : proto.modifiers()) {
             addUnique(builder, keys, e.attribute(), e.modifier(), e.slot());
         }
 
-        if (item instanceof ArmorItem armorItem) {
-            ItemAttributeModifiers armorDefaults = armorItem.getDefaultAttributeModifiers();
-            for (ItemAttributeModifiers.Entry e : armorDefaults.modifiers()) {
+        if (item instanceof ArmorItem armor) {
+            for (ItemAttributeModifiers.Entry e : armor.getDefaultAttributeModifiers().modifiers()) {
                 addUnique(builder, keys, e.attribute(), e.modifier(), e.slot());
             }
         }
 
-        ItemAttributeModifiers stackModifiers =
+        ItemAttributeModifiers current =
                 stack.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY);
 
-        for (ItemAttributeModifiers.Entry e : stackModifiers.modifiers()) {
-            AttributeModifier mod = e.modifier();
-            if (isRunicModifier(mod)) continue;
-            addUnique(builder, keys, e.attribute(), mod, e.slot());
+        for (ItemAttributeModifiers.Entry e : current.modifiers()) {
+            if (!isRunicModifier(e.modifier())) {
+                addUnique(builder, keys, e.attribute(), e.modifier(), e.slot());
+            }
         }
 
         EquipmentSlotGroup slotGroup = resolveSlotGroup(stack);
-        boolean hasStats = slotGroup != null && stats != null && !stats.isEmpty();
 
-        if (hasStats) {
-            addPercent(builder, stats, RuneStatType.ATTACK_DAMAGE,        Attributes.ATTACK_DAMAGE,             "attack_damage",        slotGroup);
-            addPercent(builder, stats, RuneStatType.ATTACK_SPEED,         Attributes.ATTACK_SPEED,              "attack_speed",         slotGroup);
-            addPercent(builder, stats, RuneStatType.ATTACK_RANGE,         Attributes.ENTITY_INTERACTION_RANGE,  "attack_range",         slotGroup);
+        if (slotGroup != null && stats != null && !stats.isEmpty()) {
+            addPercent(builder, stats, RuneStatType.ATTACK_DAMAGE,        Attributes.ATTACK_DAMAGE,       "attack_damage",        slotGroup);
+            addPercent(builder, stats, RuneStatType.ATTACK_SPEED,         Attributes.ATTACK_SPEED,        "attack_speed",         slotGroup);
+            addPercent(builder, stats, RuneStatType.ATTACK_RANGE,         Attributes.ENTITY_INTERACTION_RANGE, "attack_range", slotGroup);
 
-            addPercent(builder, stats, RuneStatType.MOVEMENT_SPEED,       Attributes.MOVEMENT_SPEED,            "movement_speed",       slotGroup);
-            addPercent(builder, stats, RuneStatType.KNOCKBACK_RESISTANCE, Attributes.KNOCKBACK_RESISTANCE,      "knockback_resistance", slotGroup);
-            addPercent(builder, stats, RuneStatType.HEALTH,               Attributes.MAX_HEALTH,                "health",               slotGroup);
-            addPercent(builder, stats, RuneStatType.TOUGHNESS,            Attributes.ARMOR_TOUGHNESS,           "toughness",            slotGroup);
+            addPercent(builder, stats, RuneStatType.MOVEMENT_SPEED,       Attributes.MOVEMENT_SPEED,      "movement_speed",       slotGroup);
+            addPercent(builder, stats, RuneStatType.KNOCKBACK_RESISTANCE, Attributes.KNOCKBACK_RESISTANCE,"knockback_resistance", slotGroup);
+            addPercent(builder, stats, RuneStatType.HEALTH,               Attributes.MAX_HEALTH,          "health",               slotGroup);
+            addPercent(builder, stats, RuneStatType.TOUGHNESS,            Attributes.ARMOR_TOUGHNESS,     "toughness",            slotGroup);
 
-            addPercent(builder, stats, RuneStatType.MINING_SPEED,         Attributes.BLOCK_BREAK_SPEED,         "mining_speed",         slotGroup);
-            addPercent(builder, stats, RuneStatType.FALL_REDUCTION,       Attributes.SAFE_FALL_DISTANCE,        "fall_reduction",       slotGroup);
-
-            addRatio(builder, stats, RuneStatType.SWIMMING_SPEED,   Attributes.WATER_MOVEMENT_EFFICIENCY, "swimming_speed",   slotGroup);
-            addRatio(builder, stats, RuneStatType.WATER_BREATHING,  Attributes.OXYGEN_BONUS,              "water_breathing",  slotGroup);
-            addRatio(builder, stats, RuneStatType.SWEEPING_RANGE,   Attributes.SWEEPING_DAMAGE_RATIO,     "sweeping_range",   slotGroup);
+            addPercent(builder, stats, RuneStatType.MINING_SPEED,         Attributes.BLOCK_BREAK_SPEED,   "mining_speed",         slotGroup);
+            addRatio  (builder, stats, RuneStatType.SWEEPING_RANGE,       Attributes.SWEEPING_DAMAGE_RATIO, "sweeping_range", slotGroup);
 
             if (item instanceof BowItem || item instanceof CrossbowItem) {
                 addPercent(builder, stats, RuneStatType.DRAW_SPEED, Attributes.ATTACK_SPEED, "draw_speed", slotGroup);
             }
-
-            applyCurses(builder, stack, stats, slotGroup);
         }
 
         ItemAttributeModifiers result = builder.build();
@@ -148,52 +128,11 @@ public final class RuneAttributeApplier {
             stack.set(DataComponents.ATTRIBUTE_MODIFIERS, result);
         }
 
-        if (hasStats) {
+        if (stats != null && !stats.isEmpty()) {
             stack.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
         } else {
             stack.remove(DataComponents.ENCHANTMENT_GLINT_OVERRIDE);
         }
-    }
-
-    private static void applyCurses(ItemAttributeModifiers.Builder builder, ItemStack stack, RuneStats stats, EquipmentSlotGroup slotGroup) {
-        Item item = stack.getItem();
-
-        float weakened = stats.get(RuneStatType.CURSE_WEAKENED);
-        if (weakened > 0.0F) {
-            double amt = -(weakened / 100.0);
-            if (item instanceof ArmorItem) {
-                addMult(builder, Attributes.ARMOR, "curse_weakened_armor", slotGroup, amt);
-            } else if (item instanceof TieredItem || item instanceof TridentItem || item instanceof MaceItem || item instanceof BowItem || item instanceof CrossbowItem) {
-                addMult(builder, Attributes.ATTACK_DAMAGE, "curse_weakened_damage", slotGroup, amt);
-            } else {
-                addMult(builder, Attributes.BLOCK_BREAK_SPEED, "curse_weakened_mining", slotGroup, amt);
-            }
-        }
-
-        float heavy = stats.get(RuneStatType.CURSE_HEAVY);
-        if (heavy > 0.0F) {
-            double amt = -(heavy / 100.0);
-            if (item instanceof ArmorItem) {
-                addMult(builder, Attributes.MOVEMENT_SPEED, "curse_heavy_slow", slotGroup, amt);
-            } else {
-                addMult(builder, Attributes.ATTACK_SPEED, "curse_heavy_speed", slotGroup, amt);
-            }
-        }
-    }
-
-    private static void addMult(ItemAttributeModifiers.Builder builder,
-                                Holder<net.minecraft.world.entity.ai.attributes.Attribute> attribute,
-                                String name,
-                                EquipmentSlotGroup slotGroup,
-                                double amount) {
-
-        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(
-                RunicMod.MOD_ID,
-                "stat." + name + "." + slotGroup.name().toLowerCase()
-        );
-
-        AttributeModifier mod = new AttributeModifier(id, amount, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-        builder.add(attribute, mod, slotGroup);
     }
 
     private static void addPercent(ItemAttributeModifiers.Builder builder,
@@ -206,15 +145,15 @@ public final class RuneAttributeApplier {
         float percent = stats.get(type);
         if (percent == 0.0F) return;
 
-        double amount = percent / 100.0F;
-
         ResourceLocation id = ResourceLocation.fromNamespaceAndPath(
                 RunicMod.MOD_ID,
                 "stat." + name + "." + slotGroup.name().toLowerCase()
         );
 
-        AttributeModifier mod = new AttributeModifier(id, amount, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-        builder.add(attribute, mod, slotGroup);
+        builder.add(attribute,
+                new AttributeModifier(id, percent / 100.0F, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL),
+                slotGroup
+        );
     }
 
     private static void addRatio(ItemAttributeModifiers.Builder builder,
@@ -227,15 +166,15 @@ public final class RuneAttributeApplier {
         float percent = stats.get(type);
         if (percent <= 0.0F) return;
 
-        double amount = percent / 100.0F;
-
         ResourceLocation id = ResourceLocation.fromNamespaceAndPath(
                 RunicMod.MOD_ID,
                 "stat." + name + "." + slotGroup.name().toLowerCase()
         );
 
-        AttributeModifier mod = new AttributeModifier(id, amount, AttributeModifier.Operation.ADD_VALUE);
-        builder.add(attribute, mod, slotGroup);
+        builder.add(attribute,
+                new AttributeModifier(id, percent / 100.0F, AttributeModifier.Operation.ADD_VALUE),
+                slotGroup
+        );
     }
 
     private static EquipmentSlotGroup resolveSlotGroup(ItemStack stack) {
@@ -268,14 +207,12 @@ public final class RuneAttributeApplier {
         if (!root.contains(DURABILITY_BASE_KEY)) return;
 
         int base = root.getInt(DURABILITY_BASE_KEY);
-        if (base > 0) {
-            stack.set(DataComponents.MAX_DAMAGE, base);
+        stack.set(DataComponents.MAX_DAMAGE, base);
 
-            int dmg = stack.getDamageValue();
-            if (dmg >= base) {
-                stack.set(DataComponents.DAMAGE, Math.max(0, base - 1));
-            }
+        if (stack.getDamageValue() >= base) {
+            stack.set(DataComponents.DAMAGE, base - 1);
         }
+
         root.remove(DURABILITY_BASE_KEY);
     }
 
@@ -283,9 +220,7 @@ public final class RuneAttributeApplier {
         if (!stack.isDamageableItem()) return;
 
         float bonus = stats.get(RuneStatType.DURABILITY);
-        float damaged = stats.get(RuneStatType.CURSE_DAMAGED);
-        float percent = bonus - damaged;
-        if (percent == 0.0F) return;
+        if (bonus == 0.0F) return;
 
         int base = root.contains(DURABILITY_BASE_KEY)
                 ? root.getInt(DURABILITY_BASE_KEY)
@@ -293,14 +228,11 @@ public final class RuneAttributeApplier {
 
         root.putInt(DURABILITY_BASE_KEY, base);
 
-        int newMax = base + Math.round(base * (percent / 100.0F));
-        if (newMax <= 1) newMax = 1;
-
+        int newMax = Math.max(1, base + Math.round(base * (bonus / 100.0F)));
         stack.set(DataComponents.MAX_DAMAGE, newMax);
 
-        int dmg = stack.getDamageValue();
-        if (dmg >= newMax) {
-            stack.set(DataComponents.DAMAGE, Math.max(0, newMax - 1));
+        if (stack.getDamageValue() >= newMax) {
+            stack.set(DataComponents.DAMAGE, newMax - 1);
         }
     }
 }

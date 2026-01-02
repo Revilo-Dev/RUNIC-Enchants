@@ -138,15 +138,7 @@ public class EtchingTableMenu extends AbstractContainerMenu {
         Item item = target.getItem();
 
         if (stat != null) {
-            if (stat.isCurse()) return false;
-
-            float cap = stat.cap();
-            if (cap > 0.0F) {
-                float current = RuneStats.get(target).get(stat);
-                if (current >= cap - 0.0001F) {
-                    return false;
-                }
-            }
+            if (RuneStats.get(target).has(stat)) return false;
 
             return switch (stat) {
                 case ATTACK_DAMAGE, ATTACK_SPEED, ATTACK_RANGE, SWEEPING_RANGE,
@@ -167,7 +159,6 @@ public class EtchingTableMenu extends AbstractContainerMenu {
 
                 case MOVEMENT_SPEED, HEALTH, RESISTANCE, FIRE_RESISTANCE, BLAST_RESISTANCE,
                      PROJECTILE_RESISTANCE, KNOCKBACK_RESISTANCE,
-                     SWIMMING_SPEED, WATER_BREATHING, FALL_REDUCTION,
                      TOUGHNESS, HEALING_EFFICIENCY, JUMP_HEIGHT ->
                         item instanceof ArmorItem;
 
@@ -202,38 +193,10 @@ public class EtchingTableMenu extends AbstractContainerMenu {
         return EnchantmentHelper.isEnchantmentCompatible(existing, effect);
     }
 
-    private List<RuneStatType> applicableCursesFor(ItemStack target) {
-        Item item = target.getItem();
-        List<RuneStatType> list = new ArrayList<>(3);
-
-        if (target.isDamageableItem()) {
-            list.add(RuneStatType.CURSE_DAMAGED);
-        }
-
-        if (item instanceof ArmorItem
-                || item instanceof DiggerItem
-                || item instanceof SwordItem
-                || item instanceof AxeItem
-                || item instanceof TridentItem
-                || item instanceof MaceItem) {
-            list.add(RuneStatType.CURSE_WEAKENED);
-        }
-
-        if (item instanceof ArmorItem
-                || item instanceof TieredItem
-                || item instanceof TridentItem
-                || item instanceof MaceItem) {
-            list.add(RuneStatType.CURSE_HEAVY);
-        }
-
-        return list;
-    }
-
     private boolean hasUpgradeableStat(ItemStack target, RuneStats current) {
         for (Map.Entry<RuneStatType, Float> e : current.view().entrySet()) {
             RuneStatType t = e.getKey();
             float v = e.getValue();
-            if (t.isCurse()) continue;
             if (v <= 0.0F) continue;
 
             float cap = t.cap();
@@ -262,26 +225,23 @@ public class EtchingTableMenu extends AbstractContainerMenu {
 
         boolean hasUsedSlots = RuneSlots.used(target) > 0 || target.has(DataComponents.ENCHANTMENT_GLINT_OVERRIDE);
 
-        boolean hasNonCurseStats = false;
+        boolean hasAnyStats = false;
         RuneStats current = RuneStats.get(target);
         if (current != null && !current.isEmpty()) {
-            for (Map.Entry<RuneStatType, Float> e : current.view().entrySet()) {
-                if (!e.getKey().isCurse() && e.getValue() != 0.0F) {
-                    hasNonCurseStats = true;
+            for (float v : current.view().values()) {
+                if (v != 0.0F) {
+                    hasAnyStats = true;
                     break;
                 }
             }
         }
 
-        return hasAnyEnchants || hasUsedSlots || hasNonCurseStats;
+        return hasAnyEnchants || hasUsedSlots || hasAnyStats;
     }
 
     private boolean canApplyUpgrade(ItemStack target) {
-        if (applicableCursesFor(target).isEmpty()) return false;
-
         RuneStats st = RuneStats.get(target);
         if (st != null && !st.isEmpty() && hasUpgradeableStat(target, st)) return true;
-
         return hasUpgradeableEnchant(target);
     }
 
@@ -295,7 +255,6 @@ public class EtchingTableMenu extends AbstractContainerMenu {
 
         if (rune.is(ModItems.EXPANSION_RUNE.get())) {
             if (RuneSlots.expansionsUsed(target) >= 3) return ItemStack.EMPTY;
-            if (applicableCursesFor(target).isEmpty()) return ItemStack.EMPTY;
             return target.copy();
         }
 
@@ -327,7 +286,6 @@ public class EtchingTableMenu extends AbstractContainerMenu {
         for (Map.Entry<RuneStatType, Float> e : current.view().entrySet()) {
             RuneStatType t = e.getKey();
             float v = e.getValue();
-            if (t.isCurse()) continue;
             if (v <= 0.0F) continue;
 
             float cap = t.cap();
@@ -337,25 +295,6 @@ public class EtchingTableMenu extends AbstractContainerMenu {
         }
         if (options.isEmpty()) return null;
         return options.get(RNG.nextInt(options.size()));
-    }
-
-    private Holder<Enchantment> pickRandomEffectEnchant(ItemEnchantments ex) {
-        List<Holder<Enchantment>> list = new ArrayList<>();
-        for (Object2IntMap.Entry<Holder<Enchantment>> e : ex.entrySet()) {
-            if (RuneItem.isEffectEnchantment(e.getKey())) list.add(e.getKey());
-        }
-        if (list.isEmpty()) return null;
-        return list.get(RNG.nextInt(list.size()));
-    }
-
-    private void addRandomCurse(ItemStack stack, EnumMap<RuneStatType, Float> map) {
-        List<RuneStatType> curses = applicableCursesFor(stack);
-        if (curses.isEmpty()) return;
-
-        RuneStatType curse = curses.get(RNG.nextInt(curses.size()));
-        float amount = curse.roll(level.random);
-
-        map.put(curse, map.getOrDefault(curse, 0.0F) + amount);
     }
 
     private void updateGlintAfter(ItemStack stack) {
@@ -371,21 +310,7 @@ public class EtchingTableMenu extends AbstractContainerMenu {
         taken.remove(DataComponents.STORED_ENCHANTMENTS);
         taken.remove(DataComponents.ENCHANTMENT_GLINT_OVERRIDE);
 
-        RuneStats current = RuneStats.get(taken);
-        EnumMap<RuneStatType, Float> map = new EnumMap<>(RuneStatType.class);
-
-        if (current != null && !current.isEmpty()) {
-            for (Map.Entry<RuneStatType, Float> e : current.view().entrySet()) {
-                RuneStatType t = e.getKey();
-                float v = e.getValue();
-                if (t.isCurse() && v != 0.0F) {
-                    map.put(t, v);
-                }
-            }
-        }
-
-        RuneStats.set(taken, map.isEmpty() ? RuneStats.empty() : new RuneStats(map));
-
+        RuneStats.set(taken, RuneStats.empty());
         taken.set(ModDataComponents.RUNE_SLOTS_USED.get(), 0);
 
         updateGlintAfter(taken);
@@ -393,14 +318,6 @@ public class EtchingTableMenu extends AbstractContainerMenu {
 
     private void applyExpansion(ItemStack taken) {
         if (RuneSlots.expansionsUsed(taken) >= 3) return;
-
-        RuneStats base = RuneStats.get(taken);
-        EnumMap<RuneStatType, Float> map = new EnumMap<>(RuneStatType.class);
-        if (base != null && !base.isEmpty()) map.putAll(base.view());
-
-        addRandomCurse(taken, map);
-
-        RuneStats.set(taken, map.isEmpty() ? RuneStats.empty() : new RuneStats(map));
         RuneSlots.addOneSlot(taken);
         RuneSlots.incrementExpansion(taken);
     }
@@ -423,8 +340,6 @@ public class EtchingTableMenu extends AbstractContainerMenu {
 
                 map.put(t, upgraded);
 
-                addRandomCurse(taken, map);
-
                 RuneStats.set(taken, new RuneStats(map));
                 changed = true;
             }
@@ -444,14 +359,6 @@ public class EtchingTableMenu extends AbstractContainerMenu {
             mut.set(chosen, ex.getLevel(chosen) + 1);
             taken.set(DataComponents.ENCHANTMENTS, mut.toImmutable());
             changed = true;
-
-            RuneStats base = RuneStats.get(taken);
-            EnumMap<RuneStatType, Float> map = new EnumMap<>(RuneStatType.class);
-            if (base != null && !base.isEmpty()) map.putAll(base.view());
-
-            addRandomCurse(taken, map);
-
-            RuneStats.set(taken, map.isEmpty() ? RuneStats.empty() : new RuneStats(map));
         }
 
         updateGlintAfter(taken);
@@ -501,9 +408,22 @@ public class EtchingTableMenu extends AbstractContainerMenu {
         if (hasStats) {
             RuneStats base = RuneStats.get(taken);
             RuneStats rolled = RuneStats.rollForApplication(runeStats, this.level.random);
-            RuneStats.set(taken, RuneStats.combine(base, rolled));
-            taken.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
-            applied = true;
+
+            boolean changedStats = false;
+            if (rolled != null && !rolled.isEmpty()) {
+                for (Map.Entry<RuneStatType, Float> e : rolled.view().entrySet()) {
+                    if (e.getValue() != 0.0F && (base == null || !base.has(e.getKey()))) {
+                        changedStats = true;
+                        break;
+                    }
+                }
+            }
+
+            if (changedStats) {
+                RuneStats.set(taken, RuneStats.combine(base, rolled));
+                taken.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
+                applied = true;
+            }
         }
 
         if (hasEnch) {

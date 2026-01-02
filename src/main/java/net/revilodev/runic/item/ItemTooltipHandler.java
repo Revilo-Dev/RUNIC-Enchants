@@ -268,46 +268,22 @@ public final class ItemTooltipHandler {
             };
 
             if (a.armor != 0) {
-                tooltip.add(statLine(
-                        armorIcon,
-                        Component.translatable(Attributes.ARMOR.value().getDescriptionId()),
-                        a.armor
-                ));
+                tooltip.add(statLine(armorIcon, Component.translatable(Attributes.ARMOR.value().getDescriptionId()), a.armor));
             }
             if (toughness != 0) {
-                tooltip.add(statLine(
-                        armorIcon,
-                        Component.translatable(Attributes.ARMOR_TOUGHNESS.value().getDescriptionId()),
-                        toughness
-                ));
+                tooltip.add(statLine(armorIcon, Component.translatable(Attributes.ARMOR_TOUGHNESS.value().getDescriptionId()), toughness));
             }
             if (knock != 0) {
-                tooltip.add(statLine(
-                        armorIcon,
-                        Component.translatable(Attributes.KNOCKBACK_RESISTANCE.value().getDescriptionId()),
-                        knock
-                ));
+                tooltip.add(statLine(armorIcon, Component.translatable(Attributes.KNOCKBACK_RESISTANCE.value().getDescriptionId()), knock));
             }
             if (health != 0) {
-                tooltip.add(statLine(
-                        armorIcon,
-                        Component.translatable(Attributes.MAX_HEALTH.value().getDescriptionId()),
-                        health
-                ));
+                tooltip.add(statLine(armorIcon, Component.translatable(Attributes.MAX_HEALTH.value().getDescriptionId()), health));
             }
             if (a.move != 0) {
-                tooltip.add(statLine(
-                        ICON_BOOTS,
-                        Component.translatable(Attributes.MOVEMENT_SPEED.value().getDescriptionId()),
-                        a.move
-                ));
+                tooltip.add(statLine(ICON_BOOTS, Component.translatable(Attributes.MOVEMENT_SPEED.value().getDescriptionId()), a.move));
             }
             if (a.soul != 0) {
-                tooltip.add(statLine(
-                        ICON_BOOTS,
-                        Component.translatable(Attributes.MOVEMENT_EFFICIENCY.value().getDescriptionId()),
-                        a.soul
-                ));
+                tooltip.add(statLine(ICON_BOOTS, Component.translatable(Attributes.MOVEMENT_EFFICIENCY.value().getDescriptionId()), a.soul));
             }
 
             int max = stack.getMaxDamage();
@@ -372,44 +348,18 @@ public final class ItemTooltipHandler {
 
             if (isBowLike) {
                 float drawPct = rs != null ? rs.get(RuneStatType.DRAW_SPEED) : 0.0F;
-                double baseDraw = 1.0;
-                double finalDraw = baseDraw * (1.0 + drawPct / 100.0);
+                double finalDraw = 1.0 * (1.0 + drawPct / 100.0);
 
                 float powerPct = rs != null ? rs.get(RuneStatType.POWER) : 0.0F;
-                double basePower = 1.0;
-                double finalPower = basePower * (1.0 + powerPct / 100.0);
+                double finalPower = 1.0 * (1.0 + powerPct / 100.0);
 
-                tooltip.add(statLine(
-                        ICON_SWORD,
-                        Component.literal("Draw Speed"),
-                        finalDraw
-                ));
-                tooltip.add(statLine(
-                        ICON_SWORD,
-                        Component.literal("Power"),
-                        finalPower
-                ));
-                tooltip.add(statLine(
-                        ICON_SWORD,
-                        Component.literal("Range"),
-                        finalRange
-                ));
+                tooltip.add(statLine(ICON_SWORD, Component.literal("Draw Speed"), finalDraw));
+                tooltip.add(statLine(ICON_SWORD, Component.literal("Power"), finalPower));
+                tooltip.add(statLine(ICON_SWORD, Component.literal("Range"), finalRange));
             } else {
-                tooltip.add(statLine(
-                        ICON_SWORD,
-                        Component.translatable(Attributes.ATTACK_DAMAGE.value().getDescriptionId()),
-                        dmgVal
-                ));
-                tooltip.add(statLine(
-                        ICON_SWORD,
-                        Component.translatable(Attributes.ATTACK_SPEED.value().getDescriptionId()),
-                        spdVal
-                ));
-                tooltip.add(statLine(
-                        ICON_SWORD,
-                        Component.literal("Range"),
-                        finalRange
-                ));
+                tooltip.add(statLine(ICON_SWORD, Component.translatable(Attributes.ATTACK_DAMAGE.value().getDescriptionId()), dmgVal));
+                tooltip.add(statLine(ICON_SWORD, Component.translatable(Attributes.ATTACK_SPEED.value().getDescriptionId()), spdVal));
+                tooltip.add(statLine(ICON_SWORD, Component.literal("Range"), finalRange));
             }
         }
 
@@ -424,11 +374,7 @@ public final class ItemTooltipHandler {
             float miningPct = stats != null ? stats.get(RuneStatType.MINING_SPEED) : 0.0F;
             double finalMining = baseMining * (1.0 + (miningPct / 100.0));
 
-            tooltip.add(statLine(
-                    ICON_PICKAXE,
-                    Component.translatable(Attributes.BLOCK_BREAK_SPEED.value().getDescriptionId()),
-                    finalMining
-            ));
+            tooltip.add(statLine(ICON_PICKAXE, Component.translatable(Attributes.BLOCK_BREAK_SPEED.value().getDescriptionId()), finalMining));
         }
 
         int max = stack.getMaxDamage();
@@ -470,22 +416,13 @@ public final class ItemTooltipHandler {
                 int min = type.minPercent();
                 int max = type.maxPercent();
 
-                String vStr;
-                ChatFormatting color;
-
-                if (type.isCurse()) {
-                    vStr = min == max ? "-" + min + "%" : "-" + min + "% - " + max + "%";
-                    color = ChatFormatting.RED;
-                } else {
-                    vStr = min == max ? "+" + min + "%" : min + "% - " + max + "%";
-                    color = ChatFormatting.AQUA;
-                }
+                String vStr = min == max ? "+" + min + "%" : min + "% - " + max + "%";
 
                 tooltip.add(
                         Component.literal("  ")
                                 .append(Component.translatable("tooltip.runic.stat." + type.id()))
                                 .append(": ")
-                                .append(Component.literal(vStr).withStyle(color))
+                                .append(Component.literal(vStr).withStyle(ChatFormatting.AQUA))
                 );
             }
             return;
@@ -499,23 +436,20 @@ public final class ItemTooltipHandler {
             float v = e.getValue();
             if (v == 0) continue;
 
-            boolean curse = type.isCurse();
-
-            float shown = v;
-            float abs = Math.abs(shown);
+            float abs = Math.abs(v);
 
             String num =
                     Math.abs(abs - Math.round(abs)) < 0.001
                             ? String.format(Locale.ROOT, "%.0f", abs)
                             : String.format(Locale.ROOT, "%.1f", abs);
 
-            String vStr = (curse ? "-" : "+") + num + "%";
+            String vStr = "+" + num + "%";
 
             tooltip.add(
                     Component.literal("  ")
                             .append(Component.translatable("tooltip.runic.stat." + type.id()))
                             .append(": ")
-                            .append(Component.literal(vStr).withStyle(curse ? ChatFormatting.RED : ChatFormatting.AQUA))
+                            .append(Component.literal(vStr).withStyle(ChatFormatting.AQUA))
             );
         }
     }
