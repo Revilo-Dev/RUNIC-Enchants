@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "runic:block/artisan_workbench_side",
+    "down": "runic:block/artisan_workbench_bottom",
+    "up": "runic:block/artisan_workbench_top",
+    "north": "runic:block/artisan_workbench_front",
+    "east": "runic:block/artisan_workbench_side",
+    "south": "runic:block/artisan_workbench_back",
+    "west": "runic:block/artisan_workbench_side"
+  }
+}

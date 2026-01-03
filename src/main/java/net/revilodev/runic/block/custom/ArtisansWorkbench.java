@@ -11,10 +11,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.revilodev.runic.screen.custom.EtchingTableMenu;
+import net.revilodev.runic.screen.custom.ArtisansWorkbenchMenu;
 
-public class EtchingTable extends Block {
-    public EtchingTable(Properties props) {
+public class ArtisansWorkbench extends Block {
+    public ArtisansWorkbench(Properties props) {
         super(props);
     }
 
@@ -23,8 +23,8 @@ public class EtchingTable extends Block {
                                                Player player, BlockHitResult hit) {
         if (!level.isClientSide && player instanceof ServerPlayer sp) {
             MenuProvider provider = new SimpleMenuProvider(
-                    (id, inv, ply) -> EtchingTableMenu.server(id, inv, level, pos),
-                    Component.translatable("block.runic.etching_table")
+                    (id, inv, ply) -> ArtisansWorkbenchMenu.server(id, inv, level, pos),
+                    Component.translatable("block.runic.artisans_workbench")
             );
             sp.openMenu(provider, pos);
         }

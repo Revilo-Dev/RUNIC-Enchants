@@ -13,8 +13,8 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-public final class EtchingPreviewRenderer {
-    private EtchingPreviewRenderer() {}
+public final class ArtisansPreviewRenderer {
+    private ArtisansPreviewRenderer() {}
 
     public static void render(GuiGraphics gg, ItemStack stack,
                               int absX, int absY, int w, int h, float partialTick) {

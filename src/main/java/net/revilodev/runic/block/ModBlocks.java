@@ -10,7 +10,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.revilodev.runic.RunicMod;
-import net.revilodev.runic.block.custom.EtchingTable;
+import net.revilodev.runic.block.custom.ArtisansWorkbench;
 
 public final class ModBlocks {
     private ModBlocks() {}
@@ -25,9 +25,9 @@ public final class ModBlocks {
 
     // ---------- Blocks ----------
 
-    public static final DeferredHolder<Block, EtchingTable> ETCHING_TABLE =
+    public static final DeferredHolder<Block, ArtisansWorkbench> ETCHING_TABLE =
             BLOCKS.register("etching_table",
-                    () -> new EtchingTable(BlockBehaviour.Properties.of()
+                    () -> new ArtisansWorkbench(BlockBehaviour.Properties.of()
                             .strength(5.0F)
                             .sound(SoundType.STONE)));
 

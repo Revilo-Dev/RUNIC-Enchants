@@ -7,7 +7,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.revilodev.runic.RunicMod;
-import net.revilodev.runic.screen.custom.EtchingTableMenu;
+import net.revilodev.runic.screen.custom.ArtisansWorkbenchMenu;
 
 
 public final class ModMenuTypes {
@@ -18,10 +18,10 @@ public final class ModMenuTypes {
             DeferredRegister.create(net.minecraft.core.registries.Registries.MENU, RunicMod.MOD_ID);
 
     // Etching Table menu registration
-    public static final DeferredHolder<MenuType<?>, MenuType<EtchingTableMenu>> ETCHING_TABLE =
-            MENUS.register("etching_table",
+    public static final DeferredHolder<MenuType<?>, MenuType<ArtisansWorkbenchMenu>> ARTISANS_WORKBENCH =
+            MENUS.register("artisans_workbench",
                     () -> new MenuType<>(
-                            (int id, Inventory inv) -> EtchingTableMenu.client(id, inv, inv.player.blockPosition()),
+                            (int id, Inventory inv) -> ArtisansWorkbenchMenu.client(id, inv, inv.player.blockPosition()),
                             FeatureFlags.VANILLA_SET
                     )
             );

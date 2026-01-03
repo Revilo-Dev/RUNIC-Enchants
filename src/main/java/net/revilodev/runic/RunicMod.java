@@ -21,7 +21,7 @@ import net.revilodev.runic.particle.ModParticles;
 import net.revilodev.runic.particle.StunStarParticle;
 import net.revilodev.runic.registry.ModDataComponents;
 import net.revilodev.runic.screen.ModMenuTypes;
-import net.revilodev.runic.screen.custom.EtchingTableScreen;
+import net.revilodev.runic.screen.custom.ArtisansWorkbenchScreen;
 import org.slf4j.Logger;
 
 @Mod(RunicMod.MOD_ID)
@@ -68,7 +68,7 @@ public class RunicMod {
     public static class ClientModEvents {
 
         public static void onRegisterScreens(RegisterMenuScreensEvent event) {
-            event.register(ModMenuTypes.ETCHING_TABLE.get(), EtchingTableScreen::new);
+            event.register(ModMenuTypes.ARTISANS_WORKBENCH.get(), ArtisansWorkbenchScreen::new);
         }
 
         public static void onClientSetup(FMLClientSetupEvent event) {

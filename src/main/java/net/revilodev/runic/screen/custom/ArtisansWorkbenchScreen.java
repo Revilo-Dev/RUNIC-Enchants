@@ -7,11 +7,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.revilodev.runic.RunicMod;
-import net.revilodev.runic.client.EtchingPreviewRenderer;
+import net.revilodev.runic.client.ArtisansPreviewRenderer;
 
-public class EtchingTableScreen extends AbstractContainerScreen<EtchingTableMenu> {
+public class ArtisansWorkbenchScreen extends AbstractContainerScreen<ArtisansWorkbenchMenu> {
     private static final ResourceLocation TEX =
-            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "textures/gui/container/etching_table.png");
+            ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "textures/gui/container/artisans_workbench.png");
 
     // preview box rect inside the 176x166 texture
     private static final int PREVIEW_X = 116;
@@ -19,7 +19,7 @@ public class EtchingTableScreen extends AbstractContainerScreen<EtchingTableMenu
     private static final int PREVIEW_W = 52;
     private static final int PREVIEW_H = 52;
 
-    public EtchingTableScreen(EtchingTableMenu menu, Inventory inv, Component title) {
+    public ArtisansWorkbenchScreen(ArtisansWorkbenchMenu menu, Inventory inv, Component title) {
         super(menu, inv, title);
 
         // Vanilla GUI size
@@ -46,7 +46,7 @@ public class EtchingTableScreen extends AbstractContainerScreen<EtchingTableMenu
         // 3D item preview in the black box
         ItemStack toPreview = this.menu.getSlot(2).getItem(); // slot 2 = result slot
         if (!toPreview.isEmpty()) {
-            EtchingPreviewRenderer.render(
+            ArtisansPreviewRenderer.render(
                     gg,
                     toPreview,
                     x + PREVIEW_X,

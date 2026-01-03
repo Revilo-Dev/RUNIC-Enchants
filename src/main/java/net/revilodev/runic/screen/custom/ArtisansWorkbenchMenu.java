@@ -30,7 +30,7 @@ import net.revilodev.runic.stat.RuneStats;
 
 import java.util.*;
 
-public class EtchingTableMenu extends AbstractContainerMenu {
+public class ArtisansWorkbenchMenu extends AbstractContainerMenu {
 
     private final ContainerLevelAccess access;
     private final Level level;
@@ -39,15 +39,15 @@ public class EtchingTableMenu extends AbstractContainerMenu {
         @Override
         public void setChanged() {
             super.setChanged();
-            EtchingTableMenu.this.slotsChanged(this);
+            ArtisansWorkbenchMenu.this.slotsChanged(this);
         }
     };
 
     private final ResultContainer result = new ResultContainer();
     private static final Random RNG = new Random();
 
-    private EtchingTableMenu(int id, Inventory inv, ContainerLevelAccess access) {
-        super(net.revilodev.runic.screen.ModMenuTypes.ETCHING_TABLE.get(), id);
+    private ArtisansWorkbenchMenu(int id, Inventory inv, ContainerLevelAccess access) {
+        super(net.revilodev.runic.screen.ModMenuTypes.ARTISANS_WORKBENCH.get(), id);
         this.access = access;
         this.level = inv.player.level();
 
@@ -77,7 +77,7 @@ public class EtchingTableMenu extends AbstractContainerMenu {
                 consumeInputs();
                 playUseSound();
                 result.setItem(0, ItemStack.EMPTY);
-                EtchingTableMenu.this.updateResult();
+                ArtisansWorkbenchMenu.this.updateResult();
                 super.onTake(player, taken);
             }
         });
@@ -95,12 +95,12 @@ public class EtchingTableMenu extends AbstractContainerMenu {
         updateResult();
     }
 
-    public static EtchingTableMenu server(int id, Inventory inv, Level level, BlockPos pos) {
-        return new EtchingTableMenu(id, inv, ContainerLevelAccess.create(level, pos));
+    public static ArtisansWorkbenchMenu server(int id, Inventory inv, Level level, BlockPos pos) {
+        return new ArtisansWorkbenchMenu(id, inv, ContainerLevelAccess.create(level, pos));
     }
 
-    public static EtchingTableMenu client(int id, Inventory inv, BlockPos pos) {
-        return new EtchingTableMenu(id, inv, ContainerLevelAccess.create(inv.player.level(), pos));
+    public static ArtisansWorkbenchMenu client(int id, Inventory inv, BlockPos pos) {
+        return new ArtisansWorkbenchMenu(id, inv, ContainerLevelAccess.create(inv.player.level(), pos));
     }
 
     @Override
