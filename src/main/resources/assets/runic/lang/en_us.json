@@ -8,8 +8,10 @@
   "item.runic.blank_inscription": "Blank Inscription",
   "item.runic.enhanced_rune": "Rune",
   "item.runic.etching": "Etching",
+  "item.runic.blank_etching": "Etching",
 
   "block.runic.artisans_workbench": "Artisans Workbench",
+  "block.runic.etching_table": "Etching Table",
 
   "minecraft:experience_bottle": "Bottle o' Experience",
 

@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "runic:item/rune/enhanced_rune"
+    "layer0": "runic:item/rune"
   },
   "overrides": [
 

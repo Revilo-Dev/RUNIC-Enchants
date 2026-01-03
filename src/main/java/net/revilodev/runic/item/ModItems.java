@@ -19,10 +19,14 @@ public final class ModItems {
             ITEMS.register("blank_inscription", () -> new Item(new Item.Properties().stacksTo(64)));
 
     public static final DeferredHolder<Item, RuneItem> ENHANCED_RUNE =
-            ITEMS.register("enhanced_rune", () -> new RuneItem(new Item.Properties().stacksTo(1)));
+            ITEMS.register("enhanced_rune", () -> new RuneItem(new Item.Properties().stacksTo(64)));
 
     public static final DeferredHolder<Item, EtchingItem> ETCHING =
-            ITEMS.register("etching", () -> new EtchingItem(new Item.Properties().stacksTo(1)));
+            ITEMS.register("etching", () -> new EtchingItem(new Item.Properties().stacksTo(64)));
+
+    public static final DeferredHolder<Item, EtchingItem> BLANK_ETCHING =
+            ITEMS.register("blank_etching", () -> new EtchingItem(new Item.Properties().stacksTo(64)));
+
 
     public static final DeferredHolder<Item, Item> REPAIR_RUNE =
             ITEMS.register("repair_rune", () -> new Item(new Item.Properties().stacksTo(16)));

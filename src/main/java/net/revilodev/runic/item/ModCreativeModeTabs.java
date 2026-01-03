@@ -30,12 +30,12 @@ public class ModCreativeModeTabs {
                     .displayItems((params, output) -> {
                         output.accept(ModBlocks.ARTISANS_WORKBENCH.get());
                         output.accept(ModBlocks.ETCHING_TABLE.get());
+                        output.accept(ModItems.BLANK_ETCHING.get());
                         output.accept(ModItems.BLANK_INSCRIPTION.get());
                         output.accept(ModItems.EXPANSION_RUNE.get());
                         output.accept(ModItems.REPAIR_RUNE.get());
                         output.accept(ModItems.NULLIFICATION_RUNE.get());
                         output.accept(ModItems.UPGRADE_RUNE.get());
-
                         RandomSource random = RandomSource.create();
 
                         for (RuneStatType type : RuneStatType.values()) {
