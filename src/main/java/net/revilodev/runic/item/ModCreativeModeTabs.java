@@ -25,10 +25,12 @@ public class ModCreativeModeTabs {
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> RUNIC_ITEMS_TAB =
             CREATIVE_MODE_TABS.register("runic_items_tab", () -> CreativeModeTab.builder()
-                    .icon(() -> new ItemStack(ModBlocks.ETCHING_TABLE.get()))
+                    .icon(() -> new ItemStack(ModBlocks.ARTISANS_WORKBENCH.get()))
                     .title(Component.translatable("creativetab.runicmod.runic_items"))
                     .displayItems((params, output) -> {
+                        output.accept(ModBlocks.ARTISANS_WORKBENCH.get());
                         output.accept(ModBlocks.ETCHING_TABLE.get());
+                        output.accept(ModItems.BLANK_INSCRIPTION.get());
                         output.accept(ModItems.EXPANSION_RUNE.get());
                         output.accept(ModItems.REPAIR_RUNE.get());
                         output.accept(ModItems.NULLIFICATION_RUNE.get());

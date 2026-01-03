@@ -492,7 +492,7 @@ public class ArtisansWorkbenchMenu extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return stillValid(this.access, player, ModBlocks.ETCHING_TABLE.get());
+        return stillValid(this.access, player, ModBlocks.ARTISANS_WORKBENCH.get());
     }
 
     @Override

@@ -17,18 +17,14 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.BlockHitResult;
-import net.revilodev.runic.screen.custom.ArtisansWorkbenchMenu;
+import net.revilodev.runic.screen.custom.EtchingTableMenu;
 
-public class ArtisansWorkbench extends HorizontalDirectionalBlock {
+public class EtchingTableBlock extends HorizontalDirectionalBlock {
+    public static final MapCodec<EtchingTableBlock> CODEC = simpleCodec(EtchingTableBlock::new);
 
-    public static final MapCodec<ArtisansWorkbench> CODEC =
-            simpleCodec(ArtisansWorkbench::new);
-
-    public ArtisansWorkbench(Properties props) {
+    public EtchingTableBlock(Properties props) {
         super(props);
-        this.registerDefaultState(
-                this.stateDefinition.any().setValue(FACING, Direction.NORTH)
-        );
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
     @Override
@@ -37,27 +33,13 @@ public class ArtisansWorkbench extends HorizontalDirectionalBlock {
     }
 
     @Override
-    protected InteractionResult useWithoutItem(
-            BlockState state,
-            Level level,
-            BlockPos pos,
-            Player player,
-            BlockHitResult hit
-    ) {
-        if (!level.isClientSide && player instanceof ServerPlayer sp) {
-            MenuProvider provider = new SimpleMenuProvider(
-                    (id, inv, ply) -> ArtisansWorkbenchMenu.server(id, inv, level, pos),
-                    Component.translatable("block.runic.artisans_workbench")
-            );
-            sp.openMenu(provider, pos);
-        }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+    protected void createBlockStateDefinition(StateDefinition.Builder<net.minecraft.world.level.block.Block, BlockState> builder) {
+        builder.add(FACING);
     }
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        return this.defaultBlockState()
-                .setValue(FACING, ctx.getHorizontalDirection().getOpposite());
+        return this.defaultBlockState().setValue(FACING, ctx.getHorizontalDirection().getOpposite());
     }
 
     @Override
@@ -71,9 +53,14 @@ public class ArtisansWorkbench extends HorizontalDirectionalBlock {
     }
 
     @Override
-    protected void createBlockStateDefinition(
-            StateDefinition.Builder<net.minecraft.world.level.block.Block, BlockState> builder
-    ) {
-        builder.add(FACING);
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+        if (!level.isClientSide && player instanceof ServerPlayer sp) {
+            MenuProvider provider = new SimpleMenuProvider(
+                    (id, inv, ply) -> EtchingTableMenu.server(id, inv, level, pos),
+                    Component.translatable("block.runic.etching_table")
+            );
+            sp.openMenu(provider, pos);
+        }
+        return InteractionResult.sidedSuccess(level.isClientSide);
     }
 }

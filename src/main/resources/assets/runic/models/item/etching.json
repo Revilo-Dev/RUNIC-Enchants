@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "runic:item/rune/etching"
+    "layer0": "runic:item/etching"
   },
   "overrides": [
     { "predicate": { "runic:rune_model": 1 }, "model": "runic:item/rune/stat/attack_damage" },

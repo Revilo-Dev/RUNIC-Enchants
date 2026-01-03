@@ -1,11 +1,13 @@
 {
   "creativetab.runicmod.runic_items": "RUNIC",
 
-  "item.runic.repair_rune": "Repair Rune",
-  "item.runic.expansion_rune": "Expansion Rune",
-  "item.runic.upgrade_rune": "Upgrade Rune",
-  "item.runic.nullification_rune": "Nullification Rune",
-  "item.runic.enhanced_rune": "Enhanced Rune",
+  "item.runic.repair_rune": "Repair Inscription",
+  "item.runic.expansion_rune": "Expansion Inscription",
+  "item.runic.upgrade_rune": "Upgrade Inscription",
+  "item.runic.nullification_rune": "Nullification Inscription",
+  "item.runic.blank_inscription": "Blank Inscription",
+  "item.runic.enhanced_rune": "Rune",
+  "item.runic.etching": "Etching",
 
   "block.runic.artisans_workbench": "Artisans Workbench",
 

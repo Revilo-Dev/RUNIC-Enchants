@@ -10,9 +10,13 @@ import net.revilodev.runic.item.custom.EtchingItem;
 import net.revilodev.runic.item.custom.RuneItem;
 
 public final class ModItems {
+    private ModItems() {}
 
     public static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(Registries.ITEM, RunicMod.MOD_ID);
+
+    public static final DeferredHolder<Item, Item> BLANK_INSCRIPTION =
+            ITEMS.register("blank_inscription", () -> new Item(new Item.Properties().stacksTo(64)));
 
     public static final DeferredHolder<Item, RuneItem> ENHANCED_RUNE =
             ITEMS.register("enhanced_rune", () -> new RuneItem(new Item.Properties().stacksTo(1)));
@@ -31,8 +35,6 @@ public final class ModItems {
 
     public static final DeferredHolder<Item, Item> UPGRADE_RUNE =
             ITEMS.register("upgrade_rune", () -> new Item(new Item.Properties().stacksTo(16)));
-
-    private ModItems() {}
 
     public static void register(IEventBus bus) {
         ITEMS.register(bus);

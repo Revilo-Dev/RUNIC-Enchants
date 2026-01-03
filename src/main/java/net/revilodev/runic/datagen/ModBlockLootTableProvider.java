@@ -21,7 +21,7 @@ public class ModBlockLootTableProvider extends BlockLootSubProvider {
 
     @Override
     protected void generate() {
-        dropSelf(ModBlocks.ETCHING_TABLE.get());
+        dropSelf(ModBlocks.ARTISANS_WORKBENCH.get());
     }
 
     @Override

@@ -1,5 +1,8 @@
 package net.revilodev.runic.stat;
 
+import com.mojang.serialization.Codec;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 
@@ -43,6 +46,24 @@ public enum RuneStatType implements StringRepresentable {
     private static final Map<String, RuneStatType> BY_ID =
             Arrays.stream(values()).collect(Collectors.toMap(RuneStatType::id, t -> t));
 
+    public static final Codec<RuneStatType> CODEC = Codec.STRING.xmap(
+            RuneStatType::byIdOrThrow,
+            RuneStatType::id
+    );
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, RuneStatType> STREAM_CODEC =
+            new StreamCodec<>() {
+                @Override
+                public RuneStatType decode(RegistryFriendlyByteBuf buf) {
+                    return byIdOrThrow(buf.readUtf());
+                }
+
+                @Override
+                public void encode(RegistryFriendlyByteBuf buf, RuneStatType value) {
+                    buf.writeUtf(value.id);
+                }
+            };
+
     private final String id;
     private final int minPercent;
     private final int maxPercent;
@@ -84,17 +105,13 @@ public enum RuneStatType implements StringRepresentable {
     }
 
     public float roll(RandomSource random) {
-        if (this.maxPercent <= this.minPercent) {
-            return this.minPercent;
-        }
+        if (this.maxPercent <= this.minPercent) return this.minPercent;
         int bound = this.maxPercent - this.minPercent + 1;
         return this.minPercent + random.nextInt(bound);
     }
 
     public float rollEtching(RandomSource random) {
-        if (this.etchingMaxPercent <= this.etchingMinPercent) {
-            return this.etchingMinPercent;
-        }
+        if (this.etchingMaxPercent <= this.etchingMinPercent) return this.etchingMinPercent;
         int bound = this.etchingMaxPercent - this.etchingMinPercent + 1;
         return this.etchingMinPercent + random.nextInt(bound);
     }
@@ -106,6 +123,12 @@ public enum RuneStatType implements StringRepresentable {
 
     public static RuneStatType byId(String id) {
         return BY_ID.get(id);
+    }
+
+    public static RuneStatType byIdOrThrow(String id) {
+        RuneStatType t = BY_ID.get(id);
+        if (t == null) throw new IllegalArgumentException("Unknown RuneStatType: " + id);
+        return t;
     }
 
     public static Map<RuneStatType, Float> emptyMap() {

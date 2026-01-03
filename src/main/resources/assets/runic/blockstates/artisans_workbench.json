@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "runic:block/artisans_workbench", "y": 0 },
+    "facing=east":  { "model": "runic:block/artisans_workbench", "y": 90 },
+    "facing=south": { "model": "runic:block/artisans_workbench", "y": 180 },
+    "facing=west":  { "model": "runic:block/artisans_workbench", "y": 270 }
+  }
+}
