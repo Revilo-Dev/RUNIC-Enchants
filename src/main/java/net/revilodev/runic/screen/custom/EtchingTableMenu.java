@@ -22,7 +22,7 @@ import net.revilodev.runic.screen.ModMenuTypes;
 
 import java.util.Optional;
 
-public final class EtchingTableMenu extends AbstractContainerMenu {
+public class EtchingTableMenu extends AbstractContainerMenu {
     private final ContainerLevelAccess access;
     private final Level level;
 
@@ -37,25 +37,29 @@ public final class EtchingTableMenu extends AbstractContainerMenu {
     private final ResultContainer result = new ResultContainer();
     private RecipeHolder<EtchingTableRecipe> lastRecipe;
 
-    public EtchingTableMenu(int id, Inventory inv, ContainerLevelAccess access) {
+    public static EtchingTableMenu client(int id, Inventory inv, BlockPos pos) {
+        return new EtchingTableMenu(id, inv, ContainerLevelAccess.create(inv.player.level(), pos));
+    }
+
+    public static EtchingTableMenu server(int id, Inventory inv, Level level, BlockPos pos) {
+        return new EtchingTableMenu(id, inv, ContainerLevelAccess.create(level, pos));
+    }
+
+    private EtchingTableMenu(int id, Inventory inv, ContainerLevelAccess access) {
         super(ModMenuTypes.ETCHING_TABLE.get(), id);
         this.access = access;
         this.level = inv.player.level();
 
         this.addSlot(new Slot(input, 0, 8, 50) {
             @Override
-            public int getMaxStackSize() {
-                return 1;
-            }
+            public int getMaxStackSize() { return 1; }
         });
 
         this.addSlot(new Slot(input, 1, 44, 50));
 
         this.addSlot(new Slot(result, 0, 98, 50) {
             @Override
-            public boolean mayPlace(ItemStack stack) {
-                return false;
-            }
+            public boolean mayPlace(ItemStack stack) { return false; }
 
             @Override
             public boolean mayPickup(Player player) {
@@ -80,14 +84,6 @@ public final class EtchingTableMenu extends AbstractContainerMenu {
             this.addSlot(new Slot(inv, c, x + c * 18, y + 58));
 
         updateResult();
-    }
-
-    public static EtchingTableMenu client(int id, Inventory inv, BlockPos pos) {
-        return new EtchingTableMenu(id, inv, ContainerLevelAccess.create(inv.player.level(), pos));
-    }
-
-    public static EtchingTableMenu server(int id, Inventory inv, Level level, BlockPos pos) {
-        return new EtchingTableMenu(id, inv, ContainerLevelAccess.create(level, pos));
     }
 
     @Override
@@ -127,6 +123,7 @@ public final class EtchingTableMenu extends AbstractContainerMenu {
 
         ItemStack base = input.getItem(0);
         ItemStack mat = input.getItem(1);
+
         if (base.isEmpty() || mat.isEmpty()) return;
 
         EtchingTableInput in = new EtchingTableInput(base, mat);
