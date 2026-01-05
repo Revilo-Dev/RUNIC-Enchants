@@ -3,6 +3,7 @@ package net.revilodev.runic.screen.custom;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -12,6 +13,7 @@ import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.ResultContainer;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.revilodev.runic.block.ModBlocks;
@@ -22,7 +24,9 @@ import net.revilodev.runic.screen.ModMenuTypes;
 
 import java.util.Optional;
 
-public class EtchingTableMenu extends AbstractContainerMenu {
+public final class EtchingTableMenu extends AbstractContainerMenu {
+    public static final int TOP_SLOT_X_OFFSET = 36;
+
     private final ContainerLevelAccess access;
     private final Level level;
 
@@ -50,14 +54,14 @@ public class EtchingTableMenu extends AbstractContainerMenu {
         this.access = access;
         this.level = inv.player.level();
 
-        this.addSlot(new Slot(input, 0, 8, 50) {
+        this.addSlot(new Slot(input, 0, 8 + TOP_SLOT_X_OFFSET, 50) {
             @Override
             public int getMaxStackSize() { return 1; }
         });
 
-        this.addSlot(new Slot(input, 1, 44, 50));
+        this.addSlot(new Slot(input, 1, 44 + TOP_SLOT_X_OFFSET, 50));
 
-        this.addSlot(new Slot(result, 0, 98, 50) {
+        this.addSlot(new Slot(result, 0, 98 + TOP_SLOT_X_OFFSET, 50) {
             @Override
             public boolean mayPlace(ItemStack stack) { return false; }
 
@@ -123,7 +127,6 @@ public class EtchingTableMenu extends AbstractContainerMenu {
 
         ItemStack base = input.getItem(0);
         ItemStack mat = input.getItem(1);
-
         if (base.isEmpty() || mat.isEmpty()) return;
 
         EtchingTableInput in = new EtchingTableInput(base, mat);
@@ -148,6 +151,46 @@ public class EtchingTableMenu extends AbstractContainerMenu {
     @Override
     public boolean stillValid(Player player) {
         return stillValid(this.access, player, ModBlocks.ETCHING_TABLE.get());
+    }
+
+    public void placeRecipeFromBook(ServerPlayer player, RecipeHolder<EtchingTableRecipe> holder) {
+        EtchingTableRecipe r = holder.value();
+        moveInputBackToInventory(player);
+
+        tryTakeOne(player, r.base(), 0);
+        tryTakeOne(player, r.material(), 1);
+
+        slotsChanged(input);
+        broadcastChanges();
+    }
+
+    private void moveInputBackToInventory(ServerPlayer player) {
+        for (int i = 0; i < 2; i++) {
+            ItemStack st = input.getItem(i);
+            if (st.isEmpty()) continue;
+            ItemStack moving = st.copy();
+            input.setItem(i, ItemStack.EMPTY);
+
+            if (!this.moveItemStackTo(moving, 3, 39, true)) {
+                player.drop(moving, false);
+            }
+        }
+    }
+
+    private void tryTakeOne(ServerPlayer player, Ingredient ing, int inputSlot) {
+        if (!input.getItem(inputSlot).isEmpty()) return;
+
+        for (int i = 3; i < 39; i++) {
+            Slot s = this.slots.get(i);
+            ItemStack st = s.getItem();
+            if (st.isEmpty()) continue;
+            if (!ing.test(st)) continue;
+
+            ItemStack one = s.remove(1);
+            s.setChanged();
+            input.setItem(inputSlot, one);
+            return;
+        }
     }
 
     @Override

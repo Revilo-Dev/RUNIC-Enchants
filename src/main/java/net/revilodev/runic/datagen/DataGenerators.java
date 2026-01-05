@@ -39,6 +39,7 @@ public final class DataGenerators {
 
             generator.addProvider(true, new ModDatapackEntries(output, lookupProvider));
             generator.addProvider(true, new ModGLMProvider(output, lookupProvider));
+            generator.addProvider(true, new ModRecipeProvider(output, lookupProvider));
 
             BlockTagsProvider blockTags = new ModBlockTagProvider(output, lookupProvider, fileHelper);
             generator.addProvider(true, blockTags);
@@ -46,7 +47,6 @@ public final class DataGenerators {
 
         if (event.includeClient()) {
             generator.addProvider(true, new ModItemModelProvider(output, fileHelper));
-            // generator.addProvider(true, new ModBlockStateProvider(output, fileHelper));
         }
     }
 }

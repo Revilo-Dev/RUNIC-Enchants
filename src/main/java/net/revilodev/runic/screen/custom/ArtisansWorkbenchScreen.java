@@ -60,7 +60,6 @@ public class ArtisansWorkbenchScreen extends AbstractContainerScreen<ArtisansWor
 
     @Override
     public void render(GuiGraphics gg, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(gg, mouseX, mouseY, partialTick); // vanilla gradient background
         super.render(gg, mouseX, mouseY, partialTick);
         this.renderTooltip(gg, mouseX, mouseY);
     }
