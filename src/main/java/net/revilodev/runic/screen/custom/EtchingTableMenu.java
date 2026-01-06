@@ -1,8 +1,6 @@
 package net.revilodev.runic.screen.custom;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -41,14 +39,6 @@ public final class EtchingTableMenu extends AbstractContainerMenu {
     private final ResultContainer result = new ResultContainer();
     private RecipeHolder<EtchingTableRecipe> lastRecipe;
 
-    public static EtchingTableMenu client(int id, Inventory inv, BlockPos pos) {
-        return new EtchingTableMenu(id, inv, ContainerLevelAccess.create(inv.player.level(), pos));
-    }
-
-    public static EtchingTableMenu server(int id, Inventory inv, Level level, BlockPos pos) {
-        return new EtchingTableMenu(id, inv, ContainerLevelAccess.create(level, pos));
-    }
-
     private EtchingTableMenu(int id, Inventory inv, ContainerLevelAccess access) {
         super(ModMenuTypes.ETCHING_TABLE.get(), id);
         this.access = access;
@@ -56,14 +46,18 @@ public final class EtchingTableMenu extends AbstractContainerMenu {
 
         this.addSlot(new Slot(input, 0, 8 + TOP_SLOT_X_OFFSET, 50) {
             @Override
-            public int getMaxStackSize() { return 1; }
+            public int getMaxStackSize() {
+                return 64;
+            }
         });
 
         this.addSlot(new Slot(input, 1, 44 + TOP_SLOT_X_OFFSET, 50));
 
         this.addSlot(new Slot(result, 0, 98 + TOP_SLOT_X_OFFSET, 50) {
             @Override
-            public boolean mayPlace(ItemStack stack) { return false; }
+            public boolean mayPlace(ItemStack stack) {
+                return false;
+            }
 
             @Override
             public boolean mayPickup(Player player) {
@@ -80,14 +74,25 @@ public final class EtchingTableMenu extends AbstractContainerMenu {
         int x = 8;
         int y = 84;
 
-        for (int r = 0; r < 3; r++)
-            for (int c = 0; c < 9; c++)
+        for (int r = 0; r < 3; r++) {
+            for (int c = 0; c < 9; c++) {
                 this.addSlot(new Slot(inv, c + r * 9 + 9, x + c * 18, y + r * 18));
+            }
+        }
 
-        for (int c = 0; c < 9; c++)
+        for (int c = 0; c < 9; c++) {
             this.addSlot(new Slot(inv, c, x + c * 18, y + 58));
+        }
 
         updateResult();
+    }
+
+    public static EtchingTableMenu server(int id, Inventory inv, Level level, BlockPos pos) {
+        return new EtchingTableMenu(id, inv, ContainerLevelAccess.create(level, pos));
+    }
+
+    public static EtchingTableMenu client(int id, Inventory inv, BlockPos pos) {
+        return new EtchingTableMenu(id, inv, ContainerLevelAccess.create(inv.player.level(), pos));
     }
 
     @Override
@@ -127,6 +132,7 @@ public final class EtchingTableMenu extends AbstractContainerMenu {
 
         ItemStack base = input.getItem(0);
         ItemStack mat = input.getItem(1);
+
         if (base.isEmpty() || mat.isEmpty()) return;
 
         EtchingTableInput in = new EtchingTableInput(base, mat);
@@ -134,8 +140,6 @@ public final class EtchingTableMenu extends AbstractContainerMenu {
 
         input.getItem(0).shrink(1);
         input.getItem(1).shrink(1);
-
-        access.execute((lvl, pos) -> lvl.playSound(null, pos, SoundEvents.SMITHING_TABLE_USE, SoundSource.BLOCKS, 1f, 1f));
 
         result.setItem(0, ItemStack.EMPTY);
         updateResult();
@@ -151,46 +155,6 @@ public final class EtchingTableMenu extends AbstractContainerMenu {
     @Override
     public boolean stillValid(Player player) {
         return stillValid(this.access, player, ModBlocks.ETCHING_TABLE.get());
-    }
-
-    public void placeRecipeFromBook(ServerPlayer player, RecipeHolder<EtchingTableRecipe> holder) {
-        EtchingTableRecipe r = holder.value();
-        moveInputBackToInventory(player);
-
-        tryTakeOne(player, r.base(), 0);
-        tryTakeOne(player, r.material(), 1);
-
-        slotsChanged(input);
-        broadcastChanges();
-    }
-
-    private void moveInputBackToInventory(ServerPlayer player) {
-        for (int i = 0; i < 2; i++) {
-            ItemStack st = input.getItem(i);
-            if (st.isEmpty()) continue;
-            ItemStack moving = st.copy();
-            input.setItem(i, ItemStack.EMPTY);
-
-            if (!this.moveItemStackTo(moving, 3, 39, true)) {
-                player.drop(moving, false);
-            }
-        }
-    }
-
-    private void tryTakeOne(ServerPlayer player, Ingredient ing, int inputSlot) {
-        if (!input.getItem(inputSlot).isEmpty()) return;
-
-        for (int i = 3; i < 39; i++) {
-            Slot s = this.slots.get(i);
-            ItemStack st = s.getItem();
-            if (st.isEmpty()) continue;
-            if (!ing.test(st)) continue;
-
-            ItemStack one = s.remove(1);
-            s.setChanged();
-            input.setItem(inputSlot, one);
-            return;
-        }
     }
 
     @Override
@@ -221,5 +185,56 @@ public final class EtchingTableMenu extends AbstractContainerMenu {
         else slot.setChanged();
 
         return copy;
+    }
+
+    public void placeRecipeFromBook(ServerPlayer player, RecipeHolder<EtchingTableRecipe> recipe) {
+        if (player.containerMenu != this) return;
+
+        Ingredient a = recipe.value().base();
+        Ingredient b = recipe.value().material();
+
+        Slot s0 = this.getSlot(0);
+        Slot s1 = this.getSlot(1);
+
+        ensureSlotMatchesOrClear(player, s0, a);
+        ensureSlotMatchesOrClear(player, s1, b);
+
+        if (!s0.hasItem()) pullOneIntoSlot(player, s0, a);
+        if (!s1.hasItem()) pullOneIntoSlot(player, s1, b);
+
+        updateResult();
+        broadcastChanges();
+    }
+
+    private void ensureSlotMatchesOrClear(ServerPlayer player, Slot slot, Ingredient ing) {
+        if (!slot.hasItem()) return;
+        ItemStack cur = slot.getItem();
+        if (ing.test(cur)) return;
+
+        ItemStack toReturn = cur.copy();
+        slot.set(ItemStack.EMPTY);
+        if (!player.getInventory().add(toReturn)) {
+            player.drop(toReturn, false);
+        }
+    }
+
+    private void pullOneIntoSlot(ServerPlayer player, Slot dest, Ingredient ing) {
+        for (int i = 3; i < 3 + 36; i++) {
+            Slot src = this.getSlot(i);
+            if (!src.hasItem()) continue;
+
+            ItemStack st = src.getItem();
+            if (!ing.test(st)) continue;
+
+            ItemStack one = st.copy();
+            one.setCount(1);
+
+            st.shrink(1);
+            src.setChanged();
+
+            dest.set(one);
+            dest.setChanged();
+            return;
+        }
     }
 }

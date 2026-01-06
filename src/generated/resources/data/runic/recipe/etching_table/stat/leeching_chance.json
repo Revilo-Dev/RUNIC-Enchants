@@ -1,0 +1,14 @@
+{
+  "type": "runic:etching_table",
+  "base": {
+    "item": "runic:blank_etching"
+  },
+  "material": {
+    "item": "minecraft:honey_bottle"
+  },
+  "result": {
+    "count": 1,
+    "id": "runic:etching"
+  },
+  "stat": "leeching_chance"
+}

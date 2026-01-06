@@ -1,8 +1,6 @@
 package net.revilodev.runic.datagen;
 
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.ResourceKey;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
@@ -10,33 +8,70 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.enchantment.Enchantment;
 import net.revilodev.runic.RunicMod;
 import net.revilodev.runic.item.ModItems;
 import net.revilodev.runic.item.custom.EtchingItem;
 import net.revilodev.runic.recipe.EtchingTableRecipe;
 import net.revilodev.runic.stat.RuneStatType;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.EnumMap;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 public final class ModRecipeProvider extends RecipeProvider {
-    private final CompletableFuture<HolderLookup.Provider> lookupProvider;
+    private static final EnumMap<RuneStatType, net.minecraft.world.level.ItemLike> STAT_MATERIALS = new EnumMap<>(RuneStatType.class);
+
+    static {
+        STAT_MATERIALS.put(RuneStatType.ATTACK_SPEED, Items.SUGAR);
+        STAT_MATERIALS.put(RuneStatType.ATTACK_DAMAGE, Items.DIAMOND);
+        STAT_MATERIALS.put(RuneStatType.ATTACK_RANGE, Items.SPYGLASS);
+        STAT_MATERIALS.put(RuneStatType.MOVEMENT_SPEED, Items.RABBIT_FOOT);
+        STAT_MATERIALS.put(RuneStatType.SWEEPING_RANGE, Items.FEATHER);
+        STAT_MATERIALS.put(RuneStatType.DURABILITY, Items.OBSIDIAN);
+        STAT_MATERIALS.put(RuneStatType.RESISTANCE, Items.IRON_INGOT);
+        STAT_MATERIALS.put(RuneStatType.FIRE_RESISTANCE, Items.MAGMA_CREAM);
+        STAT_MATERIALS.put(RuneStatType.BLAST_RESISTANCE, Items.GUNPOWDER);
+        STAT_MATERIALS.put(RuneStatType.PROJECTILE_RESISTANCE, Items.SHIELD);
+        STAT_MATERIALS.put(RuneStatType.KNOCKBACK_RESISTANCE, Items.SLIME_BALL);
+        STAT_MATERIALS.put(RuneStatType.MINING_SPEED, Items.REDSTONE);
+        STAT_MATERIALS.put(RuneStatType.UNDEAD_DAMAGE, Items.ROTTEN_FLESH);
+        STAT_MATERIALS.put(RuneStatType.NETHER_DAMAGE, Items.BLAZE_ROD);
+        STAT_MATERIALS.put(RuneStatType.HEALTH, Items.GOLDEN_APPLE);
+        STAT_MATERIALS.put(RuneStatType.STUN_CHANCE, Items.AMETHYST_SHARD);
+        STAT_MATERIALS.put(RuneStatType.FLAME_CHANCE, Items.BLAZE_POWDER);
+        STAT_MATERIALS.put(RuneStatType.BLEEDING_CHANCE, Items.SWEET_BERRIES);
+        STAT_MATERIALS.put(RuneStatType.SHOCKING_CHANCE, Items.COPPER_INGOT);
+        STAT_MATERIALS.put(RuneStatType.POISON_CHANCE, Items.SPIDER_EYE);
+        STAT_MATERIALS.put(RuneStatType.WITHERING_CHANCE, Items.WITHER_ROSE);
+        STAT_MATERIALS.put(RuneStatType.WEAKENING_CHANCE, Items.FERMENTED_SPIDER_EYE);
+        STAT_MATERIALS.put(RuneStatType.HEALING_EFFICIENCY, Items.GHAST_TEAR);
+        STAT_MATERIALS.put(RuneStatType.DRAW_SPEED, Items.STRING);
+        STAT_MATERIALS.put(RuneStatType.TOUGHNESS, Items.NETHERITE_SCRAP);
+        STAT_MATERIALS.put(RuneStatType.FREEZING_CHANCE, Items.PACKED_ICE);
+        STAT_MATERIALS.put(RuneStatType.LEECHING_CHANCE, Items.HONEY_BOTTLE);
+        STAT_MATERIALS.put(RuneStatType.BONUS_CHANCE, Items.LAPIS_LAZULI);
+        STAT_MATERIALS.put(RuneStatType.JUMP_HEIGHT, Items.SLIME_BLOCK);
+        STAT_MATERIALS.put(RuneStatType.POWER, Items.NETHER_STAR);
+    }
 
     public ModRecipeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
         super(output, lookupProvider);
-        this.lookupProvider = lookupProvider;
     }
 
     @Override
     protected void buildRecipes(RecipeOutput output) {
-        Ingredient statBase = Ingredient.of(ModItems.BLANK_ETCHING.get());
-        Ingredient statMaterial = Ingredient.of(Items.DIAMOND);
         ItemStack etchingResult = new ItemStack(ModItems.ETCHING.get(), 1);
 
+        Ingredient statBase = Ingredient.of(ModItems.BLANK_ETCHING.get());
         for (RuneStatType type : RuneStatType.values()) {
+            net.minecraft.world.level.ItemLike mat = STAT_MATERIALS.get(type);
+            if (mat == null) {
+                throw new IllegalStateException("Missing STAT_MATERIALS for stat: " + type.id());
+            }
+
             ResourceLocation id = ResourceLocation.fromNamespaceAndPath(
                     RunicMod.MOD_ID,
                     "etching_table/stat/" + type.id()
@@ -44,28 +79,23 @@ public final class ModRecipeProvider extends RecipeProvider {
 
             EtchingTableRecipe recipe = new EtchingTableRecipe(
                     statBase,
-                    statMaterial,
+                    Ingredient.of(mat),
                     etchingResult.copy(),
                     Optional.of(type),
                     Optional.empty()
             );
 
-            output.accept(recipeKey(id), recipe, null);
+            output.accept(id, recipe, null);
         }
 
-        HolderLookup.Provider registries = lookupProvider.join();
         Ingredient effectBase = Ingredient.of(ModItems.BLANK_INSCRIPTION.get());
-        Ingredient effectMaterial = Ingredient.of(Items.PRISMARINE_SHARD);
+        Ingredient effectMaterial = Ingredient.of(Items.ENCHANTED_BOOK);
 
         Set<ResourceLocation> allowed = EtchingItem.allowedEffectIds();
-        var enchLookup = registries.lookupOrThrow(Registries.ENCHANTMENT);
+        ArrayList<ResourceLocation> effects = new ArrayList<>(allowed);
+        effects.sort(Comparator.comparing(ResourceLocation::toString));
 
-        for (ResourceLocation enchId : allowed) {
-            ResourceKey<Enchantment> enchKey = ResourceKey.create(Registries.ENCHANTMENT, enchId);
-            if (enchLookup.get(enchKey).isEmpty()) {
-                continue;
-            }
-
+        for (ResourceLocation enchId : effects) {
             ResourceLocation id = ResourceLocation.fromNamespaceAndPath(
                     RunicMod.MOD_ID,
                     "etching_table/effect/" + enchId.getNamespace() + "/" + enchId.getPath()
@@ -79,11 +109,7 @@ public final class ModRecipeProvider extends RecipeProvider {
                     Optional.of(enchId)
             );
 
-            output.accept(recipeKey(id), recipe, null);
+            output.accept(id, recipe, null);
         }
-    }
-
-    private static ResourceKey<Recipe<?>> recipeKey(ResourceLocation id) {
-        return ResourceKey.create(Registries.RECIPE, id);
     }
 }

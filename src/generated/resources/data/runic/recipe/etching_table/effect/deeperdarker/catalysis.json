@@ -1,0 +1,14 @@
+{
+  "type": "runic:etching_table",
+  "base": {
+    "item": "runic:blank_inscription"
+  },
+  "effect": "deeperdarker:catalysis",
+  "material": {
+    "item": "minecraft:enchanted_book"
+  },
+  "result": {
+    "count": 1,
+    "id": "runic:etching"
+  }
+}

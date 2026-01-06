@@ -4,9 +4,11 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.ResourceKey;
+import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -14,13 +16,18 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.revilodev.runic.item.custom.EtchingItem;
+import net.revilodev.runic.item.custom.RuneItem;
 import net.revilodev.runic.stat.RuneStatType;
 import net.revilodev.runic.stat.RuneStats;
 
 import java.util.Optional;
 
 public final class EtchingTableRecipe implements Recipe<EtchingTableInput> {
+    private static final ResourceKey<Registry<Enchantment>> ENCHANTMENT_REGISTRY =
+            ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath("minecraft", "enchantment"));
+
     public static final MapCodec<EtchingTableRecipe> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
             Ingredient.CODEC.fieldOf("base").forGetter(EtchingTableRecipe::base),
             Ingredient.CODEC.fieldOf("material").forGetter(EtchingTableRecipe::material),
@@ -74,12 +81,59 @@ public final class EtchingTableRecipe implements Recipe<EtchingTableInput> {
 
     @Override
     public boolean matches(EtchingTableInput input, net.minecraft.world.level.Level level) {
-        return base.test(input.base()) && material.test(input.material());
+        if (!base.test(input.base())) return false;
+
+        if (effect.isPresent()) {
+            if (!material.test(input.material())) return false;
+            return stackHasEnchantmentId(input.material(), effect.get());
+        }
+
+        return material.test(input.material());
     }
 
     @Override
     public ItemStack assemble(EtchingTableInput input, HolderLookup.Provider registries) {
-        return buildResult(registries);
+        ItemStack out = result.copy();
+
+        if (stat.isPresent()) {
+            RuneStats.set(out, RuneStats.singleUnrolled(stat.get()));
+        }
+
+        if (effect.isPresent()) {
+            Holder<Enchantment> ench = enchantmentHolderOrNull(registries, effect.get());
+            if (ench != null && EtchingItem.isEffectEnchantment(ench)) {
+                out.enchant(ench, RuneItem.forcedEtchingEffectLevel(ench));
+            }
+        }
+
+        return out;
+    }
+
+    private static boolean stackHasEnchantmentId(ItemStack stack, ResourceLocation id) {
+        ItemEnchantments stored = stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
+        if (!stored.isEmpty()) {
+            for (Holder<Enchantment> h : stored.keySet()) {
+                if (holderIdEquals(h, id)) return true;
+            }
+        }
+
+        ItemEnchantments direct = stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
+        if (!direct.isEmpty()) {
+            for (Holder<Enchantment> h : direct.keySet()) {
+                if (holderIdEquals(h, id)) return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean holderIdEquals(Holder<Enchantment> h, ResourceLocation id) {
+        return h.unwrapKey().map(k -> k.location().equals(id)).orElse(false);
+    }
+
+    private static Holder<Enchantment> enchantmentHolderOrNull(HolderLookup.Provider registries, ResourceLocation id) {
+        ResourceKey<Enchantment> key = ResourceKey.create(ENCHANTMENT_REGISTRY, id);
+        return registries.lookup(ENCHANTMENT_REGISTRY).flatMap(l -> l.get(key)).orElse(null);
     }
 
     @Override
@@ -89,7 +143,7 @@ public final class EtchingTableRecipe implements Recipe<EtchingTableInput> {
 
     @Override
     public ItemStack getResultItem(HolderLookup.Provider registries) {
-        return buildResult(registries);
+        return result.copy();
     }
 
     @Override
@@ -100,36 +154,5 @@ public final class EtchingTableRecipe implements Recipe<EtchingTableInput> {
     @Override
     public RecipeType<?> getType() {
         return ModRecipeTypes.ETCHING_TABLE.get();
-    }
-
-    private ItemStack buildResult(HolderLookup.Provider registries) {
-        if (effect.isPresent()) {
-            ResourceLocation id = effect.get();
-            ResourceKey<Enchantment> key = ResourceKey.create(net.minecraft.core.registries.Registries.ENCHANTMENT, id);
-
-            Optional<? extends Holder<Enchantment>> holderOpt = registries
-                    .lookupOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT)
-                    .get(key)
-                    .map(h -> (Holder<Enchantment>) h);
-
-            if (holderOpt.isEmpty()) {
-                return ItemStack.EMPTY;
-            }
-
-            ItemStack out = EtchingItem.createEffectEtching(holderOpt.get());
-            if (out.isEmpty()) {
-                return ItemStack.EMPTY;
-            }
-            out.setCount(this.result.getCount());
-            return out;
-        }
-
-        if (stat.isPresent()) {
-            ItemStack out = this.result.copy();
-            RuneStats.set(out, RuneStats.singleUnrolled(stat.get()));
-            return out;
-        }
-
-        return this.result.copy();
     }
 }

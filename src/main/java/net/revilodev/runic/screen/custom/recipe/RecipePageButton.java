@@ -8,8 +8,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.revilodev.runic.RunicMod;
 
 public final class RecipePageButton extends AbstractWidget {
-    private static final int W = 18;
-    private static final int H = 10;
+    private static final int W = 12;
+    private static final int H = 17;
 
     private static final ResourceLocation BACK =
             ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "textures/gui/widget/page_backward.png");

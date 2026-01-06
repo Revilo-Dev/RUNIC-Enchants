@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-@EventBusSubscriber(modid = RunicMod.MOD_ID)
+@EventBusSubscriber(modid = RunicMod.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public final class DataGenerators {
     private DataGenerators() {}
 
@@ -39,6 +39,7 @@ public final class DataGenerators {
 
             generator.addProvider(true, new ModDatapackEntries(output, lookupProvider));
             generator.addProvider(true, new ModGLMProvider(output, lookupProvider));
+
             generator.addProvider(true, new ModRecipeProvider(output, lookupProvider));
 
             BlockTagsProvider blockTags = new ModBlockTagProvider(output, lookupProvider, fileHelper);

@@ -1,0 +1,14 @@
+{
+  "type": "runic:etching_table",
+  "base": {
+    "item": "runic:blank_etching"
+  },
+  "material": {
+    "item": "minecraft:copper_ingot"
+  },
+  "result": {
+    "count": 1,
+    "id": "runic:etching"
+  },
+  "stat": "shocking_chance"
+}
