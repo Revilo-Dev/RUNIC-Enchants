@@ -5,7 +5,7 @@
   },
   "effect": "minecraft:fortune",
   "material": {
-    "item": "minecraft:enchanted_book"
+    "item": "minecraft:emerald"
   },
   "result": {
     "count": 1,

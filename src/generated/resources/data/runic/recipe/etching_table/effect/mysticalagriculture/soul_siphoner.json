@@ -5,7 +5,7 @@
   },
   "effect": "mysticalagriculture:soul_siphoner",
   "material": {
-    "item": "minecraft:enchanted_book"
+    "item": "minecraft:soul_sand"
   },
   "result": {
     "count": 1,

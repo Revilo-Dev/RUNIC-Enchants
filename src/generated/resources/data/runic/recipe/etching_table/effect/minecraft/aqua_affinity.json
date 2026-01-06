@@ -5,7 +5,7 @@
   },
   "effect": "minecraft:aqua_affinity",
   "material": {
-    "item": "minecraft:enchanted_book"
+    "item": "minecraft:prismarine_crystals"
   },
   "result": {
     "count": 1,

@@ -3,12 +3,11 @@
   "base": {
     "item": "runic:blank_inscription"
   },
-  "effect": "create:potato_recovery",
   "material": {
-    "item": "minecraft:potato"
+    "item": "minecraft:emerald_block"
   },
   "result": {
     "count": 1,
-    "id": "runic:etching"
+    "id": "runic:upgrade_rune"
   }
 }

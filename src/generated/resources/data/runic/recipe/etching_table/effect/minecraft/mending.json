@@ -5,7 +5,7 @@
   },
   "effect": "minecraft:mending",
   "material": {
-    "item": "minecraft:enchanted_book"
+    "item": "minecraft:experience_bottle"
   },
   "result": {
     "count": 1,

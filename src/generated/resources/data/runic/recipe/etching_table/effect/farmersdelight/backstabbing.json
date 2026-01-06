@@ -5,7 +5,7 @@
   },
   "effect": "farmersdelight:backstabbing",
   "material": {
-    "item": "minecraft:enchanted_book"
+    "item": "minecraft:iron_sword"
   },
   "result": {
     "count": 1,

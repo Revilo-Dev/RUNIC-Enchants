@@ -5,7 +5,7 @@
   },
   "effect": "minecraft:channeling",
   "material": {
-    "item": "minecraft:enchanted_book"
+    "item": "minecraft:trident"
   },
   "result": {
     "count": 1,

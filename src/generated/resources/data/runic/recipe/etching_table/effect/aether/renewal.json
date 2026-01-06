@@ -5,7 +5,7 @@
   },
   "effect": "aether:renewal",
   "material": {
-    "item": "minecraft:enchanted_book"
+    "item": "minecraft:ghast_tear"
   },
   "result": {
     "count": 1,

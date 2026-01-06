@@ -5,7 +5,7 @@
   },
   "effect": "simplyswords:soul_siphoner",
   "material": {
-    "item": "minecraft:enchanted_book"
+    "item": "minecraft:soul_lantern"
   },
   "result": {
     "count": 1,

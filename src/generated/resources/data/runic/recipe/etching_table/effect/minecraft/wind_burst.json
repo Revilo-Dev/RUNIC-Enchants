@@ -5,7 +5,7 @@
   },
   "effect": "minecraft:wind_burst",
   "material": {
-    "item": "minecraft:enchanted_book"
+    "item": "minecraft:breeze_rod"
   },
   "result": {
     "count": 1,

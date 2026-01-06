@@ -5,7 +5,7 @@
   },
   "effect": "minecraft:binding_curse",
   "material": {
-    "item": "minecraft:enchanted_book"
+    "item": "minecraft:chain"
   },
   "result": {
     "count": 1,

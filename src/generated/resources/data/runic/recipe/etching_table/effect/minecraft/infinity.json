@@ -5,7 +5,7 @@
   },
   "effect": "minecraft:infinity",
   "material": {
-    "item": "minecraft:enchanted_book"
+    "item": "minecraft:arrow"
   },
   "result": {
     "count": 1,

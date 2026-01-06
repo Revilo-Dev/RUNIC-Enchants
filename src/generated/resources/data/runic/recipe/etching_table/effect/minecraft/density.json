@@ -5,7 +5,7 @@
   },
   "effect": "minecraft:density",
   "material": {
-    "item": "minecraft:enchanted_book"
+    "item": "minecraft:iron_block"
   },
   "result": {
     "count": 1,

@@ -5,7 +5,7 @@
   },
   "effect": "minecraft:soul_speed",
   "material": {
-    "item": "minecraft:enchanted_book"
+    "item": "minecraft:soul_soil"
   },
   "result": {
     "count": 1,

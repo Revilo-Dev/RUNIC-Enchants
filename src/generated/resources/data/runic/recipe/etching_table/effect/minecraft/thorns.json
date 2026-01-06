@@ -5,7 +5,7 @@
   },
   "effect": "minecraft:thorns",
   "material": {
-    "item": "minecraft:enchanted_book"
+    "item": "minecraft:cactus"
   },
   "result": {
     "count": 1,

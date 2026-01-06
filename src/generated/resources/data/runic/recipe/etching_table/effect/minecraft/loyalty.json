@@ -5,7 +5,7 @@
   },
   "effect": "minecraft:loyalty",
   "material": {
-    "item": "minecraft:enchanted_book"
+    "item": "minecraft:lead"
   },
   "result": {
     "count": 1,

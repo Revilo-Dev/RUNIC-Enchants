@@ -230,8 +230,12 @@ public final class EtchingTableScreen extends AbstractContainerScreen<EtchingTab
     @Override
     protected void renderTooltip(GuiGraphics gg, int mouseX, int mouseY) {
         if (this.recipeBookVisible) {
+            Component name = this.recipeBook.getHoveredRecipeName();
             ItemStack hovered = this.recipeBook.getHoveredStack();
-            if (!hovered.isEmpty()) {
+
+            if (name != null && !name.getString().isEmpty()) {
+                gg.renderTooltip(this.font, name, mouseX, mouseY);
+            } else if (!hovered.isEmpty()) {
                 gg.renderTooltip(this.font, hovered, mouseX, mouseY);
             }
         }
@@ -297,6 +301,7 @@ public final class EtchingTableScreen extends AbstractContainerScreen<EtchingTab
             if (this.recipeBookVisible) {
                 if (this.recipeBook.isMouseOver(mouseX, mouseY)) return handled;
                 if (this.searchBox.isMouseOver(mouseX, mouseY)) return handled;
+                if (this.searchBox.isFocused()) return handled;
                 if (this.craftableToggle.isMouseOver(mouseX, mouseY)) return handled;
                 if (this.pageBack.visible && this.pageBack.isMouseOver(mouseX, mouseY)) return handled;
                 if (this.pageForward.visible && this.pageForward.isMouseOver(mouseX, mouseY)) return handled;

@@ -5,7 +5,7 @@
   },
   "effect": "minecraft:luck_of_the_sea",
   "material": {
-    "item": "minecraft:enchanted_book"
+    "item": "minecraft:nautilus_shell"
   },
   "result": {
     "count": 1,

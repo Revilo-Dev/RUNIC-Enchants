@@ -1,7 +1,0 @@
-{
-  "type": "runic:etching_table",
-  "base": { "item": "runic:blank_etching" },
-  "material": { "item": "minecraft:diamond" },
-  "result": { "id": "runic:etching", "count": 1 },
-  "stat": "attack_damage"
-}

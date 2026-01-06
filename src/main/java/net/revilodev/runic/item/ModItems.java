@@ -43,4 +43,6 @@ public final class ModItems {
     public static void register(IEventBus bus) {
         ITEMS.register(bus);
     }
+
+
 }

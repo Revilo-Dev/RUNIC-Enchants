@@ -5,7 +5,7 @@
   },
   "effect": "combat_roll:longfooted",
   "material": {
-    "item": "minecraft:enchanted_book"
+    "item": "minecraft:leather_boots"
   },
   "result": {
     "count": 1,

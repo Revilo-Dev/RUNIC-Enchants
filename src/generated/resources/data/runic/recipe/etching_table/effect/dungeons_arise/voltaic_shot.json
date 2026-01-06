@@ -5,7 +5,7 @@
   },
   "effect": "dungeons_arise:voltaic_shot",
   "material": {
-    "item": "minecraft:enchanted_book"
+    "item": "minecraft:copper_ingot"
   },
   "result": {
     "count": 1,

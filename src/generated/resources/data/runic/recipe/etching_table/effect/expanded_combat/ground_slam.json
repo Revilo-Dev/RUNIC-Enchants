@@ -5,7 +5,7 @@
   },
   "effect": "expanded_combat:ground_slam",
   "material": {
-    "item": "minecraft:enchanted_book"
+    "item": "minecraft:anvil"
   },
   "result": {
     "count": 1,

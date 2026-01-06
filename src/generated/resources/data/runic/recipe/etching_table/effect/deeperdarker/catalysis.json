@@ -5,7 +5,7 @@
   },
   "effect": "deeperdarker:catalysis",
   "material": {
-    "item": "minecraft:enchanted_book"
+    "item": "minecraft:sculk_catalyst"
   },
   "result": {
     "count": 1,

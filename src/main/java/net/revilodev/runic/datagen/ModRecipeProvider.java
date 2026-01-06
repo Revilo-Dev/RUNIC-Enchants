@@ -7,22 +7,22 @@ import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.revilodev.runic.RunicMod;
 import net.revilodev.runic.item.ModItems;
-import net.revilodev.runic.item.custom.EtchingItem;
 import net.revilodev.runic.recipe.EtchingTableRecipe;
 import net.revilodev.runic.stat.RuneStatType;
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.EnumMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 public final class ModRecipeProvider extends RecipeProvider {
-    private static final EnumMap<RuneStatType, net.minecraft.world.level.ItemLike> STAT_MATERIALS = new EnumMap<>(RuneStatType.class);
+    private static final EnumMap<RuneStatType, ItemLike> STAT_MATERIALS = new EnumMap<>(RuneStatType.class);
 
     static {
         STAT_MATERIALS.put(RuneStatType.ATTACK_SPEED, Items.SUGAR);
@@ -57,6 +57,160 @@ public final class ModRecipeProvider extends RecipeProvider {
         STAT_MATERIALS.put(RuneStatType.POWER, Items.NETHER_STAR);
     }
 
+    private static final List<ResourceLocation> EFFECTS = List.of(
+            ResourceLocation.fromNamespaceAndPath("aether", "renewal"),
+
+            ResourceLocation.fromNamespaceAndPath("combat_roll", "acrobat"),
+            ResourceLocation.fromNamespaceAndPath("combat_roll", "longfooted"),
+            ResourceLocation.fromNamespaceAndPath("combat_roll", "multi_roll"),
+
+            ResourceLocation.fromNamespaceAndPath("create", "capacity"),
+            ResourceLocation.fromNamespaceAndPath("create", "potato_recovery"),
+
+            ResourceLocation.fromNamespaceAndPath("deeperdarker", "catalysis"),
+            ResourceLocation.fromNamespaceAndPath("deeperdarker", "discharge"),
+            ResourceLocation.fromNamespaceAndPath("deeperdarker", "sculk_smite"),
+
+            ResourceLocation.fromNamespaceAndPath("dungeons_arise", "discharge"),
+            ResourceLocation.fromNamespaceAndPath("dungeons_arise", "ensnaring"),
+            ResourceLocation.fromNamespaceAndPath("dungeons_arise", "lolths_curse"),
+            ResourceLocation.fromNamespaceAndPath("dungeons_arise", "purification"),
+            ResourceLocation.fromNamespaceAndPath("dungeons_arise", "voltaic_shot"),
+
+            ResourceLocation.fromNamespaceAndPath("expanded_combat", "blocking"),
+            ResourceLocation.fromNamespaceAndPath("expanded_combat", "ground_slam"),
+
+            ResourceLocation.fromNamespaceAndPath("farmersdelight", "backstabbing"),
+
+            ResourceLocation.fromNamespaceAndPath("mysticalagriculture", "mystical_enlightenment"),
+            ResourceLocation.fromNamespaceAndPath("mysticalagriculture", "soul_siphoner"),
+
+            ResourceLocation.fromNamespaceAndPath("simplyswords", "catalysis"),
+            ResourceLocation.fromNamespaceAndPath("simplyswords", "fire_react"),
+            ResourceLocation.fromNamespaceAndPath("simplyswords", "soul_siphoner"),
+
+            ResourceLocation.fromNamespaceAndPath("supplementaries", "stasis"),
+
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "chill_aura"),
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "destruction"),
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "fire_react"),
+
+            ResourceLocation.withDefaultNamespace("aqua_affinity"),
+            ResourceLocation.withDefaultNamespace("depth_strider"),
+            ResourceLocation.withDefaultNamespace("feather_falling"),
+
+            ResourceLocation.withDefaultNamespace("binding_curse"),
+            ResourceLocation.withDefaultNamespace("breach"),
+            ResourceLocation.withDefaultNamespace("channeling"),
+            ResourceLocation.withDefaultNamespace("density"),
+            ResourceLocation.withDefaultNamespace("flame"),
+            ResourceLocation.withDefaultNamespace("impaling"),
+            ResourceLocation.withDefaultNamespace("infinity"),
+            ResourceLocation.withDefaultNamespace("looting"),
+            ResourceLocation.withDefaultNamespace("luck_of_the_sea"),
+            ResourceLocation.withDefaultNamespace("multishot"),
+            ResourceLocation.withDefaultNamespace("respiration"),
+            ResourceLocation.withDefaultNamespace("riptide"),
+            ResourceLocation.withDefaultNamespace("fortune"),
+            ResourceLocation.withDefaultNamespace("frost_walker"),
+            ResourceLocation.withDefaultNamespace("loyalty"),
+            ResourceLocation.withDefaultNamespace("lure"),
+            ResourceLocation.withDefaultNamespace("mending"),
+            ResourceLocation.withDefaultNamespace("piercing"),
+            ResourceLocation.withDefaultNamespace("punch"),
+            ResourceLocation.withDefaultNamespace("silk_touch"),
+            ResourceLocation.withDefaultNamespace("soul_speed"),
+            ResourceLocation.withDefaultNamespace("swift_sneak"),
+            ResourceLocation.withDefaultNamespace("thorns"),
+            ResourceLocation.withDefaultNamespace("vanishing_curse"),
+            ResourceLocation.withDefaultNamespace("wind_burst")
+    );
+
+    private static final Map<ResourceLocation, ItemLike> EFFECT_MATERIALS = new LinkedHashMap<>();
+
+    static {
+        put("aether", "renewal", Items.GHAST_TEAR);
+
+        put("combat_roll", "acrobat", Items.RABBIT_FOOT);
+        put("combat_roll", "longfooted", Items.LEATHER_BOOTS);
+        put("combat_roll", "multi_roll", Items.FEATHER);
+
+        put("create", "capacity", Items.BARREL);
+        put("create", "potato_recovery", Items.POTATO);
+
+        put("deeperdarker", "catalysis", Items.SCULK_CATALYST);
+        put("deeperdarker", "discharge", Items.ECHO_SHARD);
+        put("deeperdarker", "sculk_smite", Items.SCULK_SHRIEKER);
+
+        put("dungeons_arise", "discharge", Items.LIGHTNING_ROD);
+        put("dungeons_arise", "ensnaring", Items.COBWEB);
+        put("dungeons_arise", "lolths_curse", Items.SPIDER_EYE);
+        put("dungeons_arise", "purification", Items.MILK_BUCKET);
+        put("dungeons_arise", "voltaic_shot", Items.COPPER_INGOT);
+
+        put("expanded_combat", "blocking", Items.SHIELD);
+        put("expanded_combat", "ground_slam", Items.ANVIL);
+
+        put("farmersdelight", "backstabbing", Items.IRON_SWORD);
+
+        put("mysticalagriculture", "mystical_enlightenment", Items.EXPERIENCE_BOTTLE);
+        put("mysticalagriculture", "soul_siphoner", Items.SOUL_SAND);
+
+        put("simplyswords", "catalysis", Items.BLAZE_POWDER);
+        put("simplyswords", "fire_react", Items.MAGMA_CREAM);
+        put("simplyswords", "soul_siphoner", Items.SOUL_LANTERN);
+
+        put("supplementaries", "stasis", Items.CLOCK);
+
+        put("twilightforest", "chill_aura", Items.PACKED_ICE);
+        put("twilightforest", "destruction", Items.TNT);
+        put("twilightforest", "fire_react", Items.FIRE_CHARGE);
+
+        putVanilla("aqua_affinity", Items.PRISMARINE_CRYSTALS);
+        putVanilla("depth_strider", Items.PRISMARINE_SHARD);
+        putVanilla("feather_falling", Items.FEATHER);
+
+        putVanilla("binding_curse", Items.CHAIN);
+        putVanilla("breach", Items.IRON_PICKAXE);
+        putVanilla("channeling", Items.TRIDENT);
+        putVanilla("density", Items.IRON_BLOCK);
+        putVanilla("flame", Items.FLINT_AND_STEEL);
+        putVanilla("impaling", Items.PRISMARINE_SHARD);
+        putVanilla("infinity", Items.ARROW);
+        putVanilla("looting", Items.GOLD_INGOT);
+        putVanilla("luck_of_the_sea", Items.NAUTILUS_SHELL);
+        putVanilla("multishot", Items.CROSSBOW);
+        putVanilla("respiration", Items.PUFFERFISH);
+        putVanilla("riptide", Items.HEART_OF_THE_SEA);
+        putVanilla("fortune", Items.EMERALD);
+        putVanilla("frost_walker", Items.PACKED_ICE);
+        putVanilla("loyalty", Items.LEAD);
+        putVanilla("lure", Items.FISHING_ROD);
+        putVanilla("mending", Items.EXPERIENCE_BOTTLE);
+        putVanilla("piercing", Items.SPECTRAL_ARROW);
+        putVanilla("punch", Items.PISTON);
+        putVanilla("silk_touch", Items.SHEARS);
+        putVanilla("soul_speed", Items.SOUL_SOIL);
+        putVanilla("swift_sneak", Items.ECHO_SHARD);
+        putVanilla("thorns", Items.CACTUS);
+        putVanilla("vanishing_curse", Items.ENDER_PEARL);
+        putVanilla("wind_burst", Items.BREEZE_ROD);
+    }
+
+    private static void put(String ns, String path, ItemLike item) {
+        EFFECT_MATERIALS.put(ResourceLocation.fromNamespaceAndPath(ns, path), item);
+    }
+
+    private static void putVanilla(String path, ItemLike item) {
+        EFFECT_MATERIALS.put(ResourceLocation.withDefaultNamespace(path), item);
+    }
+
+    private static ItemLike effectMaterialOrThrow(ResourceLocation effectId) {
+        ItemLike item = EFFECT_MATERIALS.get(effectId);
+        if (item == null) throw new IllegalStateException("Missing EFFECT_MATERIALS entry for: " + effectId);
+        return item;
+    }
+
     public ModRecipeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
         super(output, lookupProvider);
     }
@@ -67,10 +221,8 @@ public final class ModRecipeProvider extends RecipeProvider {
 
         Ingredient statBase = Ingredient.of(ModItems.BLANK_ETCHING.get());
         for (RuneStatType type : RuneStatType.values()) {
-            net.minecraft.world.level.ItemLike mat = STAT_MATERIALS.get(type);
-            if (mat == null) {
-                throw new IllegalStateException("Missing STAT_MATERIALS for stat: " + type.id());
-            }
+            ItemLike mat = STAT_MATERIALS.get(type);
+            if (mat == null) throw new IllegalStateException("Missing STAT_MATERIALS for stat: " + type.id());
 
             ResourceLocation id = ResourceLocation.fromNamespaceAndPath(
                     RunicMod.MOD_ID,
@@ -89,27 +241,56 @@ public final class ModRecipeProvider extends RecipeProvider {
         }
 
         Ingredient effectBase = Ingredient.of(ModItems.BLANK_INSCRIPTION.get());
-        Ingredient effectMaterial = Ingredient.of(Items.ENCHANTED_BOOK);
 
-        Set<ResourceLocation> allowed = EtchingItem.allowedEffectIds();
-        ArrayList<ResourceLocation> effects = new ArrayList<>(allowed);
-        effects.sort(Comparator.comparing(ResourceLocation::toString));
-
-        for (ResourceLocation enchId : effects) {
+        for (ResourceLocation effectId : EFFECTS) {
             ResourceLocation id = ResourceLocation.fromNamespaceAndPath(
                     RunicMod.MOD_ID,
-                    "etching_table/effect/" + enchId.getNamespace() + "/" + enchId.getPath()
+                    "etching_table/effect/" + effectId.getNamespace() + "/" + effectId.getPath()
             );
 
             EtchingTableRecipe recipe = new EtchingTableRecipe(
                     effectBase,
-                    effectMaterial,
+                    Ingredient.of(effectMaterialOrThrow(effectId)),
                     etchingResult.copy(),
                     Optional.empty(),
-                    Optional.of(enchId)
+                    Optional.of(effectId)
             );
 
             output.accept(id, recipe, null);
         }
+
+        buildUtilityInscriptions(output);
+    }
+
+    private void buildUtilityInscriptions(RecipeOutput output) {
+        Ingredient base = Ingredient.of(ModItems.BLANK_INSCRIPTION.get());
+
+        addUtility(output, "repair_rune", base, Items.IRON_BLOCK, ModItems.REPAIR_RUNE.get());
+        addUtility(output, "expansion_rune", base, Items.DIAMOND_BLOCK, ModItems.EXPANSION_RUNE.get());
+        addUtility(output, "nullification_rune", base, Items.GOLD_BLOCK, ModItems.NULLIFICATION_RUNE.get());
+        addUtility(output, "upgrade_rune", base, Items.EMERALD_BLOCK, ModItems.UPGRADE_RUNE.get());
+    }
+
+    private static void addUtility(
+            RecipeOutput output,
+            String idPath,
+            Ingredient base,
+            ItemLike material,
+            ItemLike resultItem
+    ) {
+        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(
+                RunicMod.MOD_ID,
+                "etching_table/utility/" + idPath
+        );
+
+        EtchingTableRecipe recipe = new EtchingTableRecipe(
+                base,
+                Ingredient.of(material),
+                new ItemStack(resultItem, 1),
+                Optional.empty(),
+                Optional.empty()
+        );
+
+        output.accept(id, recipe, null);
     }
 }

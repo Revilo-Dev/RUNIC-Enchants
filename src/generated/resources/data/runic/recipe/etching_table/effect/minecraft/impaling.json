@@ -5,7 +5,7 @@
   },
   "effect": "minecraft:impaling",
   "material": {
-    "item": "minecraft:enchanted_book"
+    "item": "minecraft:prismarine_shard"
   },
   "result": {
     "count": 1,

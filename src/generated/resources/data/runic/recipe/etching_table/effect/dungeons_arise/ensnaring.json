@@ -5,7 +5,7 @@
   },
   "effect": "dungeons_arise:ensnaring",
   "material": {
-    "item": "minecraft:enchanted_book"
+    "item": "minecraft:cobweb"
   },
   "result": {
     "count": 1,

@@ -5,7 +5,7 @@
   },
   "effect": "minecraft:breach",
   "material": {
-    "item": "minecraft:enchanted_book"
+    "item": "minecraft:iron_pickaxe"
   },
   "result": {
     "count": 1,

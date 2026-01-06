@@ -5,7 +5,7 @@
   },
   "effect": "minecraft:multishot",
   "material": {
-    "item": "minecraft:enchanted_book"
+    "item": "minecraft:crossbow"
   },
   "result": {
     "count": 1,

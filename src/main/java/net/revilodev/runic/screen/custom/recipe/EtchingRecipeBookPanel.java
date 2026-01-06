@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -13,8 +14,10 @@ import net.revilodev.runic.RunicMod;
 import net.revilodev.runic.recipe.EtchingTableRecipe;
 import net.revilodev.runic.recipe.ModRecipeTypes;
 import net.revilodev.runic.screen.custom.EtchingTableMenu;
+import net.revilodev.runic.stat.RuneStatType;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
@@ -39,7 +42,9 @@ public final class EtchingRecipeBookPanel extends AbstractWidget {
     private final List<RecipeHolder<EtchingTableRecipe>> filtered = new ArrayList<>();
 
     private Consumer<RecipeHolder<EtchingTableRecipe>> onSelect = h -> {};
+
     private ItemStack hoveredStack = ItemStack.EMPTY;
+    private Component hoveredRecipeName = Component.empty();
 
     private String search = "";
     private boolean craftableOnly;
@@ -48,7 +53,7 @@ public final class EtchingRecipeBookPanel extends AbstractWidget {
     private int totalPages = 1;
 
     public EtchingRecipeBookPanel() {
-        super(0, 0, 147, 166, net.minecraft.network.chat.Component.empty());
+        super(0, 0, 147, 166, Component.empty());
     }
 
     public void setBounds(int x, int y, int w, int h) {
@@ -62,16 +67,12 @@ public final class EtchingRecipeBookPanel extends AbstractWidget {
         this.onSelect = onSelect == null ? h -> {} : onSelect;
     }
 
-    public void setSearch(String search) {
-        String s = (search == null) ? "" : search;
-        if (this.search.equals(s)) return;
-        this.search = s;
-        this.page = 0;
-        rebuildFiltered();
-    }
-
     public ItemStack getHoveredStack() {
         return hoveredStack;
+    }
+
+    public Component getHoveredRecipeName() {
+        return hoveredRecipeName;
     }
 
     public void refresh() {
@@ -79,48 +80,22 @@ public final class EtchingRecipeBookPanel extends AbstractWidget {
         this.all.clear();
         this.filtered.clear();
         this.hoveredStack = ItemStack.EMPTY;
+        this.hoveredRecipeName = Component.empty();
         this.page = 0;
         this.totalPages = 1;
 
         if (mc.level == null) return;
 
         this.all.addAll(mc.level.getRecipeManager().getAllRecipesFor(ModRecipeTypes.ETCHING_TABLE.get()));
+        this.all.sort(Comparator.comparing(h -> recipeDisplayName(h).getString().toLowerCase(Locale.ROOT)));
+
         rebuildFiltered();
     }
 
-    private String searchNameFor(RecipeHolder<EtchingTableRecipe> h) {
-        ItemStack out = h.value().result().copy();
-
-        String ench = firstEnchantmentName(out);
-        if (!ench.isEmpty()) return ench;
-
-        if (h.value().effect().isPresent()) {
-            String eff = effectName(h.value().effect().get());
-            if (!eff.isEmpty()) return eff;
-        }
-
-        return out.getHoverName().getString();
-    }
-
-    private String firstEnchantmentName(ItemStack stack) {
-        var ench = stack.getOrDefault(net.minecraft.core.component.DataComponents.ENCHANTMENTS, net.minecraft.world.item.enchantment.ItemEnchantments.EMPTY);
-        if (!ench.isEmpty()) {
-            var it = ench.entrySet().iterator();
-            if (it.hasNext()) return it.next().getKey().value().description().getString();
-        }
-
-        var stored = stack.getOrDefault(net.minecraft.core.component.DataComponents.STORED_ENCHANTMENTS, net.minecraft.world.item.enchantment.ItemEnchantments.EMPTY);
-        if (!stored.isEmpty()) {
-            var it = stored.entrySet().iterator();
-            if (it.hasNext()) return it.next().getKey().value().description().getString();
-        }
-
-        return "";
-    }
-
-    private String effectName(net.minecraft.resources.ResourceLocation id) {
-        var eff = net.minecraft.core.registries.BuiltInRegistries.MOB_EFFECT.getOptional(id);
-        return eff.map(e -> e.getDisplayName().getString()).orElse("");
+    public void setSearch(String s) {
+        this.search = s == null ? "" : s;
+        this.page = 0;
+        rebuildFiltered();
     }
 
     public void setCraftableOnly(boolean craftableOnly) {
@@ -133,12 +108,8 @@ public final class EtchingRecipeBookPanel extends AbstractWidget {
         return totalPages;
     }
 
-    public boolean canGoBack() {
-        return page > 0;
-    }
-
-    public boolean canGoForward() {
-        return page + 1 < totalPages;
+    public int getPageIndex() {
+        return page;
     }
 
     public void prevPage() {
@@ -153,14 +124,17 @@ public final class EtchingRecipeBookPanel extends AbstractWidget {
         Minecraft mc = Minecraft.getInstance();
         this.filtered.clear();
         this.hoveredStack = ItemStack.EMPTY;
+        this.hoveredRecipeName = Component.empty();
         if (mc.level == null) return;
 
         String q = this.search.toLowerCase(Locale.ROOT).trim();
 
         for (RecipeHolder<EtchingTableRecipe> h : this.all) {
-            String name = searchNameFor(h).toLowerCase(Locale.ROOT);
+            if (!q.isEmpty()) {
+                String name = recipeDisplayName(h).getString().toLowerCase(Locale.ROOT);
+                if (!name.contains(q)) continue;
+            }
 
-            if (!q.isEmpty() && !name.contains(q)) continue;
             if (this.craftableOnly && !isCraftable(mc, h)) continue;
 
             this.filtered.add(h);
@@ -170,11 +144,45 @@ public final class EtchingRecipeBookPanel extends AbstractWidget {
         if (this.page >= this.totalPages) this.page = this.totalPages - 1;
     }
 
+    private Component recipeDisplayName(RecipeHolder<EtchingTableRecipe> h) {
+        EtchingTableRecipe r = h.value();
+
+        if (r.stat().isPresent()) {
+            RuneStatType stat = r.stat().get();
+            return Component.literal(titleize(stat.id()));
+        }
+
+        if (r.effect().isPresent()) {
+            ResourceLocation enchId = r.effect().get();
+            String key = "enchantment." + enchId.getNamespace() + "." + enchId.getPath();
+            Component tr = Component.translatable(key);
+            String resolved = tr.getString();
+            if (!resolved.equals(key)) return tr;
+            return Component.literal(titleize(enchId.getPath()));
+        }
+
+        return r.result().getHoverName();
+    }
+
+    private static String titleize(String id) {
+        if (id == null || id.isBlank()) return "";
+        String[] parts = id.split("[_\\-]+");
+        StringBuilder sb = new StringBuilder();
+        for (String p : parts) {
+            if (p.isEmpty()) continue;
+            if (!sb.isEmpty()) sb.append(' ');
+            sb.append(Character.toUpperCase(p.charAt(0)));
+            if (p.length() > 1) sb.append(p.substring(1));
+        }
+        return sb.toString();
+    }
+
     @Override
     protected void renderWidget(GuiGraphics gg, int mouseX, int mouseY, float partialTick) {
         if (!this.visible) return;
 
         hoveredStack = ItemStack.EMPTY;
+        hoveredRecipeName = Component.empty();
 
         gg.blit(PANEL, getX(), getY(), 0, 0, width, height, 256, 256);
 
@@ -202,6 +210,7 @@ public final class EtchingRecipeBookPanel extends AbstractWidget {
 
             if (mouseX >= bx && mouseX < bx + 25 && mouseY >= by && mouseY < by + 25) {
                 hoveredStack = out;
+                hoveredRecipeName = recipeDisplayName(holder);
             }
         }
     }
@@ -242,10 +251,6 @@ public final class EtchingRecipeBookPanel extends AbstractWidget {
         else if (verticalAmount > 0) prevPage();
 
         return true;
-    }
-
-    public int getPageIndex() {
-        return page;
     }
 
     private boolean isCraftable(Minecraft mc, RecipeHolder<EtchingTableRecipe> holder) {

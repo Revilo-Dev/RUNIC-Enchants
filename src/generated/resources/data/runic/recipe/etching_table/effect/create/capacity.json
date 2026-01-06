@@ -5,7 +5,7 @@
   },
   "effect": "create:capacity",
   "material": {
-    "item": "minecraft:enchanted_book"
+    "item": "minecraft:barrel"
   },
   "result": {
     "count": 1,

@@ -5,7 +5,7 @@
   },
   "effect": "minecraft:flame",
   "material": {
-    "item": "minecraft:enchanted_book"
+    "item": "minecraft:flint_and_steel"
   },
   "result": {
     "count": 1,

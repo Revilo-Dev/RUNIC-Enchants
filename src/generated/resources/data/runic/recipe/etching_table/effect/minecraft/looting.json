@@ -5,7 +5,7 @@
   },
   "effect": "minecraft:looting",
   "material": {
-    "item": "minecraft:enchanted_book"
+    "item": "minecraft:gold_ingot"
   },
   "result": {
     "count": 1,

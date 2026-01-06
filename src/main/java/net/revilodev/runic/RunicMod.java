@@ -43,6 +43,7 @@ public class RunicMod {
         ModMobEffects.register(modEventBus);
         ModParticles.register(modEventBus);
 
+
         ModRecipeTypes.register(modEventBus);
         ModRecipeSerializers.register(modEventBus);
 

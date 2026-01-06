@@ -5,7 +5,7 @@
   },
   "effect": "minecraft:punch",
   "material": {
-    "item": "minecraft:enchanted_book"
+    "item": "minecraft:piston"
   },
   "result": {
     "count": 1,

@@ -5,7 +5,7 @@
   },
   "effect": "simplyswords:catalysis",
   "material": {
-    "item": "minecraft:enchanted_book"
+    "item": "minecraft:blaze_powder"
   },
   "result": {
     "count": 1,

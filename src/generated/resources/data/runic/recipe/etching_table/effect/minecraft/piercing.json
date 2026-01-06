@@ -5,7 +5,7 @@
   },
   "effect": "minecraft:piercing",
   "material": {
-    "item": "minecraft:enchanted_book"
+    "item": "minecraft:spectral_arrow"
   },
   "result": {
     "count": 1,

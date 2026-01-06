@@ -5,7 +5,7 @@
   },
   "effect": "supplementaries:stasis",
   "material": {
-    "item": "minecraft:enchanted_book"
+    "item": "minecraft:clock"
   },
   "result": {
     "count": 1,

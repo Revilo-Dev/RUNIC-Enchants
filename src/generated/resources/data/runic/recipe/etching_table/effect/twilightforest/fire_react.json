@@ -5,7 +5,7 @@
   },
   "effect": "twilightforest:fire_react",
   "material": {
-    "item": "minecraft:enchanted_book"
+    "item": "minecraft:fire_charge"
   },
   "result": {
     "count": 1,
