@@ -59,7 +59,7 @@ public class RunicMod {
 
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
-            event.accept(ModItems.EXPANSION_RUNE.get());
+            event.accept(ModItems.EXPANSION_INSCRIPTION.get());
         }
         if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
             event.accept(ModBlocks.ARTISANS_WORKBENCH.get());

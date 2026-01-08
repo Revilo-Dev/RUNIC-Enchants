@@ -13,10 +13,10 @@ public class ModItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        basicItem(ModItems.EXPANSION_RUNE.get());
-        basicItem(ModItems.REPAIR_RUNE.get());
-        basicItem(ModItems.UPGRADE_RUNE.get());
-        basicItem(ModItems.NULLIFICATION_RUNE.get());
+        basicItem(ModItems.EXPANSION_INSCRIPTION.get());
+        basicItem(ModItems.REPAIR_INSCRIPTION.get());
+        basicItem(ModItems.UPGRADE_INSCRIPTION.get());
+        basicItem(ModItems.NULLIFICATION_INSCRIPTION.get());
 
     }
 }

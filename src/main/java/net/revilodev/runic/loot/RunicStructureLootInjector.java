@@ -119,13 +119,13 @@ public class RunicStructureLootInjector extends LootModifier {
     private static ItemStack randomUtilityRune(RandomSource rand) {
         int roll = rand.nextInt(12);
         if (roll < 6) {
-            return new ItemStack(ModItems.REPAIR_RUNE.get());
+            return new ItemStack(ModItems.REPAIR_INSCRIPTION.get());
         } else if (roll < 9) {
-            return new ItemStack(ModItems.EXPANSION_RUNE.get());
+            return new ItemStack(ModItems.EXPANSION_INSCRIPTION.get());
         } else if (roll < 11) {
-            return new ItemStack(ModItems.NULLIFICATION_RUNE.get());
+            return new ItemStack(ModItems.NULLIFICATION_INSCRIPTION.get());
         } else {
-            return new ItemStack(ModItems.UPGRADE_RUNE.get());
+            return new ItemStack(ModItems.UPGRADE_INSCRIPTION.get());
         }
     }
 

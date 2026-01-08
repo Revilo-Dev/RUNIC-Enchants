@@ -32,10 +32,14 @@ public class ModCreativeModeTabs {
                         output.accept(ModBlocks.ETCHING_TABLE.get());
                         output.accept(ModItems.BLANK_ETCHING.get());
                         output.accept(ModItems.BLANK_INSCRIPTION.get());
-                        output.accept(ModItems.EXPANSION_RUNE.get());
-                        output.accept(ModItems.REPAIR_RUNE.get());
-                        output.accept(ModItems.NULLIFICATION_RUNE.get());
-                        output.accept(ModItems.UPGRADE_RUNE.get());
+                        output.accept(ModItems.EXPANSION_INSCRIPTION.get());
+                        output.accept(ModItems.REPAIR_INSCRIPTION.get());
+                        output.accept(ModItems.NULLIFICATION_INSCRIPTION.get());
+                        output.accept(ModItems.UPGRADE_INSCRIPTION.get());
+                        output.accept(ModItems.REROLL_INSCRIPTION.get());
+                        output.accept(ModItems.WILD_INSCRIPTION.get());
+                        output.accept(ModItems.CURSED_INSCRIPTION.get());
+                        output.accept(ModItems.EXTRACTION_INSCRIPTION.get());
                         RandomSource random = RandomSource.create();
 
                         for (RuneStatType type : RuneStatType.values()) {

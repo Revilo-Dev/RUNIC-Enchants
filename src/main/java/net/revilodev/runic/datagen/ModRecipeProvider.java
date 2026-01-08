@@ -265,10 +265,12 @@ public final class ModRecipeProvider extends RecipeProvider {
     private void buildUtilityInscriptions(RecipeOutput output) {
         Ingredient base = Ingredient.of(ModItems.BLANK_INSCRIPTION.get());
 
-        addUtility(output, "repair_rune", base, Items.IRON_BLOCK, ModItems.REPAIR_RUNE.get());
-        addUtility(output, "expansion_rune", base, Items.DIAMOND_BLOCK, ModItems.EXPANSION_RUNE.get());
-        addUtility(output, "nullification_rune", base, Items.GOLD_BLOCK, ModItems.NULLIFICATION_RUNE.get());
-        addUtility(output, "upgrade_rune", base, Items.EMERALD_BLOCK, ModItems.UPGRADE_RUNE.get());
+        addUtility(output, "repair_rune", base, Items.IRON_BLOCK, ModItems.REPAIR_INSCRIPTION.get());
+        addUtility(output, "expansion_rune", base, Items.DIAMOND_BLOCK, ModItems.EXPANSION_INSCRIPTION.get());
+        addUtility(output, "nullification_rune", base, Items.AMETHYST_BLOCK, ModItems.NULLIFICATION_INSCRIPTION.get());
+        addUtility(output, "upgrade_rune", base, Items.LAPIS_BLOCK, ModItems.UPGRADE_INSCRIPTION.get());
+        addUtility(output, "reroll_inscription", base, Items.GOLD_BLOCK, ModItems.REROLL_INSCRIPTION.get());
+        addUtility(output, "extraction_inscription", base, Items.EMERALD_BLOCK, ModItems.EXTRACTION_INSCRIPTION.get());
     }
 
     private static void addUtility(

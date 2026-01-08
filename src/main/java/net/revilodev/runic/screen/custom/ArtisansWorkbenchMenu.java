@@ -119,7 +119,7 @@ public class ArtisansWorkbenchMenu extends AbstractContainerMenu {
         if (!input.getItem(0).isEmpty()) input.getItem(0).shrink(1);
 
         ItemStack runeIn = input.getItem(1);
-        if (!runeIn.isEmpty() && !runeIn.is(ModItems.REPAIR_RUNE.get())) {
+        if (!runeIn.isEmpty() && !runeIn.is(ModItems.REPAIR_INSCRIPTION.get())) {
             runeIn.shrink(1);
         }
 
@@ -267,21 +267,21 @@ public class ArtisansWorkbenchMenu extends AbstractContainerMenu {
     private ItemStack preview(ItemStack target, ItemStack enhancement) {
         if (target.isEmpty() || enhancement.isEmpty()) return ItemStack.EMPTY;
 
-        if (enhancement.is(ModItems.REPAIR_RUNE.get())) {
+        if (enhancement.is(ModItems.REPAIR_INSCRIPTION.get())) {
             if (RuneSlots.capacity(target) <= 1) return ItemStack.EMPTY;
             return target.copy();
         }
 
-        if (enhancement.is(ModItems.EXPANSION_RUNE.get())) {
+        if (enhancement.is(ModItems.EXPANSION_INSCRIPTION.get())) {
             if (RuneSlots.expansionsUsed(target) >= 3) return ItemStack.EMPTY;
             return target.copy();
         }
 
-        if (enhancement.is(ModItems.NULLIFICATION_RUNE.get())) {
+        if (enhancement.is(ModItems.NULLIFICATION_INSCRIPTION.get())) {
             return canApplyNullification(target) ? target.copy() : ItemStack.EMPTY;
         }
 
-        if (enhancement.is(ModItems.UPGRADE_RUNE.get())) {
+        if (enhancement.is(ModItems.UPGRADE_INSCRIPTION.get())) {
             return canApplyUpgrade(target) ? target.copy() : ItemStack.EMPTY;
         }
 
@@ -385,7 +385,7 @@ public class ArtisansWorkbenchMenu extends AbstractContainerMenu {
     }
 
     private void applyRuneOnTake(ItemStack taken, ItemStack enhancement) {
-        if (enhancement.is(ModItems.REPAIR_RUNE.get())) {
+        if (enhancement.is(ModItems.REPAIR_INSCRIPTION.get())) {
             int cap = RuneSlots.capacity(taken);
             if (cap > 1) {
                 RuneSlots.removeOneSlot(taken);
@@ -395,17 +395,17 @@ public class ArtisansWorkbenchMenu extends AbstractContainerMenu {
             return;
         }
 
-        if (enhancement.is(ModItems.EXPANSION_RUNE.get())) {
+        if (enhancement.is(ModItems.EXPANSION_INSCRIPTION.get())) {
             applyExpansion(taken);
             return;
         }
 
-        if (enhancement.is(ModItems.NULLIFICATION_RUNE.get())) {
+        if (enhancement.is(ModItems.NULLIFICATION_INSCRIPTION.get())) {
             applyNullification(taken);
             return;
         }
 
-        if (enhancement.is(ModItems.UPGRADE_RUNE.get())) {
+        if (enhancement.is(ModItems.UPGRADE_INSCRIPTION.get())) {
             if (applyUpgrade(taken)) {
                 RuneSlots.tryConsumeSlot(taken);
             }
@@ -527,10 +527,10 @@ public class ArtisansWorkbenchMenu extends AbstractContainerMenu {
         } else {
             if (stack.getItem() instanceof RuneItem
                     || stack.getItem() instanceof EtchingItem
-                    || stack.is(ModItems.REPAIR_RUNE.get())
-                    || stack.is(ModItems.EXPANSION_RUNE.get())
-                    || stack.is(ModItems.NULLIFICATION_RUNE.get())
-                    || stack.is(ModItems.UPGRADE_RUNE.get())) {
+                    || stack.is(ModItems.REPAIR_INSCRIPTION.get())
+                    || stack.is(ModItems.EXPANSION_INSCRIPTION.get())
+                    || stack.is(ModItems.NULLIFICATION_INSCRIPTION.get())
+                    || stack.is(ModItems.UPGRADE_INSCRIPTION.get())) {
                 if (!this.moveItemStackTo(stack, 1, 2, false)) return ItemStack.EMPTY;
             } else {
                 if (!this.moveItemStackTo(stack, 0, 1, false)) return ItemStack.EMPTY;
