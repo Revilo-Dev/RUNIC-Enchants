@@ -5,6 +5,10 @@
   "item.runic.expansion_rune": "Expansion Inscription",
   "item.runic.upgrade_rune": "Upgrade Inscription",
   "item.runic.nullification_rune": "Nullification Inscription",
+  "item.runic.reroll_inscription": "Reroll Inscription",
+  "item.runic.wild_inscription": "Wild Inscription",
+  "item.runic.extraction_inscription": "Extraction Inscription",
+  "item.runic.cursed_inscription": "Cursed Inscription",
   "item.runic.blank_inscription": "Blank Inscription",
   "item.runic.enhanced_rune": "Rune",
   "item.runic.etching": "Etching",
@@ -17,10 +21,6 @@
 
   "effect.runic.bleeding": "Bleeding",
   "effect.runic.stunning": "Stunned",
-
-  "tooltip.runic.stat.curse_damaged": "\ueef3 Damaged",
-  "tooltip.runic.stat.curse_weakened": "\ueef3 Weakened",
-  "tooltip.runic.stat.curse_heavy": "\ueef3 Heavy",
 
   "tooltip.runic.stat.attack_speed": "\uefe5 Attack Speed",
   "tooltip.runic.stat.attack_damage": "\uefe5 Attack Damage",
@@ -63,10 +63,17 @@
   "enchantment.runic.committed": "Committed",
 
 
-  "tooltip.runic.expansion_rune": "§7Add an additional Rune slot to an item, Adds a curse, can be used 3 times",
-  "tooltip.runic.repair_rune": "§7Completely Repair an item in an etching table ",
-  "tooltip.runic.nullification_rune": "§7Completely Reset a gear piece, removing all enhancements ",
-  "tooltip.runic.upgrade_rune": "§7Upgrade the stats of a random stat enhancement",
+
+  "tooltip.runic.expansion_rune": "Adds 1 Rune slot, reduces max durability by 20%, applies Negative (max 3 uses)",
+  "tooltip.runic.repair_rune": "Repairs item to full durability, reduces max durability by 5%",
+  "tooltip.runic.nullification_rune": "Removes all enhancements, resets Rune slots, applies Negative",
+  "tooltip.runic.upgrade_rune": "Upgrades a random stat by up to 10%, costs durability equal to upgrade (min 25% durability)",
+  "tooltip.runic.reroll_inscription": "Rerolls a stat value, applies Instable",
+  "tooltip.runic.cursed_inscription": "50% over-upgrade a stat beyond max by 10%, 50% apply Cursed",
+  "tooltip.runic.wild_inscription": "Removes all enhancements, applies random enhancements, applies Cursed",
+  "tooltip.runic.extraction_inscription": "Extracts 1 enhancement into an Etching, applies Sealed",
+
+
 
   "tooltip.runic.aqua_affinity": "Increases underwater mining speed",
   "tooltip.runic.bane_of_arthropods": "Deal more damage to arthropod type enemies",
