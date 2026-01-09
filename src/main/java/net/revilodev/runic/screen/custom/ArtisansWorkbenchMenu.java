@@ -1,3 +1,4 @@
+// src/main/java/net/revilodev/runic/screen/custom/ArtisansWorkbenchMenu.java
 package net.revilodev.runic.screen.custom;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
@@ -30,7 +31,8 @@ import net.revilodev.runic.stat.RuneStats;
 
 import java.util.*;
 
-public class ArtisansWorkbenchMenu extends AbstractContainerMenu {
+public final class ArtisansWorkbenchMenu extends AbstractContainerMenu {
+    public static final int BUTTON_FORGE = 0;
 
     private final ContainerLevelAccess access;
     private final Level level;
@@ -43,7 +45,7 @@ public class ArtisansWorkbenchMenu extends AbstractContainerMenu {
         }
     };
 
-    private final ResultContainer result = new ResultContainer();
+    private final ResultContainer preview = new ResultContainer();
     private static final Random RNG = new Random();
 
     private ArtisansWorkbenchMenu(int id, Inventory inv, ContainerLevelAccess access) {
@@ -51,34 +53,29 @@ public class ArtisansWorkbenchMenu extends AbstractContainerMenu {
         this.access = access;
         this.level = inv.player.level();
 
-        this.addSlot(new Slot(input, 0, 8, 50) {
+        this.addSlot(new Slot(input, 0, 26, 53) {
             @Override
-            public int getMaxStackSize() { return 1; }
+            public int getMaxStackSize() {
+                return 64;
+            }
         });
 
-        this.addSlot(new Slot(input, 1, 44, 50) {
+        this.addSlot(new Slot(input, 1, 80, 53) {
             @Override
-            public int getMaxStackSize() { return 64; }
+            public int getMaxStackSize() {
+                return 1;
+            }
         });
 
-        this.addSlot(new Slot(result, 0, 98, 50) {
+        this.addSlot(new Slot(preview, 0, 2000, 2000) {
             @Override
-            public boolean mayPlace(ItemStack stack) { return false; }
-
-            @Override
-            public boolean mayPickup(Player player) {
-                return !this.getItem().isEmpty();
+            public boolean mayPlace(ItemStack stack) {
+                return false;
             }
 
             @Override
-            public void onTake(Player player, ItemStack taken) {
-                ItemStack rune = input.getItem(1).copy();
-                applyRuneOnTake(taken, rune);
-                consumeInputs();
-                playUseSound();
-                result.setItem(0, ItemStack.EMPTY);
-                ArtisansWorkbenchMenu.this.updateResult();
-                super.onTake(player, taken);
+            public boolean mayPickup(Player player) {
+                return false;
             }
         });
 
@@ -92,7 +89,7 @@ public class ArtisansWorkbenchMenu extends AbstractContainerMenu {
         for (int c = 0; c < 9; c++)
             this.addSlot(new Slot(inv, c, x + c * 18, y + 58));
 
-        updateResult();
+        updatePreview();
     }
 
     public static ArtisansWorkbenchMenu server(int id, Inventory inv, Level level, BlockPos pos) {
@@ -103,27 +100,61 @@ public class ArtisansWorkbenchMenu extends AbstractContainerMenu {
         return new ArtisansWorkbenchMenu(id, inv, ContainerLevelAccess.create(inv.player.level(), pos));
     }
 
-    @Override
-    public void slotsChanged(Container container) {
-        updateResult();
+    public ItemStack getPreviewStack() {
+        return this.preview.getItem(0);
     }
 
-    private void updateResult() {
-        ItemStack target = input.getItem(0);
-        ItemStack rune = input.getItem(1);
-        result.setItem(0, preview(target, rune));
+    public ItemStack getEnhancementStack() {
+        return this.input.getItem(0);
+    }
+
+    public ItemStack getGearStack() {
+        return this.input.getItem(1);
+    }
+
+    @Override
+    public void slotsChanged(Container container) {
+        updatePreview();
+    }
+
+    @Override
+    public boolean clickMenuButton(Player player, int id) {
+        if (id != BUTTON_FORGE) return super.clickMenuButton(player, id);
+        if (this.level.isClientSide) return true;
+
+        ItemStack out = this.preview.getItem(0);
+        if (out.isEmpty()) return false;
+
+        ItemStack enh = this.input.getItem(0);
+        ItemStack gear = this.input.getItem(1);
+        if (enh.isEmpty() || gear.isEmpty()) return false;
+
+        this.input.setItem(1, out);
+        consumeEnhancement();
+        playUseSound();
+
+        this.input.setChanged();
+        updatePreview();
+        return true;
+    }
+
+    private void updatePreview() {
+        if (this.level.isClientSide) return;
+
+        ItemStack enh = input.getItem(0);
+        ItemStack gear = input.getItem(1);
+
+        ItemStack out = computePreview(gear, enh);
+        preview.setItem(0, out);
         broadcastChanges();
     }
 
-    private void consumeInputs() {
-        if (!input.getItem(0).isEmpty()) input.getItem(0).shrink(1);
-
-        ItemStack runeIn = input.getItem(1);
-        if (!runeIn.isEmpty() && !runeIn.is(ModItems.REPAIR_INSCRIPTION.get())) {
-            runeIn.shrink(1);
+    private void consumeEnhancement() {
+        ItemStack enh = input.getItem(0);
+        if (!enh.isEmpty() && !enh.is(ModItems.REPAIR_INSCRIPTION.get())) {
+            enh.shrink(1);
+            if (enh.isEmpty()) input.setItem(0, ItemStack.EMPTY);
         }
-
-        input.setChanged();
     }
 
     private void playUseSound() {
@@ -264,40 +295,45 @@ public class ArtisansWorkbenchMenu extends AbstractContainerMenu {
         return hasUpgradeableEnchant(target);
     }
 
-    private ItemStack preview(ItemStack target, ItemStack enhancement) {
-        if (target.isEmpty() || enhancement.isEmpty()) return ItemStack.EMPTY;
+    private ItemStack computePreview(ItemStack gear, ItemStack enhancement) {
+        if (gear.isEmpty() || enhancement.isEmpty()) return ItemStack.EMPTY;
+
+        ItemStack base = gear.copy();
+        base.setCount(1);
+
+        ItemStack out = gear.copy();
+        out.setCount(1);
 
         if (enhancement.is(ModItems.REPAIR_INSCRIPTION.get())) {
-            if (RuneSlots.capacity(target) <= 1) return ItemStack.EMPTY;
-            return target.copy();
+            if (RuneSlots.capacity(out) <= 1) return ItemStack.EMPTY;
+            applyRuneOnTake(out, enhancement);
+        } else if (enhancement.is(ModItems.EXPANSION_INSCRIPTION.get())) {
+            if (RuneSlots.expansionsUsed(out) >= 3) return ItemStack.EMPTY;
+            applyRuneOnTake(out, enhancement);
+        } else if (enhancement.is(ModItems.NULLIFICATION_INSCRIPTION.get())) {
+            if (!canApplyNullification(out)) return ItemStack.EMPTY;
+            applyRuneOnTake(out, enhancement);
+        } else if (enhancement.is(ModItems.UPGRADE_INSCRIPTION.get())) {
+            if (!canApplyUpgrade(out)) return ItemStack.EMPTY;
+            applyRuneOnTake(out, enhancement);
+        } else {
+            if (!isEnhancementItem(enhancement)) return ItemStack.EMPTY;
+            if (RuneSlots.remaining(out) <= 0) return ItemStack.EMPTY;
+
+            RuneStats stats = RuneStats.get(enhancement);
+            RuneStatType stat = (stats != null && !stats.isEmpty()) ? getEnhancementStatType(enhancement) : null;
+            boolean statApplicable = stat != null && canApplyStatTo(out, stat);
+
+            ItemEnchantments enchants = getEnhancementEnchantments(enhancement);
+            boolean effectApplicable = canApplyAnyEffectEnchant(out, enchants);
+
+            if (!statApplicable && !effectApplicable) return ItemStack.EMPTY;
+
+            applyRuneOnTake(out, enhancement);
         }
 
-        if (enhancement.is(ModItems.EXPANSION_INSCRIPTION.get())) {
-            if (RuneSlots.expansionsUsed(target) >= 3) return ItemStack.EMPTY;
-            return target.copy();
-        }
-
-        if (enhancement.is(ModItems.NULLIFICATION_INSCRIPTION.get())) {
-            return canApplyNullification(target) ? target.copy() : ItemStack.EMPTY;
-        }
-
-        if (enhancement.is(ModItems.UPGRADE_INSCRIPTION.get())) {
-            return canApplyUpgrade(target) ? target.copy() : ItemStack.EMPTY;
-        }
-
-        if (!isEnhancementItem(enhancement)) return ItemStack.EMPTY;
-        if (RuneSlots.remaining(target) <= 0) return ItemStack.EMPTY;
-
-        RuneStats stats = RuneStats.get(enhancement);
-        RuneStatType stat = (stats != null && !stats.isEmpty()) ? getEnhancementStatType(enhancement) : null;
-        boolean statApplicable = stat != null && canApplyStatTo(target, stat);
-
-        ItemEnchantments enchants = getEnhancementEnchantments(enhancement);
-        boolean effectApplicable = canApplyAnyEffectEnchant(target, enchants);
-
-        if (!statApplicable && !effectApplicable) return ItemStack.EMPTY;
-
-        return target.copy();
+        if (ItemStack.isSameItemSameComponents(base, out) && base.getDamageValue() == out.getDamageValue()) return ItemStack.EMPTY;
+        return out;
     }
 
     private RuneStatType pickRandomUpgradeableStat(RuneStats current) {
@@ -487,7 +523,7 @@ public class ArtisansWorkbenchMenu extends AbstractContainerMenu {
     public void removed(Player player) {
         super.removed(player);
         this.access.execute((lvl, pos) -> this.clearContainer(player, input));
-        result.removeItemNoUpdate(0);
+        preview.removeItemNoUpdate(0);
     }
 
     @Override
@@ -500,41 +536,31 @@ public class ArtisansWorkbenchMenu extends AbstractContainerMenu {
         Slot slot = this.slots.get(index);
         if (slot == null || !slot.hasItem()) return ItemStack.EMPTY;
 
-        int resultIdx = 2;
+        int enhIdx = 0;
+        int gearIdx = 1;
+        int previewIdx = 2;
+
         int invStart = 3;
         int invEnd = invStart + 36;
 
         ItemStack stack = slot.getItem();
         ItemStack copy = stack.copy();
 
-        if (index == resultIdx) {
-            ItemStack enhancement = input.getItem(1).copy();
-            ItemStack taken = stack.copy();
-            result.setItem(0, ItemStack.EMPTY);
-            slot.set(ItemStack.EMPTY);
+        if (index == previewIdx) return ItemStack.EMPTY;
 
-            applyRuneOnTake(taken, enhancement);
-            consumeInputs();
-            playUseSound();
-            this.updateResult();
-
-            if (!this.moveItemStackTo(taken, invStart, invEnd, true)) return ItemStack.EMPTY;
-            return copy;
-        }
-
-        if (index < invStart) {
-            if (!this.moveItemStackTo(stack, invStart, invEnd, false)) return ItemStack.EMPTY;
-        } else {
+        if (index >= invStart) {
             if (stack.getItem() instanceof RuneItem
                     || stack.getItem() instanceof EtchingItem
                     || stack.is(ModItems.REPAIR_INSCRIPTION.get())
                     || stack.is(ModItems.EXPANSION_INSCRIPTION.get())
                     || stack.is(ModItems.NULLIFICATION_INSCRIPTION.get())
                     || stack.is(ModItems.UPGRADE_INSCRIPTION.get())) {
-                if (!this.moveItemStackTo(stack, 1, 2, false)) return ItemStack.EMPTY;
+                if (!this.moveItemStackTo(stack, enhIdx, enhIdx + 1, false)) return ItemStack.EMPTY;
             } else {
-                if (!this.moveItemStackTo(stack, 0, 1, false)) return ItemStack.EMPTY;
+                if (!this.moveItemStackTo(stack, gearIdx, gearIdx + 1, false)) return ItemStack.EMPTY;
             }
+        } else {
+            if (!this.moveItemStackTo(stack, invStart, invEnd, false)) return ItemStack.EMPTY;
         }
 
         if (stack.isEmpty()) slot.set(ItemStack.EMPTY);

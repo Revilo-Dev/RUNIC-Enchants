@@ -1,4 +1,4 @@
-// 1.21.1	2026-01-06T14:01:28.6046929	Recipes
+// 1.21.1	2026-01-09T09:23:31.6510642	Recipes
 af33bae65c1721b8352e13f1ea6bf38a2d2b41c3 data/runic/recipe/etching_table/effect/aether/renewal.json
 9fa2b551607e8608f80ec26df9db8e812a0cd733 data/runic/recipe/etching_table/effect/combat_roll/acrobat.json
 ff8e7e8c22852520d36327a3f29c71c563d949be data/runic/recipe/etching_table/effect/combat_roll/longfooted.json
@@ -84,6 +84,8 @@ c9429c3e36ee49439eca1f2108b9ded3cd27c765 data/runic/recipe/etching_table/stat/sw
 787bc96356056c30e5c4a47e7f148bccb61a14b8 data/runic/recipe/etching_table/stat/weakening_chance.json
 114cdb79da5c3b7d62c8cbdb94d334e0ad74df35 data/runic/recipe/etching_table/stat/withering_chance.json
 058515750f11b2458f6a91e25d0215e3da19c69f data/runic/recipe/etching_table/utility/expansion_rune.json
-aef6f741afc7875b06580c1b8debffbadef13b50 data/runic/recipe/etching_table/utility/nullification_rune.json
+f84f44e9d4872bde1692b7a0ab3a81342e9f3edd data/runic/recipe/etching_table/utility/extraction_inscription.json
+83c77fee7b15c614627339aeb512ce9040178d4f data/runic/recipe/etching_table/utility/nullification_rune.json
 ed76f6767f5d20bac421eaea1a2c8c268513449a data/runic/recipe/etching_table/utility/repair_rune.json
-aaf14637dbb6cbf7887ab2b37ed4966c45bf97a0 data/runic/recipe/etching_table/utility/upgrade_rune.json
+a0542aecc7bf7c638b5f3e7f40a371d591577a33 data/runic/recipe/etching_table/utility/reroll_inscription.json
+92862ef45b68b9c5200f41997c9ef93983a18c50 data/runic/recipe/etching_table/utility/upgrade_rune.json

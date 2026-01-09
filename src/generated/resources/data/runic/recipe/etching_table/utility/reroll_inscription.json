@@ -4,10 +4,10 @@
     "item": "runic:blank_inscription"
   },
   "material": {
-    "item": "minecraft:amethyst_block"
+    "item": "minecraft:gold_block"
   },
   "result": {
     "count": 1,
-    "id": "runic:nullification_rune"
+    "id": "runic:reroll_inscription"
   }
 }
