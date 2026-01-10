@@ -46,12 +46,6 @@ public final class ArtisansWorkbenchMenu extends AbstractContainerMenu {
     private static final String PREVIEW_DELTA = "preview_delta";
     private static final int MAX_ATTR_LEVEL = 10;
 
-    private static final String OBF_MODE = "obf_mode";
-    private static final String OBF_TEXT = "obf_text";
-    private static final String OBF_ENH = "obf_enh";
-    private static final String OBF_ATTR = "obf_attr";
-    private static final String OBF_SWAP = "obf_swap";
-
     private final ContainerLevelAccess access;
     private final Level level;
 
@@ -140,11 +134,15 @@ public final class ArtisansWorkbenchMenu extends AbstractContainerMenu {
         if (id != BUTTON_FORGE) return super.clickMenuButton(player, id);
         if (this.level.isClientSide) return true;
 
+        ItemStack outView = this.preview.getItem(0);
+        if (outView.isEmpty()) return false;
+
         ItemStack enh = this.input.getItem(0);
         ItemStack gear = this.input.getItem(1);
         if (enh.isEmpty() || gear.isEmpty()) return false;
 
         if (GearAttributes.has(gear, GearAttribute.SEALED)) return false;
+        if (isInscription(enh) && anyAttrAtMax(gear)) return false;
 
         if (enh.is(ModItems.EXTRACTION_INSCRIPTION.get())) {
             ItemStack extracted = createExtractionEtching(gear);
@@ -155,22 +153,8 @@ public final class ArtisansWorkbenchMenu extends AbstractContainerMenu {
             }
         }
 
-        ItemStack applied;
-
-        if (enh.is(ModItems.WILD_INSCRIPTION.get()) || enh.is(ModItems.CURSED_INSCRIPTION.get())) {
-            applied = gear.copy();
-            applied.setCount(1);
-            applyRuneOnTake(applied, enh);
-            stripPreviewDelta(applied);
-            if (ItemStack.isSameItemSameComponents(gear, applied) && gear.getDamageValue() == applied.getDamageValue()) return false;
-        } else {
-            ItemStack outView = this.preview.getItem(0);
-            if (outView.isEmpty()) return false;
-
-            applied = outView.copy();
-            applied.setCount(1);
-            stripPreviewDelta(applied);
-        }
+        ItemStack applied = outView.copy();
+        stripPreviewDelta(applied);
 
         this.input.setItem(1, applied);
         consumeEnhancement();
@@ -229,6 +213,13 @@ public final class ArtisansWorkbenchMenu extends AbstractContainerMenu {
                 || stack.is(ModItems.CURSED_INSCRIPTION.get())
                 || stack.is(ModItems.WILD_INSCRIPTION.get())
                 || stack.is(ModItems.EXTRACTION_INSCRIPTION.get());
+    }
+
+    private boolean anyAttrAtMax(ItemStack stack) {
+        for (GearAttribute a : GearAttribute.values()) {
+            if (GearAttributes.getLevel(stack, a) >= MAX_ATTR_LEVEL) return true;
+        }
+        return false;
     }
 
     private int effectiveCapacity(ItemStack stack) {
@@ -411,22 +402,7 @@ public final class ArtisansWorkbenchMenu extends AbstractContainerMenu {
         if (gear.isEmpty() || enhancement.isEmpty()) return ItemStack.EMPTY;
         if (!isEnhancementItem(enhancement) && !isInscription(enhancement)) return ItemStack.EMPTY;
         if (GearAttributes.has(gear, GearAttribute.SEALED)) return ItemStack.EMPTY;
-
-        if (enhancement.is(ModItems.WILD_INSCRIPTION.get())) {
-            if (!canApplyWild(gear)) return ItemStack.EMPTY;
-            ItemStack out = gear.copy();
-            out.setCount(1);
-            writeObfuscatedPreview(out, "wild", true, true, false);
-            return out;
-        }
-
-        if (enhancement.is(ModItems.CURSED_INSCRIPTION.get())) {
-            if (!canApplyCursed(gear)) return ItemStack.EMPTY;
-            ItemStack out = gear.copy();
-            out.setCount(1);
-            writeObfuscatedPreview(out, "cursed", true, true, true);
-            return out;
-        }
+        if (isInscription(enhancement) && anyAttrAtMax(gear)) return ItemStack.EMPTY;
 
         ItemStack base = gear.copy();
         base.setCount(1);
@@ -448,6 +424,12 @@ public final class ArtisansWorkbenchMenu extends AbstractContainerMenu {
             applyRuneOnTake(out, enhancement);
         } else if (enhancement.is(ModItems.REROLL_INSCRIPTION.get())) {
             if (!canApplyReroll(out)) return ItemStack.EMPTY;
+            applyRuneOnTake(out, enhancement);
+        } else if (enhancement.is(ModItems.CURSED_INSCRIPTION.get())) {
+            if (!canApplyCursed(out)) return ItemStack.EMPTY;
+            applyRuneOnTake(out, enhancement);
+        } else if (enhancement.is(ModItems.WILD_INSCRIPTION.get())) {
+            if (!canApplyWild(out)) return ItemStack.EMPTY;
             applyRuneOnTake(out, enhancement);
         } else if (enhancement.is(ModItems.EXTRACTION_INSCRIPTION.get())) {
             if (!canApplyExtraction(out)) return ItemStack.EMPTY;
@@ -487,30 +469,17 @@ public final class ArtisansWorkbenchMenu extends AbstractContainerMenu {
 
     private static void stripPreviewDelta(ItemStack stack) {
         CompoundTag root = getRootCopy(stack);
-        if (!root.contains(ROOT, Tag.TAG_COMPOUND)) return;
 
-        CompoundTag runic = root.getCompound(ROOT);
-        runic.remove(PREVIEW_DELTA);
+        root.remove(PREVIEW_DELTA);
 
-        if (runic.isEmpty()) root.remove(ROOT);
-        else root.put(ROOT, runic);
+        if (root.contains(ROOT, Tag.TAG_COMPOUND)) {
+            CompoundTag runic = root.getCompound(ROOT);
+            runic.remove(PREVIEW_DELTA);
+            if (runic.isEmpty()) root.remove(ROOT);
+            else root.put(ROOT, runic);
+        }
 
         setRoot(stack, root);
-    }
-
-    private void writeObfuscatedPreview(ItemStack out, String mode, boolean enh, boolean attr, boolean swap) {
-        CompoundTag delta = new CompoundTag();
-        delta.putString(OBF_MODE, mode);
-        delta.putString(OBF_TEXT, "????????????");
-        delta.putBoolean(OBF_ENH, enh);
-        delta.putBoolean(OBF_ATTR, attr);
-        delta.putBoolean(OBF_SWAP, swap);
-
-        CompoundTag root = getRootCopy(out);
-        CompoundTag runic = root.contains(ROOT, Tag.TAG_COMPOUND) ? root.getCompound(ROOT) : new CompoundTag();
-        runic.put(PREVIEW_DELTA, delta);
-        root.put(ROOT, runic);
-        setRoot(out, root);
     }
 
     private void writePreviewDelta(ItemStack base, ItemStack out) {
@@ -568,9 +537,13 @@ public final class ArtisansWorkbenchMenu extends AbstractContainerMenu {
         if (delta.isEmpty()) return;
 
         CompoundTag root = getRootCopy(out);
+
+        root.put(PREVIEW_DELTA, delta);
+
         CompoundTag runic = root.contains(ROOT, Tag.TAG_COMPOUND) ? root.getCompound(ROOT) : new CompoundTag();
         runic.put(PREVIEW_DELTA, delta);
         root.put(ROOT, runic);
+
         setRoot(out, root);
     }
 
