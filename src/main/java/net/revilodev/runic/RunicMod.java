@@ -6,12 +6,15 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.revilodev.runic.block.ModBlocks;
 import net.revilodev.runic.client.RunicClient;
+import net.revilodev.runic.client.RunicClientModels;
+import net.revilodev.runic.datagen.DataGenerators;
 import net.revilodev.runic.effect.ModMobEffects;
 import net.revilodev.runic.item.ModCreativeModeTabs;
 import net.revilodev.runic.item.ModItems;
@@ -30,6 +33,8 @@ public class RunicMod {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public RunicMod(ModContainer modContainer, IEventBus modEventBus) {
+        modEventBus.addListener(DataGenerators::gatherData);
+
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::addCreative);
         modEventBus.addListener(RunicNetwork::registerPayloads);
@@ -43,12 +48,12 @@ public class RunicMod {
         ModMobEffects.register(modEventBus);
         ModParticles.register(modEventBus);
 
-
         ModRecipeTypes.register(modEventBus);
         ModRecipeSerializers.register(modEventBus);
 
         if (FMLEnvironment.dist == Dist.CLIENT) {
             modEventBus.addListener(RunicClient::onRegisterScreens);
+            modEventBus.addListener(RunicClientModels::onClientSetup);
         }
 
         NeoForge.EVENT_BUS.register(this);

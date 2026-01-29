@@ -240,7 +240,7 @@ public final class ModRecipeProvider extends RecipeProvider {
             output.accept(id, recipe, null);
         }
 
-        Ingredient effectBase = Ingredient.of(ModItems.BLANK_INSCRIPTION.get());
+        Ingredient effectBase = Ingredient.of(ModItems.BLANK_ETCHING.get());
 
         for (ResourceLocation effectId : EFFECTS) {
             ResourceLocation id = ResourceLocation.fromNamespaceAndPath(

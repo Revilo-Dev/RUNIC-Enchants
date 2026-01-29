@@ -1,7 +1,7 @@
 {
   "type": "runic:etching_table",
   "base": {
-    "item": "runic:blank_inscription"
+    "item": "runic:blank_etching"
   },
   "effect": "minecraft:soul_speed",
   "material": {

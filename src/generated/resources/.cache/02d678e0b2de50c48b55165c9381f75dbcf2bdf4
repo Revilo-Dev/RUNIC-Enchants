@@ -1,4 +1,4 @@
-// 1.21.1	2025-11-26T19:57:48.8122625	Global Loot Modifiers : runic
+// 1.21.1	2026-01-29T18:27:47.093675	Global Loot Modifiers : runic
 048e079f22d6a1e42d30246be16a007dcff97445 data/neoforge/loot_modifiers/global_loot_modifiers.json
 510013094de9cd835b214bb522b47e3c5b0e9699 data/runic/loot_modifiers/remove_enchanted_books.json
 1c56a894880bf4b8278debe19e7243fd11a07f05 data/runic/loot_modifiers/runic_structure_loot_injector.json

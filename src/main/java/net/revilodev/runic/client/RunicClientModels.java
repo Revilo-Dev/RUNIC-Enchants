@@ -6,11 +6,14 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.revilodev.runic.RunicMod;
 import net.revilodev.runic.item.ModItems;
+import net.revilodev.runic.item.custom.RuneItem;
 import net.revilodev.runic.stat.RuneStatType;
 import net.revilodev.runic.stat.RuneStats;
 
@@ -22,12 +25,21 @@ public final class RunicClientModels {
         return ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, path);
     }
 
-    public static void init() {
-        ItemProperties.register(
-                ModItems.ENHANCED_RUNE.get(),
-                id("rune_model"),
-                RunicClientModels::runePredicate
-        );
+    public static void onClientSetup(FMLClientSetupEvent event) {
+        event.enqueueWork(() -> {
+            registerAllRuneLikeItems();
+        });
+    }
+
+    private static void registerAllRuneLikeItems() {
+        ResourceLocation pred = id("rune_model");
+
+        register(ModItems.ENHANCED_RUNE.get(), pred);
+        register(ModItems.ETCHING.get(), pred);
+    }
+
+    private static void register(Item item, ResourceLocation predicateId) {
+        ItemProperties.register(item, predicateId, RunicClientModels::runePredicate);
     }
 
     private static float runePredicate(ItemStack stack, ClientLevel level, LivingEntity entity, int seed) {
@@ -39,110 +51,104 @@ public final class RunicClientModels {
             return mapStatToIndex(type);
         }
 
-        ItemEnchantments enchants =
-                stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
+        Holder<Enchantment> effect = RuneItem.getPrimaryEffectEnchantment(stack);
+        if (effect == null) return 0.0F;
 
-        if (enchants.isEmpty()) {
-            enchants = stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
-        }
+        ResourceLocation rl = effect.unwrapKey().map(k -> k.location()).orElse(null);
+        if (rl == null) return 0.0F;
 
-        if (enchants.isEmpty()) return 0.0F;
-
-        Holder<Enchantment> ench = enchants.keySet().iterator().next();
-        String path = ench.unwrapKey().map(k -> k.location().getPath()).orElse("");
-
-        return mapEnchantToIndex(path);
+        return mapEnchantToIndex(rl);
     }
 
     private static float mapStatToIndex(RuneStatType type) {
         return switch (type.id()) {
-            case "attack_damage" -> 1;
-            case "attack_range" -> 2;
-            case "attack_speed" -> 3;
-            case "blast_resistance" -> 4;
-            case "bleeding_chance" -> 5;
-            case "bonus_chance" -> 6;
-            case "draw_speed" -> 7;
-            case "durability" -> 8;
-            case "fall_reduction" -> 9;
-            case "fire_resistance" -> 10;
-            case "flame_chance" -> 11;
-            case "freezing_chance" -> 12;
-            case "health" -> 13;
-            case "healing_efficiency" -> 14;
-            case "jump_height" -> 15;
-            case "knockback_resistance" -> 16;
-            case "leeching_chance" -> 17;
-            case "mining_speed" -> 18;
-            case "movement_speed" -> 19;
-            case "nether_damage" -> 20;
-            case "poison_chance" -> 21;
-            case "power" -> 22;
-            case "projectile_resistance" -> 23;
-            case "resistance" -> 24;
-            case "shocking_chance" -> 25;
-            case "stun_chance" -> 26;
-            case "sweeping_range" -> 27;
-            case "swimming_speed" -> 28;
-            case "toughness" -> 29;
-            case "undead_damage" -> 30;
-            case "water_breathing" -> 31;
-            case "weakening_chance" -> 32;
-            case "withering_chance" -> 33;
-            default -> 0;
+            case "attack_damage" -> 1f;
+            case "attack_range" -> 2f;
+            case "attack_speed" -> 3f;
+            case "blast_resistance" -> 4f;
+            case "bleeding_chance" -> 5f;
+            case "bonus_chance" -> 6f;
+            case "draw_speed" -> 7f;
+            case "durability" -> 8f;
+            case "fall_reduction" -> 9f;
+            case "fire_resistance" -> 10f;
+            case "flame_chance" -> 11f;
+            case "freezing_chance" -> 12f;
+            case "health" -> 13f;
+            case "healing_efficiency" -> 14f;
+            case "jump_height" -> 15f;
+            case "knockback_resistance" -> 16f;
+            case "leeching_chance" -> 17f;
+            case "mining_speed" -> 18f;
+            case "movement_speed" -> 19f;
+            case "nether_damage" -> 20f;
+            case "poison_chance" -> 21f;
+            case "power" -> 22f;
+            case "projectile_resistance" -> 23f;
+            case "resistance" -> 24f;
+            case "shocking_chance" -> 25f;
+            case "stun_chance" -> 26f;
+            case "sweeping_range" -> 27f;
+            case "swimming_speed" -> 28f;
+            case "toughness" -> 29f;
+            case "undead_damage" -> 30f;
+            case "water_breathing" -> 31f;
+            case "weakening_chance" -> 32f;
+            case "withering_chance" -> 33f;
+            default -> 0f;
         };
     }
 
-    private static float mapEnchantToIndex(String path) {
-        return switch (path) {
-            case "acrobat" -> 34;
-            case "backstabbing" -> 35;
-            case "binding_curse" -> 36;
-            case "blocking" -> 37;
-            case "breach" -> 38;
-            case "capacity" -> 39;
-            case "catalysis" -> 40;
-            case "channeling" -> 41;
-            case "chill_aura" -> 42;
-            case "density" -> 43;
-            case "destruction" -> 44;
-            case "discharge" -> 45;
-            case "ensnaring" -> 46;
-            case "fire_react" -> 47;
-            case "flame" -> 48;
-            case "fortune" -> 49;
-            case "frost_walker" -> 50;
-            case "ground_slam" -> 51;
-            case "impaling" -> 52;
-            case "infinity" -> 53;
-            case "lolths_curse" -> 54;
-            case "longfooted" -> 55;
-            case "looting" -> 56;
-            case "loyalty" -> 57;
-            case "luck_of_the_sea" -> 58;
-            case "lure" -> 59;
-            case "mending" -> 60;
-            case "multi_roll" -> 61;
-            case "mystical_enlightenment" -> 62;
-            case "piercing" -> 63;
-            case "potato_recovery" -> 64;
-            case "purification" -> 65;
-            case "renewal" -> 66;
-            case "respiration" -> 67;
-            case "riptide" -> 68;
-            case "sculk_smite" -> 69;
-            case "silk_touch" -> 70;
-            case "soul_siphoner" -> 71;
-            case "soul_speed" -> 72;
-            case "stasis" -> 73;
-            case "swift_sneak" -> 74;
-            case "thorns" -> 75;
-            case "vanishing_curse" -> 76;
-            case "voltaic_shot" -> 77;
-            case "wind_burst" -> 78;
-            case "multishot" -> 79;
-            case "punch" -> 80;
-            default -> 0;
+    private static float mapEnchantToIndex(ResourceLocation id) {
+        return switch (id.toString()) {
+            case "combat_roll:acrobat" -> 34f;
+            case "farmersdelight:backstabbing" -> 35f;
+            case "minecraft:binding_curse" -> 36f;
+            case "expanded_combat:blocking" -> 37f;
+            case "minecraft:breach" -> 38f;
+            case "create:capacity" -> 39f;
+            case "deeperdarker:catalysis" -> 40f;
+            case "minecraft:channeling" -> 41f;
+            case "twilightforest:chill_aura" -> 42f;
+            case "minecraft:density" -> 43f;
+            case "twilightforest:destruction" -> 44f;
+            case "deeperdarker:discharge" -> 45f;
+            case "dungeons_arise:ensnaring" -> 46f;
+            case "simplyswords:fire_react" -> 47f;
+            case "minecraft:flame" -> 48f;
+            case "minecraft:fortune" -> 49f;
+            case "minecraft:frost_walker" -> 50f;
+            case "expanded_combat:ground_slam" -> 51f;
+            case "minecraft:impaling" -> 52f;
+            case "minecraft:infinity" -> 53f;
+            case "dungeons_arise:lolths_curse" -> 54f;
+            case "combat_roll:longfooted" -> 55f;
+            case "minecraft:looting" -> 56f;
+            case "minecraft:loyalty" -> 57f;
+            case "minecraft:luck_of_the_sea" -> 58f;
+            case "minecraft:lure" -> 59f;
+            case "minecraft:mending" -> 60f;
+            case "combat_roll:multi_roll" -> 61f;
+            case "mysticalagriculture:mystical_enlightenment" -> 62f;
+            case "minecraft:piercing" -> 63f;
+            case "create:potato_recovery" -> 64f;
+            case "dungeons_arise:purification" -> 65f;
+            case "aether:renewal" -> 66f;
+            case "minecraft:respiration" -> 67f;
+            case "minecraft:riptide" -> 68f;
+            case "deeperdarker:sculk_smite" -> 69f;
+            case "minecraft:silk_touch" -> 70f;
+            case "mysticalagriculture:soul_siphoner" -> 71f;
+            case "minecraft:soul_speed" -> 72f;
+            case "supplementaries:stasis" -> 73f;
+            case "minecraft:swift_sneak" -> 74f;
+            case "minecraft:thorns" -> 75f;
+            case "minecraft:vanishing_curse" -> 76f;
+            case "dungeons_arise:voltaic_shot" -> 77f;
+            case "minecraft:wind_burst" -> 78f;
+            case "minecraft:multishot" -> 79f;
+            case "minecraft:punch" -> 80f;
+            default -> 0f;
         };
     }
 }
