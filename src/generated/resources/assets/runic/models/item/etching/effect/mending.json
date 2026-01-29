@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "runic:item/etching",
+    "layer1": "runic:item/icons/effect/mending"
+  }
+}

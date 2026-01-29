@@ -120,6 +120,7 @@ public final class RunicLangProviders {
             add("tooltip.runic.extraction_inscription", "Extracts 1 enhancement into an Etching, applies Sealed");
 
             // tooltips
+            add("tooltip.runic.use_etching_table", "Used in an Etching Table");
             add("tooltip.runic.aqua_affinity", "Increases underwater mining speed");
             add("tooltip.runic.bane_of_arthropods", "Deal more damage to arthropod type enemies");
             add("tooltip.runic.binding_curse", "Item cannot be unequipped");

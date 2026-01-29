@@ -1,0 +1,488 @@
+{
+  "parent": "minecraft:item/generated",
+  "overrides": [
+    {
+      "model": "runic:item/etching/stat/attack_damage",
+      "predicate": {
+        "runic:rune_model": 1.0
+      }
+    },
+    {
+      "model": "runic:item/etching/stat/attack_range",
+      "predicate": {
+        "runic:rune_model": 2.0
+      }
+    },
+    {
+      "model": "runic:item/etching/stat/attack_speed",
+      "predicate": {
+        "runic:rune_model": 3.0
+      }
+    },
+    {
+      "model": "runic:item/etching/stat/blast_resistance",
+      "predicate": {
+        "runic:rune_model": 4.0
+      }
+    },
+    {
+      "model": "runic:item/etching/stat/bleeding_chance",
+      "predicate": {
+        "runic:rune_model": 5.0
+      }
+    },
+    {
+      "model": "runic:item/etching/stat/bonus_chance",
+      "predicate": {
+        "runic:rune_model": 6.0
+      }
+    },
+    {
+      "model": "runic:item/etching/stat/draw_speed",
+      "predicate": {
+        "runic:rune_model": 7.0
+      }
+    },
+    {
+      "model": "runic:item/etching/stat/durability",
+      "predicate": {
+        "runic:rune_model": 8.0
+      }
+    },
+    {
+      "model": "runic:item/etching/stat/fall_reduction",
+      "predicate": {
+        "runic:rune_model": 9.0
+      }
+    },
+    {
+      "model": "runic:item/etching/stat/fire_resistance",
+      "predicate": {
+        "runic:rune_model": 10.0
+      }
+    },
+    {
+      "model": "runic:item/etching/stat/flame_chance",
+      "predicate": {
+        "runic:rune_model": 11.0
+      }
+    },
+    {
+      "model": "runic:item/etching/stat/freezing_chance",
+      "predicate": {
+        "runic:rune_model": 12.0
+      }
+    },
+    {
+      "model": "runic:item/etching/stat/health",
+      "predicate": {
+        "runic:rune_model": 13.0
+      }
+    },
+    {
+      "model": "runic:item/etching/stat/healing_efficiency",
+      "predicate": {
+        "runic:rune_model": 14.0
+      }
+    },
+    {
+      "model": "runic:item/etching/stat/jump_height",
+      "predicate": {
+        "runic:rune_model": 15.0
+      }
+    },
+    {
+      "model": "runic:item/etching/stat/knockback_resistance",
+      "predicate": {
+        "runic:rune_model": 16.0
+      }
+    },
+    {
+      "model": "runic:item/etching/stat/leeching_chance",
+      "predicate": {
+        "runic:rune_model": 17.0
+      }
+    },
+    {
+      "model": "runic:item/etching/stat/mining_speed",
+      "predicate": {
+        "runic:rune_model": 18.0
+      }
+    },
+    {
+      "model": "runic:item/etching/stat/movement_speed",
+      "predicate": {
+        "runic:rune_model": 19.0
+      }
+    },
+    {
+      "model": "runic:item/etching/stat/nether_damage",
+      "predicate": {
+        "runic:rune_model": 20.0
+      }
+    },
+    {
+      "model": "runic:item/etching/stat/poison_chance",
+      "predicate": {
+        "runic:rune_model": 21.0
+      }
+    },
+    {
+      "model": "runic:item/etching/stat/power",
+      "predicate": {
+        "runic:rune_model": 22.0
+      }
+    },
+    {
+      "model": "runic:item/etching/stat/projectile_resistance",
+      "predicate": {
+        "runic:rune_model": 23.0
+      }
+    },
+    {
+      "model": "runic:item/etching/stat/resistance",
+      "predicate": {
+        "runic:rune_model": 24.0
+      }
+    },
+    {
+      "model": "runic:item/etching/stat/shocking_chance",
+      "predicate": {
+        "runic:rune_model": 25.0
+      }
+    },
+    {
+      "model": "runic:item/etching/stat/stun_chance",
+      "predicate": {
+        "runic:rune_model": 26.0
+      }
+    },
+    {
+      "model": "runic:item/etching/stat/sweeping_range",
+      "predicate": {
+        "runic:rune_model": 27.0
+      }
+    },
+    {
+      "model": "runic:item/etching/stat/swimming_speed",
+      "predicate": {
+        "runic:rune_model": 28.0
+      }
+    },
+    {
+      "model": "runic:item/etching/stat/toughness",
+      "predicate": {
+        "runic:rune_model": 29.0
+      }
+    },
+    {
+      "model": "runic:item/etching/stat/undead_damage",
+      "predicate": {
+        "runic:rune_model": 30.0
+      }
+    },
+    {
+      "model": "runic:item/etching/stat/water_breathing",
+      "predicate": {
+        "runic:rune_model": 31.0
+      }
+    },
+    {
+      "model": "runic:item/etching/stat/weakening_chance",
+      "predicate": {
+        "runic:rune_model": 32.0
+      }
+    },
+    {
+      "model": "runic:item/etching/stat/withering_chance",
+      "predicate": {
+        "runic:rune_model": 33.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/acrobat",
+      "predicate": {
+        "runic:rune_model": 34.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/backstabbing",
+      "predicate": {
+        "runic:rune_model": 35.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/binding_curse",
+      "predicate": {
+        "runic:rune_model": 36.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/blocking",
+      "predicate": {
+        "runic:rune_model": 37.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/breach",
+      "predicate": {
+        "runic:rune_model": 38.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/capacity",
+      "predicate": {
+        "runic:rune_model": 39.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/catalysis",
+      "predicate": {
+        "runic:rune_model": 40.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/channeling",
+      "predicate": {
+        "runic:rune_model": 41.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/chill_aura",
+      "predicate": {
+        "runic:rune_model": 42.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/density",
+      "predicate": {
+        "runic:rune_model": 43.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/destruction",
+      "predicate": {
+        "runic:rune_model": 44.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/discharge",
+      "predicate": {
+        "runic:rune_model": 45.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/ensnaring",
+      "predicate": {
+        "runic:rune_model": 46.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/fire_react",
+      "predicate": {
+        "runic:rune_model": 47.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/flame",
+      "predicate": {
+        "runic:rune_model": 48.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/fortune",
+      "predicate": {
+        "runic:rune_model": 49.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/frost_walker",
+      "predicate": {
+        "runic:rune_model": 50.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/ground_slam",
+      "predicate": {
+        "runic:rune_model": 51.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/impaling",
+      "predicate": {
+        "runic:rune_model": 52.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/infinity",
+      "predicate": {
+        "runic:rune_model": 53.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/lolths_curse",
+      "predicate": {
+        "runic:rune_model": 54.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/longfooted",
+      "predicate": {
+        "runic:rune_model": 55.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/looting",
+      "predicate": {
+        "runic:rune_model": 56.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/loyalty",
+      "predicate": {
+        "runic:rune_model": 57.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/luck_of_the_sea",
+      "predicate": {
+        "runic:rune_model": 58.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/lure",
+      "predicate": {
+        "runic:rune_model": 59.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/mending",
+      "predicate": {
+        "runic:rune_model": 60.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/multi_roll",
+      "predicate": {
+        "runic:rune_model": 61.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/mystical_enlightenment",
+      "predicate": {
+        "runic:rune_model": 62.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/piercing",
+      "predicate": {
+        "runic:rune_model": 63.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/potato_recovery",
+      "predicate": {
+        "runic:rune_model": 64.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/purification",
+      "predicate": {
+        "runic:rune_model": 65.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/renewal",
+      "predicate": {
+        "runic:rune_model": 66.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/respiration",
+      "predicate": {
+        "runic:rune_model": 67.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/riptide",
+      "predicate": {
+        "runic:rune_model": 68.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/sculk_smite",
+      "predicate": {
+        "runic:rune_model": 69.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/silk_touch",
+      "predicate": {
+        "runic:rune_model": 70.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/soul_siphoner",
+      "predicate": {
+        "runic:rune_model": 71.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/soul_speed",
+      "predicate": {
+        "runic:rune_model": 72.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/stasis",
+      "predicate": {
+        "runic:rune_model": 73.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/swift_sneak",
+      "predicate": {
+        "runic:rune_model": 74.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/thorns",
+      "predicate": {
+        "runic:rune_model": 75.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/vanishing_curse",
+      "predicate": {
+        "runic:rune_model": 76.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/voltaic_shot",
+      "predicate": {
+        "runic:rune_model": 77.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/wind_burst",
+      "predicate": {
+        "runic:rune_model": 78.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/multishot",
+      "predicate": {
+        "runic:rune_model": 79.0
+      }
+    },
+    {
+      "model": "runic:item/etching/effect/punch",
+      "predicate": {
+        "runic:rune_model": 80.0
+      }
+    }
+  ],
+  "textures": {
+    "layer0": "runic:item/etching"
+  }
+}

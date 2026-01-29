@@ -22,16 +22,26 @@ public final class ModItems {
             DeferredRegister.create(Registries.ITEM, RunicMod.MOD_ID);
 
     public static final DeferredHolder<Item, Item> BLANK_INSCRIPTION =
-            ITEMS.register("blank_inscription", () -> new Item(new Item.Properties().stacksTo(64)));
+            ITEMS.register("blank_inscription", () -> new Item(new Item.Properties().stacksTo(64)) {
+                @Override
+                public void appendHoverText(ItemStack stack, TooltipContext ctx, List<Component> tooltip, TooltipFlag flag) {
+                    tooltip.add(Component.translatable("tooltip.runic.use_etching_table").withStyle(ChatFormatting.DARK_GRAY));
+                }
+            });
+
+    public static final DeferredHolder<Item, EtchingItem> BLANK_ETCHING =
+            ITEMS.register("blank_etching", () -> new EtchingItem(new Item.Properties().stacksTo(64)) {
+                @Override
+                public void appendHoverText(ItemStack stack, TooltipContext ctx, List<Component> tooltip, TooltipFlag flag) {
+                    tooltip.add(Component.translatable("tooltip.runic.use_etching_table").withStyle(ChatFormatting.DARK_GRAY));
+                }
+            });
 
     public static final DeferredHolder<Item, RuneItem> ENHANCED_RUNE =
             ITEMS.register("enhanced_rune", () -> new RuneItem(new Item.Properties().stacksTo(64)));
 
     public static final DeferredHolder<Item, EtchingItem> ETCHING =
             ITEMS.register("etching", () -> new EtchingItem(new Item.Properties().stacksTo(64)));
-
-    public static final DeferredHolder<Item, EtchingItem> BLANK_ETCHING =
-            ITEMS.register("blank_etching", () -> new EtchingItem(new Item.Properties().stacksTo(64)));
 
     public static final DeferredHolder<Item, Item> REPAIR_INSCRIPTION =
             ITEMS.register("repair_rune", () -> new Item(new Item.Properties().stacksTo(64)) {

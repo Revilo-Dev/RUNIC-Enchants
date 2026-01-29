@@ -99,7 +99,7 @@ public final class ItemTooltipHandler {
     }
 
     private static void appendEnhancementHeader(ItemStack stack, List<Component> tooltip, boolean isEtching) {
-        tooltip.add(Component.literal("Apply in an Etching Table").withStyle(ChatFormatting.DARK_GRAY));
+        tooltip.add(Component.literal("Apply in an Artisans Workbench").withStyle(ChatFormatting.DARK_GRAY));
 
         RuneStats stats = RuneStats.get(stack);
         boolean hasStats = stats != null && !stats.isEmpty();

@@ -30,6 +30,8 @@ public class ModItemModelProvider extends ItemModelProvider {
         basicItem(ModItems.WILD_INSCRIPTION.get());
         basicItem(ModItems.CURSED_INSCRIPTION.get());
         basicItem(ModItems.EXTRACTION_INSCRIPTION.get());
+        basicItem(ModItems.BLANK_INSCRIPTION.get());
+        basicItem(ModItems.BLANK_ETCHING.get());
 
         generateLayeredRuneAndEtchingModels();
     }
