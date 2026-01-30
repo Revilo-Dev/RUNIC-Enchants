@@ -30,24 +30,13 @@ public class ModItemModelProvider extends ItemModelProvider {
         basicItem(ModItems.WILD_INSCRIPTION.get());
         basicItem(ModItems.CURSED_INSCRIPTION.get());
         basicItem(ModItems.EXTRACTION_INSCRIPTION.get());
-        basicItem(ModItems.BLANK_INSCRIPTION.get());
-        basicItem(ModItems.BLANK_ETCHING.get());
 
         generateLayeredRuneAndEtchingModels();
     }
 
     private void generateLayeredRuneAndEtchingModels() {
-        generateLayeredSet(
-                "enhanced_rune",
-                "item/rune",
-                "rune"
-        );
-
-        generateLayeredSet(
-                "etching",
-                "item/etching",
-                "etching"
-        );
+        generateLayeredSet("enhanced_rune", "item/rune_base", "rune");
+        generateLayeredSet("etching", "item/etching_base", "etching");
     }
 
     private void generateLayeredSet(String itemModelName, String baseTexture, String folderName) {
@@ -85,7 +74,6 @@ public class ModItemModelProvider extends ItemModelProvider {
         out.add(new RuneModelDef(6f, "stat/bonus_chance"));
         out.add(new RuneModelDef(7f, "stat/draw_speed"));
         out.add(new RuneModelDef(8f, "stat/durability"));
-        out.add(new RuneModelDef(9f, "stat/fall_reduction"));
         out.add(new RuneModelDef(10f, "stat/fire_resistance"));
         out.add(new RuneModelDef(11f, "stat/flame_chance"));
         out.add(new RuneModelDef(12f, "stat/freezing_chance"));
@@ -104,10 +92,8 @@ public class ModItemModelProvider extends ItemModelProvider {
         out.add(new RuneModelDef(25f, "stat/shocking_chance"));
         out.add(new RuneModelDef(26f, "stat/stun_chance"));
         out.add(new RuneModelDef(27f, "stat/sweeping_range"));
-        out.add(new RuneModelDef(28f, "stat/swimming_speed"));
         out.add(new RuneModelDef(29f, "stat/toughness"));
         out.add(new RuneModelDef(30f, "stat/undead_damage"));
-        out.add(new RuneModelDef(31f, "stat/water_breathing"));
         out.add(new RuneModelDef(32f, "stat/weakening_chance"));
         out.add(new RuneModelDef(33f, "stat/withering_chance"));
 
@@ -158,6 +144,10 @@ public class ModItemModelProvider extends ItemModelProvider {
         out.add(new RuneModelDef(78f, "effect/wind_burst"));
         out.add(new RuneModelDef(79f, "effect/multishot"));
         out.add(new RuneModelDef(80f, "effect/punch"));
+
+        out.add(new RuneModelDef(81f, "effect/aqua_affinity"));
+        out.add(new RuneModelDef(82f, "effect/depth_strider"));
+        out.add(new RuneModelDef(83f, "effect/feather_falling"));
 
         return out;
     }

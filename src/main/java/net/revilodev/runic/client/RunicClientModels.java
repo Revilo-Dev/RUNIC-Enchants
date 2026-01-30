@@ -13,7 +13,6 @@ import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.revilodev.runic.RunicMod;
 import net.revilodev.runic.item.ModItems;
-import net.revilodev.runic.item.custom.RuneItem;
 import net.revilodev.runic.stat.RuneStatType;
 import net.revilodev.runic.stat.RuneStats;
 
@@ -26,14 +25,11 @@ public final class RunicClientModels {
     }
 
     public static void onClientSetup(FMLClientSetupEvent event) {
-        event.enqueueWork(() -> {
-            registerAllRuneLikeItems();
-        });
+        event.enqueueWork(RunicClientModels::registerAllRuneLikeItems);
     }
 
     private static void registerAllRuneLikeItems() {
         ResourceLocation pred = id("rune_model");
-
         register(ModItems.ENHANCED_RUNE.get(), pred);
         register(ModItems.ETCHING.get(), pred);
     }
@@ -51,10 +47,12 @@ public final class RunicClientModels {
             return mapStatToIndex(type);
         }
 
-        Holder<Enchantment> effect = RuneItem.getPrimaryEffectEnchantment(stack);
-        if (effect == null) return 0.0F;
+        ItemEnchantments enchants = stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
+        if (enchants.isEmpty()) enchants = stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
+        if (enchants.isEmpty()) return 0.0F;
 
-        ResourceLocation rl = effect.unwrapKey().map(k -> k.location()).orElse(null);
+        Holder<Enchantment> ench = enchants.keySet().iterator().next();
+        ResourceLocation rl = ench.unwrapKey().map(k -> k.location()).orElse(null);
         if (rl == null) return 0.0F;
 
         return mapEnchantToIndex(rl);
@@ -70,7 +68,6 @@ public final class RunicClientModels {
             case "bonus_chance" -> 6f;
             case "draw_speed" -> 7f;
             case "durability" -> 8f;
-            case "fall_reduction" -> 9f;
             case "fire_resistance" -> 10f;
             case "flame_chance" -> 11f;
             case "freezing_chance" -> 12f;
@@ -89,10 +86,8 @@ public final class RunicClientModels {
             case "shocking_chance" -> 25f;
             case "stun_chance" -> 26f;
             case "sweeping_range" -> 27f;
-            case "swimming_speed" -> 28f;
             case "toughness" -> 29f;
             case "undead_damage" -> 30f;
-            case "water_breathing" -> 31f;
             case "weakening_chance" -> 32f;
             case "withering_chance" -> 33f;
             default -> 0f;
@@ -101,6 +96,10 @@ public final class RunicClientModels {
 
     private static float mapEnchantToIndex(ResourceLocation id) {
         return switch (id.toString()) {
+            case "minecraft:aqua_affinity" -> 81f;
+            case "minecraft:depth_strider" -> 82f;
+            case "minecraft:feather_falling" -> 83f;
+
             case "combat_roll:acrobat" -> 34f;
             case "farmersdelight:backstabbing" -> 35f;
             case "minecraft:binding_curse" -> 36f;
