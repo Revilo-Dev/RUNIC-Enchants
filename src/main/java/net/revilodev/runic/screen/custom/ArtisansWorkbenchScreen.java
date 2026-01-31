@@ -6,10 +6,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.revilodev.runic.RunicMod;
 import net.revilodev.runic.client.ArtisansPreviewRenderer;
 import net.revilodev.runic.runes.RuneSlots;
@@ -29,9 +29,6 @@ public final class ArtisansWorkbenchScreen extends AbstractContainerScreen<Artis
 
     private static final int FORGE_X = 52;
     private static final int FORGE_Y = 51;
-
-    private static final String ATTR_ATTACK_DAMAGE = "attribute.name.generic.attack_damage";
-    private static final String ATTR_ATTACK_SPEED = "attribute.name.generic.attack_speed";
 
     private ForgeButton forgeButton;
 
@@ -99,29 +96,38 @@ public final class ArtisansWorkbenchScreen extends AbstractContainerScreen<Artis
         this.renderTooltip(gg, mouseX, mouseY);
     }
 
+    /**
+     * Renders a stable "Changes" tooltip panel to the right of the GUI (or left if no space).
+     * This does NOT use the item's full tooltip, so it won't show "When in main hand" blocks.
+     */
     private void renderForgePreviewTooltip(GuiGraphics gg) {
         ItemStack base = this.menu.getGearStack();
         ItemStack preview = this.menu.getPreviewStack();
         if (base.isEmpty() || preview.isEmpty() || this.minecraft == null) return;
 
-        List<Component> lines = new ArrayList<>(this.getTooltipFromItem(this.minecraft, preview));
-
         List<Component> delta = buildDeltaLines(base, preview);
-        if (!delta.isEmpty()) {
-            lines.add(Component.empty());
-            lines.add(Component.literal("Changes").withStyle(ChatFormatting.GRAY));
-            lines.addAll(delta);
-        }
+        if (delta.isEmpty()) return;
 
-        int x = this.leftPos + PREVIEW_X + PREVIEW_W + 10;
-        int y = this.topPos + PREVIEW_Y;
+        List<Component> lines = new ArrayList<>();
+        lines.add(Component.literal("Changes").withStyle(ChatFormatting.GRAY));
+        lines.addAll(delta);
+
+        // Place panel to the right of the GUI
+        int x = this.leftPos + this.imageWidth + 8;
+        int y = this.topPos + 6;
 
         int tw = 0;
         for (Component c : lines) tw = Math.max(tw, this.font.width(c));
         int th = lines.size() * this.font.lineHeight;
 
-        if (x + tw + 12 > this.width) return;
-        if (y + th + 12 > this.height) return;
+        // If it doesn't fit on the right, move to the left of the GUI
+        if (x + tw + 12 > this.width) {
+            x = this.leftPos - tw - 20;
+        }
+
+        // Clamp on screen (never "return" and disappear)
+        x = Math.max(6, Math.min(x, this.width - tw - 12));
+        y = Math.max(6, Math.min(y, this.height - th - 12));
 
         gg.renderTooltip(this.font, lines, Optional.empty(), x, y);
     }
@@ -129,6 +135,7 @@ public final class ArtisansWorkbenchScreen extends AbstractContainerScreen<Artis
     private List<Component> buildDeltaLines(ItemStack base, ItemStack preview) {
         List<Component> out = new ArrayList<>();
 
+        // Rune slots (show absolute base -> preview)
         int baseCap = RuneSlots.capacity(base);
         int prevCap = RuneSlots.capacity(preview);
         int baseUsed = RuneSlots.used(base);
@@ -140,60 +147,44 @@ public final class ArtisansWorkbenchScreen extends AbstractContainerScreen<Artis
             out.add(Component.literal("Rune slots: " + a + " \u2192 " + b).withStyle(ChatFormatting.AQUA));
         }
 
+        // Durability (show max + remaining deltas)
         if (base.isDamageableItem() && preview.isDamageableItem()) {
-            int baseRem = base.getMaxDamage() - base.getDamageValue();
-            int prevRem = preview.getMaxDamage() - preview.getDamageValue();
-            int d = prevRem - baseRem;
-            if (d != 0) out.add(coloredDelta("Durability (remaining)", d));
+            int baseMax = base.getMaxDamage();
+            int prevMax = preview.getMaxDamage();
+            int dMax = prevMax - baseMax;
+            if (dMax != 0) out.add(coloredDelta("Max Durability", dMax));
+
+            int baseRem = baseMax - base.getDamageValue();
+            int prevRem = prevMax - preview.getDamageValue();
+            int dRem = prevRem - baseRem;
+            if (dRem != 0) out.add(coloredDelta("Durability (remaining)", dRem));
         }
 
+        // Rune stats (percent deltas)
         RuneStats bStats = RuneStats.get(base);
         RuneStats pStats = RuneStats.get(preview);
 
         Map<RuneStatType, Float> bm = bStats == null ? Map.of() : bStats.view();
         Map<RuneStatType, Float> pm = pStats == null ? Map.of() : pStats.view();
 
-        List<RuneStatType> keys = new ArrayList<>();
-        keys.addAll(bm.keySet());
-        for (RuneStatType t : pm.keySet()) if (!keys.contains(t)) keys.add(t);
-        keys.sort(Comparator.comparing(RuneStatType::id));
+        if (!bm.isEmpty() || !pm.isEmpty()) {
+            List<RuneStatType> keys = new ArrayList<>();
+            keys.addAll(bm.keySet());
+            for (RuneStatType t : pm.keySet()) if (!keys.contains(t)) keys.add(t);
+            keys.sort(Comparator.comparing(RuneStatType::id));
 
-        List<Component> baseTooltip = this.getTooltipFromItem(this.minecraft, base);
-        double baseAttackDamage = 1.0 + sumAttrFromTooltip(baseTooltip, ATTR_ATTACK_DAMAGE);
-        double baseAttackSpeed = 4.0 + sumAttrFromTooltip(baseTooltip, ATTR_ATTACK_SPEED);
-        int baseMaxDur = base.isDamageableItem() ? base.getMaxDamage() : 0;
-
-        for (RuneStatType t : keys) {
-            float bv = bm.getOrDefault(t, 0.0F);
-            float pv = pm.getOrDefault(t, 0.0F);
-            float dvRaw = pv - bv;
-            if (Math.abs(dvRaw) <= 0.0001F) continue;
-
-            String id = t.id();
-
-            if ("attack_damage".equals(id)) {
-                double pct = pctFraction(dvRaw);
-                out.add(coloredDelta("Attack damage", baseAttackDamage * pct));
-                continue;
+            for (RuneStatType t : keys) {
+                float bv = bm.getOrDefault(t, 0.0F);
+                float pv = pm.getOrDefault(t, 0.0F);
+                float dv = pv - bv;
+                if (Math.abs(dv) <= 0.0001F) continue;
+                out.add(coloredPercent(pretty(t.id()), dv));
             }
-
-            if ("attack_speed".equals(id)) {
-                double pct = pctFraction(dvRaw);
-                out.add(coloredDelta("Attack speed", baseAttackSpeed * pct));
-                continue;
-            }
-
-            if ("durability".equals(id) && baseMaxDur > 0) {
-                double pct = pctFraction(dvRaw);
-                out.add(coloredDelta("Durability", baseMaxDur * pct));
-                continue;
-            }
-
-            out.add(coloredPercent(pretty(id), dvRaw));
         }
 
-        var be = base.getOrDefault(net.minecraft.core.component.DataComponents.ENCHANTMENTS, net.minecraft.world.item.enchantment.ItemEnchantments.EMPTY);
-        var pe = preview.getOrDefault(net.minecraft.core.component.DataComponents.ENCHANTMENTS, net.minecraft.world.item.enchantment.ItemEnchantments.EMPTY);
+        // Enchant deltas (level deltas)
+        ItemEnchantments be = base.getOrDefault(net.minecraft.core.component.DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
+        ItemEnchantments pe = preview.getOrDefault(net.minecraft.core.component.DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
 
         if (!be.isEmpty() || !pe.isEmpty()) {
             Map<String, Integer> bMap = enchMap(be);
@@ -215,64 +206,7 @@ public final class ArtisansWorkbenchScreen extends AbstractContainerScreen<Artis
         return out;
     }
 
-    private static double sumAttrFromTooltip(List<Component> tooltip, String attrKey) {
-        double sum = 0.0;
-
-        for (Component line : tooltip) {
-            if (!(line.getContents() instanceof TranslatableContents tc)) continue;
-
-            String key = tc.getKey();
-            if (key == null) continue;
-
-            boolean isPlus = key.startsWith("attribute.modifier.plus");
-            boolean isTake = key.startsWith("attribute.modifier.take");
-            boolean isEq = key.startsWith("attribute.modifier.equals");
-            if (!isPlus && !isTake && !isEq) continue;
-
-            Object[] args = tc.getArgs();
-            if (args == null || args.length < 2) continue;
-
-            Object a0 = args[0];
-            Object a1 = args[1];
-
-            if (!(a1 instanceof Component attrComp)) continue;
-            if (!(attrComp.getContents() instanceof TranslatableContents atc)) continue;
-            if (!attrKey.equals(atc.getKey())) continue;
-
-            double amt = 0.0;
-            if (a0 instanceof Number n) amt = n.doubleValue();
-            else if (a0 instanceof Component c) amt = parseDoubleSafe(c.getString());
-            else if (a0 instanceof String s) amt = parseDoubleSafe(s);
-
-            if (isTake) amt = -Math.abs(amt);
-            sum += amt;
-        }
-
-        return sum;
-    }
-
-    private static double parseDoubleSafe(String s) {
-        if (s == null) return 0.0;
-        String t = s.replace(",", "").replace("%", "").trim();
-        StringBuilder b = new StringBuilder();
-        for (int i = 0; i < t.length(); i++) {
-            char ch = t.charAt(i);
-            if ((ch >= '0' && ch <= '9') || ch == '.' || ch == '-' || ch == '+') b.append(ch);
-        }
-        try {
-            return Double.parseDouble(b.toString());
-        } catch (Exception ignored) {
-            return 0.0;
-        }
-    }
-
-    private static double pctFraction(float dvRaw) {
-        double v = dvRaw;
-        if (Math.abs(v) > 2.0) v = v / 100.0;
-        return v;
-    }
-
-    private static Map<String, Integer> enchMap(net.minecraft.world.item.enchantment.ItemEnchantments e) {
+    private static Map<String, Integer> enchMap(ItemEnchantments e) {
         Map<String, Integer> out = new HashMap<>();
         for (var it : e.entrySet()) {
             String name = it.getKey().value().description().getString();
@@ -287,34 +221,23 @@ public final class ArtisansWorkbenchScreen extends AbstractContainerScreen<Artis
         return Component.literal(label + ": " + s).withStyle(fmt);
     }
 
-    private static Component coloredDelta(String label, double delta) {
-        ChatFormatting fmt = delta > 0 ? ChatFormatting.GREEN : ChatFormatting.RED;
-        String s = formatSigned(delta);
-        return Component.literal(label + ": " + s).withStyle(fmt);
-    }
-
     private static Component coloredPercent(String label, float dvRaw) {
         double pct = dvRaw;
+        // If someone ever feeds fraction (0.18), treat as 18%
         if (Math.abs(pct) <= 2.0) pct = pct * 100.0;
         ChatFormatting fmt = pct > 0 ? ChatFormatting.GREEN : ChatFormatting.RED;
         String s = (pct > 0 ? "+" : "") + trimDouble(pct) + "%";
         return Component.literal(label + ": " + s).withStyle(fmt);
     }
 
-    private static String formatSigned(double v) {
-        String s = trimDouble(v);
-        if (v > 0) s = "+" + s;
-        return s;
-    }
-
     private static String trimDouble(double v) {
         double av = Math.abs(v);
-        if (av >= 1000.0) return String.format(java.util.Locale.ROOT, "%.0f", v);
-        if (av >= 100.0) return String.format(java.util.Locale.ROOT, "%.1f", v);
-        if (av >= 10.0) return String.format(java.util.Locale.ROOT, "%.2f", v);
-        if (av >= 1.0) return String.format(java.util.Locale.ROOT, "%.2f", v);
-        if (av >= 0.1) return String.format(java.util.Locale.ROOT, "%.2f", v);
-        return String.format(java.util.Locale.ROOT, "%.3f", v);
+        if (av >= 1000.0) return String.format(Locale.ROOT, "%.0f", v);
+        if (av >= 100.0) return String.format(Locale.ROOT, "%.1f", v);
+        if (av >= 10.0) return String.format(Locale.ROOT, "%.2f", v);
+        if (av >= 1.0) return String.format(Locale.ROOT, "%.2f", v);
+        if (av >= 0.1) return String.format(Locale.ROOT, "%.2f", v);
+        return String.format(Locale.ROOT, "%.3f", v);
     }
 
     private static String pretty(String id) {
