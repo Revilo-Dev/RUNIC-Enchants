@@ -10,6 +10,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.revilodev.runic.event.EnchantBlacklist;
 import net.revilodev.runic.recipe.EtchingTableRecipe;
 import net.revilodev.runic.recipe.ModRecipeTypes;
 
@@ -43,10 +44,19 @@ public final class EtchingRecipeBookPanel extends AbstractWidget {
             this.selectedIndex = -1;
             return;
         }
-        this.recipes = new ArrayList<>(mc.level.getRecipeManager().getAllRecipesFor(ModRecipeTypes.ETCHING_TABLE.get()));
+
+        this.recipes = mc.level.getRecipeManager()
+                .getAllRecipesFor(ModRecipeTypes.ETCHING_TABLE.get())
+                .stream()
+                .filter(h -> !EnchantBlacklist.isRecipeBlacklisted(h.value()))
+                .toList();
+
         this.scrollPx = 0;
-        if (this.selectedIndex >= this.recipes.size()) this.selectedIndex = -1;
+        if (this.selectedIndex >= this.recipes.size()) {
+            this.selectedIndex = -1;
+        }
     }
+
 
     public void setPanelPosition(int x, int y) {
         this.setX(x);

@@ -15,6 +15,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.revilodev.runic.block.ModBlocks;
+import net.revilodev.runic.event.EnchantBlacklist;
 import net.revilodev.runic.recipe.EtchingTableInput;
 import net.revilodev.runic.recipe.EtchingTableRecipe;
 import net.revilodev.runic.recipe.ModRecipeTypes;
@@ -105,9 +106,7 @@ public final class EtchingTableMenu extends AbstractContainerMenu {
         ItemStack mat = input.getItem(1);
 
         if (base.isEmpty() || mat.isEmpty()) {
-            lastRecipe = null;
-            result.setItem(0, ItemStack.EMPTY);
-            broadcastChanges();
+            clearResult();
             return;
         }
 
@@ -116,16 +115,27 @@ public final class EtchingTableMenu extends AbstractContainerMenu {
                 level.getRecipeManager().getRecipeFor(ModRecipeTypes.ETCHING_TABLE.get(), in, level);
 
         if (match.isPresent()) {
+            EtchingTableRecipe recipe = match.get().value();
+
+            if (EnchantBlacklist.isRecipeBlacklisted(recipe)) {
+                clearResult();
+                return;
+            }
+
             lastRecipe = match.get();
-            ItemStack out = lastRecipe.value().assemble(in, level.registryAccess());
-            result.setItem(0, out);
+            result.setItem(0, recipe.assemble(in, level.registryAccess()));
         } else {
-            lastRecipe = null;
-            result.setItem(0, ItemStack.EMPTY);
+            clearResult();
         }
 
         broadcastChanges();
     }
+
+    private void clearResult() {
+        lastRecipe = null;
+        result.setItem(0, ItemStack.EMPTY);
+    }
+
 
     private void craft(Player player) {
         if (lastRecipe == null) return;

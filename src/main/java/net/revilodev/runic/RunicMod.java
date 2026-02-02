@@ -6,7 +6,6 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
@@ -26,6 +25,7 @@ import net.revilodev.runic.recipe.ModRecipeTypes;
 import net.revilodev.runic.registry.ModDataComponents;
 import net.revilodev.runic.screen.ModMenuTypes;
 import org.slf4j.Logger;
+
 
 @Mod(RunicMod.MOD_ID)
 public class RunicMod {
@@ -47,9 +47,11 @@ public class RunicMod {
         ModDataComponents.DATA_COMPONENT_TYPES.register(modEventBus);
         ModMobEffects.register(modEventBus);
         ModParticles.register(modEventBus);
+        modContainer.registerConfig(net.neoforged.fml.config.ModConfig.Type.COMMON, RunicConfig.SPEC);
 
         ModRecipeTypes.register(modEventBus);
         ModRecipeSerializers.register(modEventBus);
+
 
         if (FMLEnvironment.dist == Dist.CLIENT) {
             modEventBus.addListener(RunicClient::onRegisterScreens);
