@@ -3,7 +3,6 @@ package net.revilodev.runic.item;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -33,9 +32,9 @@ public final class GearTooltips {
         stripModifierContextLines(tooltip);
         stripAllEnchantmentLines(stack, tooltip);
 
+        int durabilityInsertIdx = -1;
         if (stack.getMaxDamage() > 0) {
-            int idx = findAfterVanillaStatLines(tooltip);
-            tooltip.add(idx, buildDurabilityLine(stack));
+            durabilityInsertIdx = findAfterVanillaStatLines(tooltip);
         }
 
         List<Component> enhancements = new ArrayList<>();
@@ -53,6 +52,17 @@ public final class GearTooltips {
         if (!enhancements.isEmpty()) {
             tooltip.add(Component.literal("Enhancements:").withStyle(ChatFormatting.GRAY));
             tooltip.addAll(enhancements);
+        }
+
+        if (durabilityInsertIdx != -1) {
+            int idx = durabilityInsertIdx;
+            if (idx < 0) idx = Math.min(1, tooltip.size());
+
+            int end = idx;
+            while (end < tooltip.size() && isLikelyVanillaStatLine(tooltip.get(end))) end++;
+            idx = end;
+
+            tooltip.add(idx, buildDurabilityLine(stack));
         }
 
         List<Component> slots = buildRuneSlots(stack);
@@ -134,12 +144,13 @@ public final class GearTooltips {
             float v = stats.get(type);
             if (Math.abs(v) < 1.0e-6f) continue;
 
-            MutableComponent line = Component.literal("  ")
-                    .append(Component.translatable("tooltip.runic.stat." + type.id()))
-                    .append(Component.literal(" "))
-                    .append(Component.literal(formatSignedPercent(v)).withStyle(ChatFormatting.AQUA));
-
-            out.add(line.withStyle(ChatFormatting.WHITE));
+            out.add(
+                    Component.literal("  ")
+                            .append(Component.translatable("tooltip.runic.stat." + type.id()))
+                            .append(Component.literal(" "))
+                            .append(Component.literal(formatSignedPercent(v)).withStyle(ChatFormatting.AQUA))
+                            .withStyle(ChatFormatting.WHITE)
+            );
         }
 
         return out;
@@ -171,17 +182,10 @@ public final class GearTooltips {
 
         List<Component> out = new ArrayList<>();
         for (EnchLine e : ordered.values()) {
-            MutableComponent line = Component.literal("  ")
-                    .append(e.name.copy().withStyle(ChatFormatting.GRAY));
-
-            String roman = toRoman(e.level);
-            if (!roman.isEmpty()) {
-                line.append(Component.literal(" " + roman).withStyle(ChatFormatting.LIGHT_PURPLE));
-            }
-
-            out.add(line);
+            Component name = e.name.copy().withStyle(ChatFormatting.GRAY);
+            Component lvl = Component.literal(" " + toRoman(e.level)).withStyle(ChatFormatting.LIGHT_PURPLE);
+            out.add(Component.literal("  ").append(name).append(lvl));
         }
-
         return out;
     }
 
