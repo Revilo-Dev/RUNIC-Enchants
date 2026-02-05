@@ -15,6 +15,7 @@ import net.revilodev.runic.client.RunicClient;
 import net.revilodev.runic.client.RunicClientModels;
 import net.revilodev.runic.datagen.DataGenerators;
 import net.revilodev.runic.effect.ModMobEffects;
+import net.revilodev.runic.enchants.soulbound.SoulboundConfig;
 import net.revilodev.runic.item.ModCreativeModeTabs;
 import net.revilodev.runic.item.ModItems;
 import net.revilodev.runic.loot.ModLootModifiers;
@@ -48,6 +49,9 @@ public class RunicMod {
         ModMobEffects.register(modEventBus);
         ModParticles.register(modEventBus);
         modContainer.registerConfig(net.neoforged.fml.config.ModConfig.Type.COMMON, RunicConfig.SPEC);
+        modContainer.registerConfig(net.neoforged.fml.config.ModConfig.Type.COMMON,
+                SoulboundConfig.SPEC,
+                "runic-soulbound.toml");
 
         ModRecipeTypes.register(modEventBus);
         ModRecipeSerializers.register(modEventBus);

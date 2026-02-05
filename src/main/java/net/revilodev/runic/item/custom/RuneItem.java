@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.revilodev.runic.item.ModItems;
+import net.revilodev.runic.loot.rarity.EnhancementRarities;
 import net.revilodev.runic.stat.RuneStatType;
 import net.revilodev.runic.stat.RuneStats;
 
@@ -145,7 +146,29 @@ public class RuneItem extends Item {
         if (all.length == 0) {
             return ItemStack.EMPTY;
         }
-        return createStatRune(random, all[random.nextInt(all.length)]);
+        RuneStatType chosen = pickWeightedStat(all, random);
+        return createStatRune(random, chosen);
+    }
+
+    private static RuneStatType pickWeightedStat(RuneStatType[] all, RandomSource random) {
+        int total = 0;
+        int[] weights = new int[all.length];
+        for (int i = 0; i < all.length; i++) {
+            int w = EnhancementRarities.getStat(all[i].id()).weight();
+            weights[i] = Math.max(0, w);
+            total += weights[i];
+        }
+        if (total <= 0) {
+            return all[random.nextInt(all.length)];
+        }
+        int roll = random.nextInt(total);
+        for (int i = 0; i < weights.length; i++) {
+            roll -= weights[i];
+            if (roll < 0) {
+                return all[i];
+            }
+        }
+        return all[all.length - 1];
     }
 
     public static RuneStats getRolledStatsForTooltip(ItemStack rune) {

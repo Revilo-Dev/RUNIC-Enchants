@@ -44,11 +44,33 @@ public final class EnhancementRarities {
         );
     }
 
-    public static void replaceAllClient(Map<ResourceLocation, EnhancementRarity> incoming,
-                                        EnhancementRarity def) {
+    public static void replaceAll(Map<ResourceLocation, EnhancementRarity> incoming,
+                                  EnhancementRarity def) {
         MAP.clear();
         MAP.putAll(incoming);
         setDefault(def);
+    }
+
+    public static Map<ResourceLocation, String> exportKeyMap() {
+        Map<ResourceLocation, String> out = Maps.newHashMap();
+        MAP.forEach((id, rarity) -> out.put(id, rarity.key()));
+        return out;
+    }
+
+    public static String exportDefaultKey() {
+        return DEFAULT.key();
+    }
+
+    public static void importFromNetwork(Map<ResourceLocation, String> incoming,
+                                         String defaultKey) {
+        Map<ResourceLocation, EnhancementRarity> rebuilt = Maps.newHashMap();
+        incoming.forEach((id, key) -> {
+            EnhancementRarity rarity = EnhancementRarity.fromKey(key, null);
+            if (rarity != null) {
+                rebuilt.put(id, rarity);
+            }
+        });
+        replaceAll(rebuilt, EnhancementRarity.fromKey(defaultKey, EnhancementRarity.COMMON));
     }
 
     public static Map<ResourceLocation, EnhancementRarity> rawMap() { return MAP; }

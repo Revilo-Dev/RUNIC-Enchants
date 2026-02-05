@@ -20,6 +20,7 @@ import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.common.loot.LootModifier;
 import net.revilodev.runic.item.ModItems;
 import net.revilodev.runic.item.custom.RuneItem;
+import net.revilodev.runic.loot.rarity.EnhancementRarities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -139,8 +140,29 @@ public class RunicStructureLootInjector extends LootModifier {
         if (pool.isEmpty()) {
             return ItemStack.EMPTY;
         }
-        Holder<Enchantment> chosen = pool.get(rand.nextInt(pool.size()));
-        return RuneItem.createEffectRune(chosen);
+        Holder<Enchantment> weighted = pickWeightedEffect(pool, rand);
+        return RuneItem.createEffectRune(weighted);
 
+    }
+
+    private static Holder<Enchantment> pickWeightedEffect(List<Holder<Enchantment>> pool, RandomSource rand) {
+        int total = 0;
+        int[] weights = new int[pool.size()];
+        for (int i = 0; i < pool.size(); i++) {
+            int w = EnhancementRarities.get(pool.get(i)).weight();
+            weights[i] = Math.max(0, w);
+            total += weights[i];
+        }
+        if (total <= 0) {
+            return pool.get(rand.nextInt(pool.size()));
+        }
+        int roll = rand.nextInt(total);
+        for (int i = 0; i < weights.length; i++) {
+            roll -= weights[i];
+            if (roll < 0) {
+                return pool.get(i);
+            }
+        }
+        return pool.get(pool.size() - 1);
     }
 }

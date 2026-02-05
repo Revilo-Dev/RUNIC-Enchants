@@ -1,9 +1,13 @@
 package net.revilodev.runic.item;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
@@ -11,6 +15,8 @@ import net.revilodev.runic.gear.GearAttribute;
 import net.revilodev.runic.gear.GearAttributes;
 import net.revilodev.runic.item.custom.EtchingItem;
 import net.revilodev.runic.item.custom.RuneItem;
+import net.revilodev.runic.loot.rarity.EnhancementRarities;
+import net.revilodev.runic.loot.rarity.EnhancementRarity;
 import net.revilodev.runic.runes.RuneSlots;
 import net.revilodev.runic.stat.RuneStatType;
 import net.revilodev.runic.stat.RuneStats;
@@ -29,45 +35,47 @@ public final class GearTooltips {
         if (stack.getItem() instanceof RuneItem || stack.getItem() instanceof EtchingItem) return false;
         if (!shouldOverride(stack)) return false;
 
-        stripModifierContextLines(tooltip);
         stripAllEnchantmentLines(stack, tooltip);
 
-        int durabilityInsertIdx = -1;
-        if (stack.getMaxDamage() > 0) {
-            durabilityInsertIdx = findAfterVanillaStatLines(tooltip);
-        }
-
-        List<Component> enhancements = new ArrayList<>();
+        boolean showDetails = Screen.hasControlDown();
 
         RuneStats stats = RuneStats.get(stack);
-        if (stats != null && !stats.isEmpty()) {
-            enhancements.addAll(buildStatLines(stats));
+        boolean hasRunicStats = stats != null && !stats.isEmpty();
+        List<Component> runicStats = hasRunicStats
+                ? buildStatLines(stats, showDetails)
+                : List.of();
+
+        List<Component> enchLines = buildEnchantmentLines(stack, showDetails);
+
+        int insertAt = afterVanillaStatLines(tooltip);
+
+        if (stack.getMaxDamage() > 0) {
+            tooltip.add(insertAt, buildDurabilityLine(stack));
+            insertAt++;
         }
 
-        List<Component> enchLines = buildEnchantmentLines(stack);
+        if (hasRunicStats) {
+            tooltip.add(insertAt, Component.literal("Modded Stats:").withStyle(ChatFormatting.GRAY));
+            insertAt++;
+            tooltip.addAll(insertAt, runicStats);
+            insertAt += runicStats.size();
+        }
+
         if (!enchLines.isEmpty()) {
-            enhancements.addAll(enchLines);
-        }
-
-        if (!enhancements.isEmpty()) {
-            tooltip.add(Component.literal("Enhancements:").withStyle(ChatFormatting.GRAY));
-            tooltip.addAll(enhancements);
-        }
-
-        if (durabilityInsertIdx != -1) {
-            int idx = durabilityInsertIdx;
-            if (idx < 0) idx = Math.min(1, tooltip.size());
-
-            int end = idx;
-            while (end < tooltip.size() && isLikelyVanillaStatLine(tooltip.get(end))) end++;
-            idx = end;
-
-            tooltip.add(idx, buildDurabilityLine(stack));
+            tooltip.add(insertAt, Component.literal("Enchants:").withStyle(ChatFormatting.GRAY));
+            insertAt++;
+            tooltip.addAll(insertAt, enchLines);
+            insertAt += enchLines.size();
         }
 
         List<Component> slots = buildRuneSlots(stack);
         if (!slots.isEmpty()) {
-            tooltip.addAll(slots);
+            tooltip.addAll(insertAt, slots);
+            insertAt += slots.size();
+        }
+
+        if (!showDetails && (hasRunicStats || !enchLines.isEmpty())) {
+            tooltip.add(insertAt, Component.literal("(Ctrl for details)").withStyle(ChatFormatting.DARK_GRAY));
         }
 
         return true;
@@ -97,26 +105,11 @@ public final class GearTooltips {
         return !GearAttributes.getAll(stack).isEmpty();
     }
 
-    private static void stripModifierContextLines(List<Component> tooltip) {
-        tooltip.removeIf(c -> {
-            String key = keyOf(c);
-            if (key != null && key.startsWith("item.modifiers.")) return true;
-
-            String s = c.getString();
-            return s.startsWith("When ") && s.endsWith(":");
-        });
-    }
-
-    private static int findAfterVanillaStatLines(List<Component> tooltip) {
-        int i = 1;
-
-        while (i < tooltip.size() && tooltip.get(i).getString().isBlank()) i++;
-
-        while (i < tooltip.size() && isLikelyVanillaStatLine(tooltip.get(i))) {
-            i++;
+    private static int findFirstVanillaStatLine(List<Component> tooltip) {
+        for (int i = 0; i < tooltip.size(); i++) {
+            if (isLikelyVanillaStatLine(tooltip.get(i))) return i;
         }
-
-        return i;
+        return -1;
     }
 
     private static boolean isLikelyVanillaStatLine(Component c) {
@@ -137,7 +130,18 @@ public final class GearTooltips {
         return true;
     }
 
-    private static List<Component> buildStatLines(RuneStats stats) {
+    private static int afterVanillaStatLines(List<Component> tooltip) {
+        int statsStart = findFirstVanillaStatLine(tooltip);
+        if (statsStart == -1) return Math.min(1, tooltip.size());
+
+        int end = statsStart;
+        while (end < tooltip.size() && isLikelyVanillaStatLine(tooltip.get(end))) {
+            end++;
+        }
+        return end;
+    }
+
+    private static List<Component> buildStatLines(RuneStats stats, boolean showDetails) {
         List<Component> out = new ArrayList<>();
 
         for (RuneStatType type : RuneStatType.values()) {
@@ -151,6 +155,20 @@ public final class GearTooltips {
                             .append(Component.literal(formatSignedPercent(v)).withStyle(ChatFormatting.AQUA))
                             .withStyle(ChatFormatting.WHITE)
             );
+
+            if (showDetails) {
+                String descKey = "tooltip.runic.stat_desc." + type.id();
+                if (I18n.exists(descKey)) {
+                    out.add(Component.literal("  ")
+                            .append(Component.translatable(descKey).withStyle(ChatFormatting.DARK_GRAY)));
+                } else {
+                    String fallback = statDescription(type);
+                    if (fallback != null && !fallback.isBlank()) {
+                        out.add(Component.literal("  ")
+                                .append(Component.literal(fallback).withStyle(ChatFormatting.DARK_GRAY)));
+                    }
+                }
+            }
         }
 
         return out;
@@ -170,7 +188,7 @@ public final class GearTooltips {
         return Component.literal("Durability: " + curr + "/" + max).withStyle(color);
     }
 
-    private static List<Component> buildEnchantmentLines(ItemStack stack) {
+    private static List<Component> buildEnchantmentLines(ItemStack stack, boolean showDetails) {
         ItemEnchantments live = stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
         ItemEnchantments stored = stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
 
@@ -182,9 +200,20 @@ public final class GearTooltips {
 
         List<Component> out = new ArrayList<>();
         for (EnchLine e : ordered.values()) {
-            Component name = e.name.copy().withStyle(ChatFormatting.GRAY);
-            Component lvl = Component.literal(" " + toRoman(e.level)).withStyle(ChatFormatting.LIGHT_PURPLE);
+            Component name = e.rarity.applyTo(e.name.copy());
+            String roman = toRoman(e.level);
+            Component lvl = roman.isEmpty()
+                    ? Component.empty()
+                    : Component.literal(" " + roman).withStyle(e.rarity.style());
             out.add(Component.literal("  ").append(name).append(lvl));
+
+            if (showDetails) {
+                String descKey = descriptionKey(e.id);
+                if (descKey != null && I18n.exists(descKey)) {
+                    out.add(Component.literal("  ")
+                            .append(Component.translatable(descKey).withStyle(ChatFormatting.DARK_GRAY)));
+                }
+            }
         }
         return out;
     }
@@ -194,11 +223,13 @@ public final class GearTooltips {
             var holder = e.getKey();
             int lvl = e.getIntValue();
             String key = holder.unwrapKey().map(k -> k.location().toString()).orElse(holder.toString());
-            out.putIfAbsent(key, new EnchLine(holder.value().description().copy(), lvl));
+            EnhancementRarity rarity = EnhancementRarities.get(holder);
+            ResourceLocation id = holder.unwrapKey().map(ResourceKey::location).orElse(null);
+            out.putIfAbsent(key, new EnchLine(holder.value().description().copy(), lvl, rarity, id));
         });
     }
 
-    private record EnchLine(Component name, int level) {}
+    private record EnchLine(Component name, int level, EnhancementRarity rarity, ResourceLocation id) {}
 
     private static List<Component> buildRuneSlots(ItemStack stack) {
         int baseCap = RuneSlots.capacity(stack);
@@ -215,8 +246,8 @@ public final class GearTooltips {
         for (int i = 0; i < rem; i++) sb.append(SLOT_EMPTY);
 
         return List.of(
-                Component.literal("Rune Slots:").withStyle(ChatFormatting.GRAY),
-                Component.literal(sb.toString()).withStyle(ChatFormatting.WHITE)
+                Component.literal("Rune Slots: ").withStyle(ChatFormatting.GRAY)
+                        .append(Component.literal(sb.toString()).withStyle(ChatFormatting.WHITE))
         );
     }
 
@@ -246,6 +277,46 @@ public final class GearTooltips {
         };
     }
 
+    private static String descriptionKey(ResourceLocation id) {
+        if (id == null) return null;
+        return "tooltip.runic." + id.getPath();
+    }
+
+    private static String statDescription(RuneStatType type) {
+        return switch (type) {
+            case ATTACK_SPEED -> "Increases attack speed.";
+            case ATTACK_DAMAGE -> "Increases attack damage.";
+            case ATTACK_RANGE -> "Increases melee reach.";
+            case MOVEMENT_SPEED -> "Increases movement speed.";
+            case SWEEPING_RANGE -> "Increases sweeping attack range.";
+            case DURABILITY -> "Increases maximum durability.";
+            case RESISTANCE -> "Reduces incoming damage.";
+            case FIRE_RESISTANCE -> "Reduces fire damage.";
+            case BLAST_RESISTANCE -> "Reduces explosion damage.";
+            case PROJECTILE_RESISTANCE -> "Reduces projectile damage.";
+            case KNOCKBACK_RESISTANCE -> "Reduces knockback taken.";
+            case MINING_SPEED -> "Increases mining speed.";
+            case UNDEAD_DAMAGE -> "Increases damage to undead.";
+            case NETHER_DAMAGE -> "Increases damage to nether mobs.";
+            case HEALTH -> "Increases maximum health.";
+            case STUN_CHANCE -> "Chance to stun on hit.";
+            case FLAME_CHANCE -> "Chance to ignite targets.";
+            case BLEEDING_CHANCE -> "Chance to apply bleeding.";
+            case SHOCKING_CHANCE -> "Chance to shock targets.";
+            case POISON_CHANCE -> "Chance to poison targets.";
+            case WITHERING_CHANCE -> "Chance to wither targets.";
+            case WEAKENING_CHANCE -> "Chance to weaken targets.";
+            case HEALING_EFFICIENCY -> "Improves healing received.";
+            case DRAW_SPEED -> "Increases bow draw speed.";
+            case TOUGHNESS -> "Increases armor toughness.";
+            case FREEZING_CHANCE -> "Chance to freeze targets.";
+            case LEECHING_CHANCE -> "Chance to heal on hit.";
+            case BONUS_CHANCE -> "Chance to fire an extra projectile.";
+            case JUMP_HEIGHT -> "Increases jump height.";
+            case POWER -> "Increases ranged damage.";
+        };
+    }
+
     private static void stripAllEnchantmentLines(ItemStack stack, List<Component> tooltip) {
         ItemEnchantments live = stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
         ItemEnchantments stored = stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
@@ -266,3 +337,4 @@ public final class GearTooltips {
         return null;
     }
 }
+

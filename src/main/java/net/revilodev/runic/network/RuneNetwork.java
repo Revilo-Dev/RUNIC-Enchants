@@ -11,5 +11,8 @@ public final class RuneNetwork {
     public static void onRegisterPayloads(RegisterPayloadHandlersEvent event) {
         var registrar = event.registrar("1");
         registrar.playBidirectional(RuneSlotDataSync.TYPE, RuneSlotDataSync.CODEC, RuneSlotDataSync.HANDLER);
+        registrar.playBidirectional(EnhancementRarityDataSync.TYPE,
+                EnhancementRarityDataSync.CODEC,
+                EnhancementRarityDataSync.HANDLER);
     }
 }

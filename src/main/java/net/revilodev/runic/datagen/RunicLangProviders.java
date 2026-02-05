@@ -104,6 +104,38 @@ public final class RunicLangProviders {
             add("tooltip.runic.stat.bonus_chance", "\uefe5 Bonus Shot Chance");
             add("tooltip.runic.stat.power", "\uefe5 Power");
 
+            // Stat descriptions
+            add("tooltip.runic.stat_desc.attack_speed", "Increases attack speed.");
+            add("tooltip.runic.stat_desc.attack_damage", "Increases attack damage.");
+            add("tooltip.runic.stat_desc.attack_range", "Increases melee reach.");
+            add("tooltip.runic.stat_desc.movement_speed", "Increases movement speed.");
+            add("tooltip.runic.stat_desc.sweeping_range", "Increases sweeping attack range.");
+            add("tooltip.runic.stat_desc.durability", "Increases maximum durability.");
+            add("tooltip.runic.stat_desc.resistance", "Reduces incoming damage.");
+            add("tooltip.runic.stat_desc.fire_resistance", "Reduces fire damage.");
+            add("tooltip.runic.stat_desc.blast_resistance", "Reduces explosion damage.");
+            add("tooltip.runic.stat_desc.projectile_resistance", "Reduces projectile damage.");
+            add("tooltip.runic.stat_desc.knockback_resistance", "Reduces knockback taken.");
+            add("tooltip.runic.stat_desc.mining_speed", "Increases mining speed.");
+            add("tooltip.runic.stat_desc.undead_damage", "Increases damage to undead.");
+            add("tooltip.runic.stat_desc.nether_damage", "Increases damage to nether mobs.");
+            add("tooltip.runic.stat_desc.health", "Increases maximum health.");
+            add("tooltip.runic.stat_desc.stun_chance", "Chance to stun on hit.");
+            add("tooltip.runic.stat_desc.flame_chance", "Chance to ignite targets.");
+            add("tooltip.runic.stat_desc.bleeding_chance", "Chance to apply bleeding.");
+            add("tooltip.runic.stat_desc.shocking_chance", "Chance to shock targets.");
+            add("tooltip.runic.stat_desc.poison_chance", "Chance to poison targets.");
+            add("tooltip.runic.stat_desc.withering_chance", "Chance to wither targets.");
+            add("tooltip.runic.stat_desc.weakening_chance", "Chance to weaken targets.");
+            add("tooltip.runic.stat_desc.healing_efficiency", "Improves healing received.");
+            add("tooltip.runic.stat_desc.draw_speed", "Increases bow draw speed.");
+            add("tooltip.runic.stat_desc.toughness", "Increases armor toughness.");
+            add("tooltip.runic.stat_desc.freezing_chance", "Chance to freeze targets.");
+            add("tooltip.runic.stat_desc.leeching_chance", "Chance to heal on hit.");
+            add("tooltip.runic.stat_desc.bonus_chance", "Chance to fire an extra projectile.");
+            add("tooltip.runic.stat_desc.jump_height", "Increases jump height.");
+            add("tooltip.runic.stat_desc.power", "Increases ranged damage.");
+
             // Enchants
             add("enchantment.runic.poison_cloud", "Poison Cloud");
             add("enchantment.runic.pain_cycle", "Pain Cycle");
