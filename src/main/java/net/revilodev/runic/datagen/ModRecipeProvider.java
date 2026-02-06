@@ -9,6 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
 import net.revilodev.runic.RunicMod;
 import net.revilodev.runic.item.ModItems;
 import net.revilodev.runic.recipe.EtchingTableRecipe;
@@ -256,7 +257,12 @@ public final class ModRecipeProvider extends RecipeProvider {
                     Optional.of(effectId)
             );
 
-            output.accept(id, recipe, null);
+            String ns = effectId.getNamespace();
+            if (!"minecraft".equals(ns) && !RunicMod.MOD_ID.equals(ns)) {
+                output.withConditions(new ModLoadedCondition(ns)).accept(id, recipe, null);
+            } else {
+                output.accept(id, recipe, null);
+            }
         }
 
         buildUtilityInscriptions(output);

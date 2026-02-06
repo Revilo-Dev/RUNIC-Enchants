@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -97,20 +98,24 @@ public final class ArtisansWorkbenchScreen extends AbstractContainerScreen<Artis
     }
 
     /**
-     * Renders a stable "Changes" tooltip panel to the right of the GUI (or left if no space).
-     * This does NOT use the item's full tooltip, so it won't show "When in main hand" blocks.
+     * Renders a stable tooltip panel to the right of the GUI (or left if no space),
+     * with the full item tooltip and a "Changes" section appended at the bottom.
      */
     private void renderForgePreviewTooltip(GuiGraphics gg) {
         ItemStack base = this.menu.getGearStack();
         ItemStack preview = this.menu.getPreviewStack();
         if (base.isEmpty() || preview.isEmpty() || this.minecraft == null) return;
 
-        List<Component> delta = buildDeltaLines(base, preview);
-        if (delta.isEmpty()) return;
+        List<Component> lines = new ArrayList<>(this.getTooltipFromContainerItem(preview));
+        moveVanillaStatsToTop(lines);
+        if (lines.isEmpty()) return;
 
-        List<Component> lines = new ArrayList<>();
-        lines.add(Component.literal("Changes").withStyle(ChatFormatting.GRAY));
-        lines.addAll(delta);
+        List<Component> delta = buildDeltaLines(base, preview);
+        if (!delta.isEmpty()) {
+            lines.add(Component.empty());
+            lines.add(Component.literal("Changes").withStyle(ChatFormatting.GRAY));
+            lines.addAll(delta);
+        }
 
         // Place panel to the right of the GUI
         int x = this.leftPos + this.imageWidth + 8;
@@ -124,6 +129,9 @@ public final class ArtisansWorkbenchScreen extends AbstractContainerScreen<Artis
         if (x + tw + 12 > this.width) {
             x = this.leftPos - tw - 20;
         }
+
+        x -= 13;
+        y += 8;
 
         // Clamp on screen (never "return" and disappear)
         x = Math.max(6, Math.min(x, this.width - tw - 12));
@@ -249,6 +257,75 @@ public final class ArtisansWorkbenchScreen extends AbstractContainerScreen<Artis
             sb.append(Character.toUpperCase(p.charAt(0))).append(p.substring(1)).append(' ');
         }
         return sb.toString().trim();
+    }
+
+    private static void moveVanillaStatsToTop(List<Component> tooltip) {
+        if (tooltip.size() <= 1) return;
+
+        List<Component> statLines = new ArrayList<>();
+        List<Integer> removeIdx = new ArrayList<>();
+
+        for (int i = 0; i < tooltip.size(); i++) {
+            Component c = tooltip.get(i);
+            if (isAttributeHeader(c)) {
+                removeIdx.add(i);
+                continue;
+            }
+            if (isLikelyVanillaStatLine(c)) {
+                statLines.add(c);
+                removeIdx.add(i);
+            }
+        }
+
+        if (statLines.isEmpty()) {
+            for (int i = removeIdx.size() - 1; i >= 0; i--) {
+                tooltip.remove((int) removeIdx.get(i));
+            }
+            return;
+        }
+
+        for (int i = removeIdx.size() - 1; i >= 0; i--) {
+            tooltip.remove((int) removeIdx.get(i));
+        }
+
+        int insertAt = Math.min(1, tooltip.size());
+        tooltip.addAll(insertAt, statLines);
+    }
+
+    private static boolean isLikelyVanillaStatLine(Component c) {
+        String key = keyOf(c);
+        if (key != null) {
+            if (key.startsWith("attribute.modifier.") || key.startsWith("attribute.name.")) return true;
+        }
+
+        String s = c.getString();
+        if (s == null || s.isEmpty()) return false;
+
+        String trimmed = s.trim();
+        if (trimmed.isEmpty()) return false;
+
+        char ch = trimmed.charAt(0);
+        boolean startsNumeric = (ch == '+' || ch == '-' || (ch >= '0' && ch <= '9'));
+        if (!startsNumeric) return false;
+
+        if (trimmed.contains("%")) return false;
+        if (trimmed.endsWith(":")) return false;
+        return true;
+    }
+
+    private static String keyOf(Component c) {
+        if (c == null) return null;
+        if (c.getContents() instanceof TranslatableContents tc) {
+            return tc.getKey();
+        }
+        return null;
+    }
+
+    private static boolean isAttributeHeader(Component c) {
+        String key = keyOf(c);
+        if (key != null && key.startsWith("item.modifiers.")) return true;
+        String s = c.getString();
+        return s != null && s.startsWith("When ") && s.endsWith(":");
     }
 
     @Override

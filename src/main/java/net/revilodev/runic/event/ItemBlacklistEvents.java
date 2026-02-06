@@ -27,10 +27,11 @@ public final class ItemBlacklistEvents {
     public static void onVillagerTrades(VillagerTradesEvent event) {
         if (event.getType() == VillagerProfession.LIBRARIAN) {
             Int2ObjectMap<List<VillagerTrades.ItemListing>> trades = event.getTrades();
-            List<VillagerTrades.ItemListing> master = trades.get(5);
-            if (master != null) {
-                master.clear();
-            }
+            trades.int2ObjectEntrySet().forEach(entry ->
+                    entry.getValue().removeIf(listing ->
+                            listing instanceof VillagerTrades.EnchantBookForEmeralds
+                    )
+            );
         }
     }
 

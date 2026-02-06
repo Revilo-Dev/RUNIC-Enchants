@@ -35,6 +35,7 @@ public final class GearTooltips {
         if (stack.getItem() instanceof RuneItem || stack.getItem() instanceof EtchingItem) return false;
         if (!shouldOverride(stack)) return false;
 
+        moveVanillaStatsToTop(tooltip);
         stripAllEnchantmentLines(stack, tooltip);
 
         boolean showDetails = Screen.hasControlDown();
@@ -121,13 +122,49 @@ public final class GearTooltips {
         String s = c.getString();
         if (s == null || s.isEmpty()) return false;
 
-        char ch = s.charAt(0);
+        String trimmed = s.trim();
+        if (trimmed.isEmpty()) return false;
+
+        char ch = trimmed.charAt(0);
         boolean startsNumeric = (ch == '+' || ch == '-' || (ch >= '0' && ch <= '9'));
         if (!startsNumeric) return false;
 
-        if (s.contains("%")) return false;
-        if (s.endsWith(":")) return false;
+        if (trimmed.contains("%")) return false;
+        if (trimmed.endsWith(":")) return false;
         return true;
+    }
+
+    private static void moveVanillaStatsToTop(List<Component> tooltip) {
+        if (tooltip.size() <= 1) return;
+
+        List<Component> statLines = new ArrayList<>();
+        List<Integer> removeIdx = new ArrayList<>();
+
+        for (int i = 0; i < tooltip.size(); i++) {
+            Component c = tooltip.get(i);
+            if (isAttributeHeader(c)) {
+                removeIdx.add(i);
+                continue;
+            }
+            if (isLikelyVanillaStatLine(c)) {
+                statLines.add(c);
+                removeIdx.add(i);
+            }
+        }
+
+        if (statLines.isEmpty()) {
+            for (int i = removeIdx.size() - 1; i >= 0; i--) {
+                tooltip.remove((int) removeIdx.get(i));
+            }
+            return;
+        }
+
+        for (int i = removeIdx.size() - 1; i >= 0; i--) {
+            tooltip.remove((int) removeIdx.get(i));
+        }
+
+        int insertAt = Math.min(1, tooltip.size());
+        tooltip.addAll(insertAt, statLines);
     }
 
     private static int afterVanillaStatLines(List<Component> tooltip) {
@@ -335,6 +372,13 @@ public final class GearTooltips {
             return tc.getKey();
         }
         return null;
+    }
+
+    private static boolean isAttributeHeader(Component c) {
+        String key = keyOf(c);
+        if (key != null && key.startsWith("item.modifiers.")) return true;
+        String s = c.getString();
+        return s != null && s.startsWith("When ") && s.endsWith(":");
     }
 }
 

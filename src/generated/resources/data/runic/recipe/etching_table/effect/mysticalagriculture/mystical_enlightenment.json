@@ -1,14 +1,20 @@
 {
-  "type": "runic:etching_table",
-  "base": {
-    "item": "runic:blank_etching"
-  },
-  "effect": "mysticalagriculture:mystical_enlightenment",
-  "material": {
-    "item": "minecraft:experience_bottle"
-  },
-  "result": {
-    "count": 1,
-    "id": "runic:etching"
-  }
+    "type":  "runic:etching_table",
+    "base":  {
+                 "item":  "runic:blank_etching"
+             },
+    "effect":  "mysticalagriculture:mystical_enlightenment",
+    "material":  {
+                     "item":  "minecraft:experience_bottle"
+                 },
+    "result":  {
+                   "count":  1,
+                   "id":  "runic:etching"
+               },
+    "neoforge:conditions":  [
+                                {
+                                    "type":  "neoforge:mod_loaded",
+                                    "modid":  "mysticalagriculture"
+                                }
+                            ]
 }

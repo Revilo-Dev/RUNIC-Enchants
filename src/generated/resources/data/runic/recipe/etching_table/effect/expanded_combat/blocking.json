@@ -1,14 +1,20 @@
 {
-  "type": "runic:etching_table",
-  "base": {
-    "item": "runic:blank_etching"
-  },
-  "effect": "expanded_combat:blocking",
-  "material": {
-    "item": "minecraft:shield"
-  },
-  "result": {
-    "count": 1,
-    "id": "runic:etching"
-  }
+    "type":  "runic:etching_table",
+    "base":  {
+                 "item":  "runic:blank_etching"
+             },
+    "effect":  "expanded_combat:blocking",
+    "material":  {
+                     "item":  "minecraft:shield"
+                 },
+    "result":  {
+                   "count":  1,
+                   "id":  "runic:etching"
+               },
+    "neoforge:conditions":  [
+                                {
+                                    "type":  "neoforge:mod_loaded",
+                                    "modid":  "expanded_combat"
+                                }
+                            ]
 }

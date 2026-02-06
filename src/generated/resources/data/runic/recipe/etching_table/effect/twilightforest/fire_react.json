@@ -1,14 +1,20 @@
 {
-  "type": "runic:etching_table",
-  "base": {
-    "item": "runic:blank_etching"
-  },
-  "effect": "twilightforest:fire_react",
-  "material": {
-    "item": "minecraft:fire_charge"
-  },
-  "result": {
-    "count": 1,
-    "id": "runic:etching"
-  }
+    "type":  "runic:etching_table",
+    "base":  {
+                 "item":  "runic:blank_etching"
+             },
+    "effect":  "twilightforest:fire_react",
+    "material":  {
+                     "item":  "minecraft:fire_charge"
+                 },
+    "result":  {
+                   "count":  1,
+                   "id":  "runic:etching"
+               },
+    "neoforge:conditions":  [
+                                {
+                                    "type":  "neoforge:mod_loaded",
+                                    "modid":  "twilightforest"
+                                }
+                            ]
 }
