@@ -37,10 +37,15 @@ public final class EnchantBlacklist {
        CONFIG DISABLED (RUNTIME)
        =============================== */
     private static final Set<ResourceLocation> CONFIG_DISABLED = new HashSet<>();
+    private static volatile boolean DISABLE_ALL = false;
 
     public static void setConfigDisabled(Set<ResourceLocation> ids) {
         CONFIG_DISABLED.clear();
         CONFIG_DISABLED.addAll(ids);
+    }
+
+    public static void setDisableAll(boolean disableAll) {
+        DISABLE_ALL = disableAll;
     }
 
     /* ===============================
@@ -54,7 +59,7 @@ public final class EnchantBlacklist {
     }
 
     public static boolean isBlacklisted(ResourceLocation id) {
-        return HARD_DISABLED.contains(id) || CONFIG_DISABLED.contains(id);
+        return DISABLE_ALL || HARD_DISABLED.contains(id) || CONFIG_DISABLED.contains(id);
     }
 
     /* ===============================

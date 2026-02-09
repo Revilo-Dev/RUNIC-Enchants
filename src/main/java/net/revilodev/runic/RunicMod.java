@@ -34,6 +34,7 @@ public class RunicMod {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public RunicMod(ModContainer modContainer, IEventBus modEventBus) {
+        RunicConfig.register(modEventBus);
         modEventBus.addListener(DataGenerators::gatherData);
 
         modEventBus.addListener(this::commonSetup);

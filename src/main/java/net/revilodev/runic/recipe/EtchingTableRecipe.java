@@ -83,12 +83,13 @@ public final class EtchingTableRecipe implements Recipe<EtchingTableInput> {
     public boolean matches(EtchingTableInput input, net.minecraft.world.level.Level level) {
         if (!base.test(input.base())) return false;
 
-        if (effect.isPresent()) {
-            if (!material.test(input.material())) return false;
+        if (!material.test(input.material())) return false;
+
+        if (effect.isPresent() && stackHasAnyEnchantment(input.material())) {
             return stackHasEnchantmentId(input.material(), effect.get());
         }
 
-        return material.test(input.material());
+        return true;
     }
 
     @Override
@@ -107,6 +108,14 @@ public final class EtchingTableRecipe implements Recipe<EtchingTableInput> {
         }
 
         return out;
+    }
+
+    private static boolean stackHasAnyEnchantment(ItemStack stack) {
+        ItemEnchantments stored = stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
+        if (!stored.isEmpty()) return true;
+
+        ItemEnchantments direct = stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
+        return !direct.isEmpty();
     }
 
     private static boolean stackHasEnchantmentId(ItemStack stack, ResourceLocation id) {
