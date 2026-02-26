@@ -20,6 +20,15 @@ import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 
 public final class RunicEtchingRecipeProvider extends RecipeProvider {
+    private static final Set<ResourceLocation> DISABLED_EFFECT_ETCHING_RECIPES = Set.of(
+            ResourceLocation.fromNamespaceAndPath("deeperdarker", "catalysis"),
+            ResourceLocation.fromNamespaceAndPath("simplyswords", "catalysis"),
+            ResourceLocation.fromNamespaceAndPath("simplyswords", "fire_react"),
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "fire_react"),
+            ResourceLocation.fromNamespaceAndPath("mysticalagriculture", "soul_siphoner"),
+            ResourceLocation.fromNamespaceAndPath("simplyswords", "soul_siphoner")
+    );
+
     public RunicEtchingRecipeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
         super(output, lookupProvider);
     }
@@ -51,6 +60,10 @@ public final class RunicEtchingRecipeProvider extends RecipeProvider {
         effects.sort(Comparator.comparing(ResourceLocation::toString));
 
         for (ResourceLocation effectId : effects) {
+            if (DISABLED_EFFECT_ETCHING_RECIPES.contains(effectId)) {
+                continue;
+            }
+
             ResourceLocation id = ResourceLocation.fromNamespaceAndPath(
                     RunicMod.MOD_ID,
                     "etching_table/etchings/effects/" + effectId.getNamespace() + "/" + effectId.getPath()

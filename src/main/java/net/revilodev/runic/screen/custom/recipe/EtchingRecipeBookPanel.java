@@ -10,7 +10,9 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.neoforged.fml.ModList;
 import net.revilodev.runic.RunicMod;
+import net.revilodev.runic.recipe.EtchingTableInput;
 import net.revilodev.runic.recipe.EtchingTableRecipe;
 import net.revilodev.runic.recipe.ModRecipeTypes;
 import net.revilodev.runic.screen.custom.EtchingTableMenu;
@@ -86,7 +88,10 @@ public final class EtchingRecipeBookPanel extends AbstractWidget {
 
         if (mc.level == null) return;
 
-        this.all.addAll(mc.level.getRecipeManager().getAllRecipesFor(ModRecipeTypes.ETCHING_TABLE.get()));
+        this.all.addAll(mc.level.getRecipeManager().getAllRecipesFor(ModRecipeTypes.ETCHING_TABLE.get())
+                .stream()
+                .filter(this::isVisibleForLoadedMods)
+                .toList());
         this.all.sort(Comparator.comparing(h -> recipeDisplayName(h).getString().toLowerCase(Locale.ROOT)));
 
         rebuildFiltered();
@@ -164,6 +169,29 @@ public final class EtchingRecipeBookPanel extends AbstractWidget {
         return r.result().getHoverName();
     }
 
+    private boolean isVisibleForLoadedMods(RecipeHolder<EtchingTableRecipe> h) {
+        String sourceMod = compatSourceModFromRecipeId(h.id());
+        if (sourceMod != null && !sourceMod.equals("minecraft") && !sourceMod.equals(RunicMod.MOD_ID)) {
+            if (!ModList.get().isLoaded(sourceMod)) return false;
+        }
+
+        var effect = h.value().effect();
+        if (effect.isEmpty()) return true;
+
+        String namespace = effect.get().getNamespace();
+        if (namespace.equals("minecraft") || namespace.equals(RunicMod.MOD_ID)) return true;
+
+        return ModList.get().isLoaded(namespace);
+    }
+
+    private static String compatSourceModFromRecipeId(ResourceLocation recipeId) {
+        String[] parts = recipeId.getPath().split("/");
+        if (parts.length >= 3 && parts[0].equals("etching_table") && parts[1].equals("effect")) {
+            return parts[2];
+        }
+        return null;
+    }
+
     private static String titleize(String id) {
         if (id == null || id.isBlank()) return "";
         String[] parts = id.split("[_\\-]+");
@@ -204,7 +232,7 @@ public final class EtchingRecipeBookPanel extends AbstractWidget {
 
             gg.blit(craftable ? SLOT_C : SLOT_U, bx, by, 0, 0, 25, 25, 25, 25);
 
-            ItemStack out = holder.value().result().copy();
+            ItemStack out = previewStack(mc, holder);
             gg.renderItem(out, bx + 4, by + 4);
             gg.renderItemDecorations(mc.font, out, bx + 4, by + 4);
 
@@ -271,6 +299,17 @@ public final class EtchingRecipeBookPanel extends AbstractWidget {
         for (int i = 0; i < stacks.size(); i++) counts[i] = stacks.get(i).isEmpty() ? 0 : stacks.get(i).getCount();
 
         return takeOne(stacks, counts, a) && takeOne(stacks, counts, b);
+    }
+
+    private ItemStack previewStack(Minecraft mc, RecipeHolder<EtchingTableRecipe> holder) {
+        if (mc.level == null) return holder.value().result().copy();
+
+        ItemStack out = holder.value().assemble(
+                new EtchingTableInput(ItemStack.EMPTY, ItemStack.EMPTY),
+                mc.level.registryAccess()
+        );
+
+        return out.isEmpty() ? holder.value().result().copy() : out;
     }
 
     private boolean takeOne(List<ItemStack> stacks, int[] counts, Ingredient ing) {

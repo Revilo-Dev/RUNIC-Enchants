@@ -3,7 +3,9 @@ package net.revilodev.runic.datagen;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -68,7 +70,6 @@ public final class ModRecipeProvider extends RecipeProvider {
             ResourceLocation.fromNamespaceAndPath("create", "capacity"),
             ResourceLocation.fromNamespaceAndPath("create", "potato_recovery"),
 
-            ResourceLocation.fromNamespaceAndPath("deeperdarker", "catalysis"),
             ResourceLocation.fromNamespaceAndPath("deeperdarker", "discharge"),
             ResourceLocation.fromNamespaceAndPath("deeperdarker", "sculk_smite"),
 
@@ -84,17 +85,12 @@ public final class ModRecipeProvider extends RecipeProvider {
             ResourceLocation.fromNamespaceAndPath("farmersdelight", "backstabbing"),
 
             ResourceLocation.fromNamespaceAndPath("mysticalagriculture", "mystical_enlightenment"),
-            ResourceLocation.fromNamespaceAndPath("mysticalagriculture", "soul_siphoner"),
-
-            ResourceLocation.fromNamespaceAndPath("simplyswords", "catalysis"),
-            ResourceLocation.fromNamespaceAndPath("simplyswords", "fire_react"),
-            ResourceLocation.fromNamespaceAndPath("simplyswords", "soul_siphoner"),
+            
 
             ResourceLocation.fromNamespaceAndPath("supplementaries", "stasis"),
 
             ResourceLocation.fromNamespaceAndPath("twilightforest", "chill_aura"),
             ResourceLocation.fromNamespaceAndPath("twilightforest", "destruction"),
-            ResourceLocation.fromNamespaceAndPath("twilightforest", "fire_react"),
 
             ResourceLocation.withDefaultNamespace("aqua_affinity"),
             ResourceLocation.withDefaultNamespace("depth_strider"),
@@ -139,7 +135,6 @@ public final class ModRecipeProvider extends RecipeProvider {
         put("create", "capacity", Items.BARREL);
         put("create", "potato_recovery", Items.POTATO);
 
-        put("deeperdarker", "catalysis", Items.SCULK_CATALYST);
         put("deeperdarker", "discharge", Items.ECHO_SHARD);
         put("deeperdarker", "sculk_smite", Items.SCULK_SHRIEKER);
 
@@ -155,17 +150,12 @@ public final class ModRecipeProvider extends RecipeProvider {
         put("farmersdelight", "backstabbing", Items.IRON_SWORD);
 
         put("mysticalagriculture", "mystical_enlightenment", Items.EXPERIENCE_BOTTLE);
-        put("mysticalagriculture", "soul_siphoner", Items.SOUL_SAND);
-
-        put("simplyswords", "catalysis", Items.BLAZE_POWDER);
-        put("simplyswords", "fire_react", Items.MAGMA_CREAM);
-        put("simplyswords", "soul_siphoner", Items.SOUL_LANTERN);
+        
 
         put("supplementaries", "stasis", Items.CLOCK);
 
         put("twilightforest", "chill_aura", Items.PACKED_ICE);
         put("twilightforest", "destruction", Items.TNT);
-        put("twilightforest", "fire_react", Items.FIRE_CHARGE);
 
         putVanilla("aqua_affinity", Items.PRISMARINE_CRYSTALS);
         putVanilla("depth_strider", Items.PRISMARINE_SHARD);
@@ -218,6 +208,15 @@ public final class ModRecipeProvider extends RecipeProvider {
 
     @Override
     protected void buildRecipes(RecipeOutput output) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.BLANK_ETCHING.get())
+                .pattern("SSS")
+                .pattern("SLS")
+                .pattern("SSS")
+                .define('S', Items.STONE)
+                .define('L', Items.LAPIS_LAZULI)
+                .unlockedBy(getHasName(Items.LAPIS_LAZULI), has(Items.LAPIS_LAZULI))
+                .save(output, ResourceLocation.fromNamespaceAndPath(RunicMod.MOD_ID, "blank_etching"));
+
         ItemStack etchingResult = new ItemStack(ModItems.ETCHING.get(), 1);
 
         Ingredient statBase = Ingredient.of(ModItems.BLANK_ETCHING.get());

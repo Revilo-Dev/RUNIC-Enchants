@@ -117,6 +117,7 @@ public final class RunicLangProviders {
             add("tooltip.runic.stat_desc.projectile_resistance", "Reduces projectile damage.");
             add("tooltip.runic.stat_desc.knockback_resistance", "Reduces knockback taken.");
             add("tooltip.runic.stat_desc.mining_speed", "Increases mining speed.");
+            add("tooltip.runic.stat_desc.swimming_speed", "Increases swimming speed.");
             add("tooltip.runic.stat_desc.undead_damage", "Increases damage to undead.");
             add("tooltip.runic.stat_desc.nether_damage", "Increases damage to nether mobs.");
             add("tooltip.runic.stat_desc.health", "Increases maximum health.");
@@ -128,6 +129,7 @@ public final class RunicLangProviders {
             add("tooltip.runic.stat_desc.withering_chance", "Chance to wither targets.");
             add("tooltip.runic.stat_desc.weakening_chance", "Chance to weaken targets.");
             add("tooltip.runic.stat_desc.healing_efficiency", "Improves healing received.");
+            add("tooltip.runic.stat_desc.water_breathing", "Increases underwater breathing duration.");
             add("tooltip.runic.stat_desc.draw_speed", "Increases bow draw speed.");
             add("tooltip.runic.stat_desc.toughness", "Increases armor toughness.");
             add("tooltip.runic.stat_desc.freezing_chance", "Chance to freeze targets.");
