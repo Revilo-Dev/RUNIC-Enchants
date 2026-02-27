@@ -144,7 +144,7 @@ public final class RunicLangProviders {
             add("enchantment.runic.committed", "Committed");
 
             // Inscription
-            add("tooltip.runic.expansion_rune", "Adds 1 Rune slot, reduces max durability by 20%, applies Negative (max 3 uses)");
+            add("tooltip.runic.expansion_rune", "Adds 1 Rune slot, reduces max durability by 20%");
             add("tooltip.runic.repair_rune", "Repairs item to full durability, reduces max durability by 5%");
             add("tooltip.runic.nullification_rune", "Removes all enhancements, resets Rune slots, applies Negative");
             add("tooltip.runic.upgrade_rune", "Upgrades a random stat by up to 10%, costs durability equal to upgrade (min 25% durability)");

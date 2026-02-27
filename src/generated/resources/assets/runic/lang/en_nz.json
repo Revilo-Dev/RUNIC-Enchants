@@ -34,7 +34,7 @@
   "tooltip.runic.depth_strider": "Increases underwater movement speed",
   "tooltip.runic.destruction": "+% attack damage",
   "tooltip.runic.efficiency": "Increases mining speed",
-  "tooltip.runic.expansion_rune": "Adds 1 Rune slot, reduces max durability by 20%, applies Negative (max 3 uses)",
+  "tooltip.runic.expansion_rune": "Adds 1 Rune slot, reduces max durability by 20%",
   "tooltip.runic.extraction_inscription": "Extracts 1 enhancement into an Etching, applies Sealed",
   "tooltip.runic.feather_falling": "Reduces fall damage",
   "tooltip.runic.fire_aspect": "Sets targets alight on hit",

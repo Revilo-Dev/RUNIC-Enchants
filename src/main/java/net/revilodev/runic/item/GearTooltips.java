@@ -75,7 +75,14 @@ public final class GearTooltips {
             insertAt += slots.size();
         }
 
-        if (!showDetails && (hasRunicStats || !enchLines.isEmpty())) {
+        boolean hasAttributes = !GearAttributes.getAll(stack).isEmpty();
+        List<Component> attrs = buildAttributeIndicators(stack, showDetails);
+        if (!attrs.isEmpty()) {
+            tooltip.addAll(insertAt, attrs);
+            insertAt += attrs.size();
+        }
+
+        if (!showDetails && (hasRunicStats || !enchLines.isEmpty() || hasAttributes)) {
             tooltip.add(insertAt, Component.literal("(Ctrl for details)").withStyle(ChatFormatting.DARK_GRAY));
         }
 
@@ -286,6 +293,44 @@ public final class GearTooltips {
                 Component.literal("Rune Slots: ").withStyle(ChatFormatting.GRAY)
                         .append(Component.literal(sb.toString()).withStyle(ChatFormatting.WHITE))
         );
+    }
+
+    private static List<Component> buildAttributeIndicators(ItemStack stack, boolean showDetails) {
+        Map<GearAttribute, Integer> attrs = GearAttributes.getAll(stack);
+        if (attrs.isEmpty()) return List.of();
+
+        List<Component> out = new ArrayList<>();
+        out.add(Component.literal("Attributes:").withStyle(ChatFormatting.GRAY));
+
+        for (GearAttribute attr : GearAttribute.values()) {
+            int lvl = attrs.getOrDefault(attr, 0);
+            if (lvl <= 0) continue;
+
+            String roman = toRoman(Math.min(lvl, 10));
+            out.add(
+                    Component.literal("  ")
+                            .append(attr.displayName().copy().withStyle(attr.color()))
+                            .append(roman.isEmpty()
+                                    ? Component.empty()
+                                    : Component.literal(" " + roman).withStyle(attr.color()))
+            );
+
+            if (showDetails) {
+                out.add(Component.literal("  ")
+                        .append(Component.literal(attributeDescription(attr)).withStyle(ChatFormatting.DARK_GRAY)));
+            }
+        }
+
+        return out;
+    }
+
+    private static String attributeDescription(GearAttribute attr) {
+        return switch (attr) {
+            case CURSED -> "Reduces all runic stat values by 5% per stack.";
+            case INSTABLE -> "Rerolls become weaker by reducing rolled stat ranges.";
+            case NEGATIVE -> "Reduces effective rune slot capacity by 1 per stack.";
+            case SEALED -> "Prevents further modifications at the Artisan's Workbench.";
+        };
     }
 
     private static String formatSignedPercent(float v) {

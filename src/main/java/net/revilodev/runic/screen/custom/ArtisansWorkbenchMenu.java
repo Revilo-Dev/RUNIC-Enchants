@@ -142,7 +142,7 @@ public final class ArtisansWorkbenchMenu extends AbstractContainerMenu {
         if (enh.isEmpty() || gear.isEmpty()) return false;
 
         if (GearAttributes.has(gear, GearAttribute.SEALED)) return false;
-        if (isInscription(enh) && anyAttrAtMax(gear)) return false;
+        if (isInscription(enh) && !isCursedApplyingInscription(enh) && anyAttrAtMax(gear)) return false;
 
         if (enh.is(ModItems.EXTRACTION_INSCRIPTION.get())) {
             ItemStack extracted = createExtractionEtching(gear);
@@ -213,6 +213,11 @@ public final class ArtisansWorkbenchMenu extends AbstractContainerMenu {
                 || stack.is(ModItems.CURSED_INSCRIPTION.get())
                 || stack.is(ModItems.WILD_INSCRIPTION.get())
                 || stack.is(ModItems.EXTRACTION_INSCRIPTION.get());
+    }
+
+    private static boolean isCursedApplyingInscription(ItemStack stack) {
+        return stack.is(ModItems.CURSED_INSCRIPTION.get())
+                || stack.is(ModItems.WILD_INSCRIPTION.get());
     }
 
     private boolean anyAttrAtMax(ItemStack stack) {
@@ -402,7 +407,7 @@ public final class ArtisansWorkbenchMenu extends AbstractContainerMenu {
         if (gear.isEmpty() || enhancement.isEmpty()) return ItemStack.EMPTY;
         if (!isEnhancementItem(enhancement) && !isInscription(enhancement)) return ItemStack.EMPTY;
         if (GearAttributes.has(gear, GearAttribute.SEALED)) return ItemStack.EMPTY;
-        if (isInscription(enhancement) && anyAttrAtMax(gear)) return ItemStack.EMPTY;
+        if (isInscription(enhancement) && !isCursedApplyingInscription(enhancement) && anyAttrAtMax(gear)) return ItemStack.EMPTY;
 
         ItemStack base = gear.copy();
         base.setCount(1);

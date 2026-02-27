@@ -13,6 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.revilodev.runic.RunicMod;
 import net.revilodev.runic.client.ArtisansPreviewRenderer;
+import net.revilodev.runic.item.ModItems;
 import net.revilodev.runic.runes.RuneSlots;
 import net.revilodev.runic.stat.RuneStatType;
 import net.revilodev.runic.stat.RuneStats;
@@ -110,7 +111,8 @@ public final class ArtisansWorkbenchScreen extends AbstractContainerScreen<Artis
         moveVanillaStatsToTop(lines);
         if (lines.isEmpty()) return;
 
-        List<Component> delta = buildDeltaLines(base, preview);
+        ItemStack enhancement = this.menu.getEnhancementStack();
+        List<Component> delta = buildDeltaLines(base, preview, enhancement);
         if (!delta.isEmpty()) {
             lines.add(Component.empty());
             lines.add(Component.literal("Changes").withStyle(ChatFormatting.GRAY));
@@ -140,7 +142,9 @@ public final class ArtisansWorkbenchScreen extends AbstractContainerScreen<Artis
         gg.renderTooltip(this.font, lines, Optional.empty(), x, y);
     }
 
-    private List<Component> buildDeltaLines(ItemStack base, ItemStack preview) {
+    private List<Component> buildDeltaLines(ItemStack base, ItemStack preview, ItemStack enhancement) {
+        if (isInscription(enhancement)) return List.of();
+
         List<Component> out = new ArrayList<>();
 
         // Rune slots (show absolute base -> preview)
@@ -212,6 +216,17 @@ public final class ArtisansWorkbenchScreen extends AbstractContainerScreen<Artis
         }
 
         return out;
+    }
+
+    private static boolean isInscription(ItemStack stack) {
+        return stack.is(ModItems.REPAIR_INSCRIPTION.get())
+                || stack.is(ModItems.EXPANSION_INSCRIPTION.get())
+                || stack.is(ModItems.NULLIFICATION_INSCRIPTION.get())
+                || stack.is(ModItems.UPGRADE_INSCRIPTION.get())
+                || stack.is(ModItems.REROLL_INSCRIPTION.get())
+                || stack.is(ModItems.CURSED_INSCRIPTION.get())
+                || stack.is(ModItems.WILD_INSCRIPTION.get())
+                || stack.is(ModItems.EXTRACTION_INSCRIPTION.get());
     }
 
     private static Map<String, Integer> enchMap(ItemEnchantments e) {
