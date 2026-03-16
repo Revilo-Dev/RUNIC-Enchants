@@ -186,6 +186,26 @@ public final class EtchingTableScreen extends AbstractContainerScreen<EtchingTab
     @Override
     protected void renderBg(GuiGraphics gg, float partialTick, int mouseX, int mouseY) {
         gg.blit(TEX, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, 176, 166);
+        String text = "Experience Cost: " + EtchingTableMenu.ETCHING_XP_COST_LEVELS;
+        int textWidth = this.font.width(text);
+
+        int firstInputX = this.leftPos + 8 + EtchingTableMenu.TOP_SLOT_X_OFFSET;
+        int secondInputX = this.leftPos + 44 + EtchingTableMenu.TOP_SLOT_X_OFFSET;
+        int centerX = (firstInputX + secondInputX + 16) / 2;
+
+        int textX = centerX - (textWidth / 2);
+        int textY = this.topPos + 70;
+
+        int padX = 3;
+        int padY = 2;
+        int bgLeft = textX - padX;
+        int bgTop = textY - padY;
+        int bgRight = textX + textWidth + padX;
+        int bgBottom = textY + this.font.lineHeight + padY;
+
+        gg.fill(bgLeft - 1, bgTop - 1, bgRight + 1, bgBottom + 1, 0xFF2D2D2D);
+        gg.fill(bgLeft, bgTop, bgRight, bgBottom, 0xFF6A6A6A);
+        gg.drawString(this.font, text, textX, textY, 0xFF55FF55, false);
     }
 
     @Override

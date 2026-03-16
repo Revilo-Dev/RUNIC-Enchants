@@ -284,6 +284,7 @@ public final class EtchingRecipeBookPanel extends AbstractWidget {
     private boolean isCraftable(Minecraft mc, RecipeHolder<EtchingTableRecipe> holder) {
         if (mc.player == null) return false;
         if (!(mc.player.containerMenu instanceof EtchingTableMenu menu)) return false;
+        if (!EtchingTableMenu.canAffordEtchingCostLevels(mc.player)) return false;
 
         Ingredient a = holder.value().base();
         Ingredient b = holder.value().material();

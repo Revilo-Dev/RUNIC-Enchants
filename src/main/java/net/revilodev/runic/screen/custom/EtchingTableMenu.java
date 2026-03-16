@@ -25,7 +25,7 @@ import java.util.Optional;
 
 public final class EtchingTableMenu extends AbstractContainerMenu {
     public static final int TOP_SLOT_X_OFFSET = 36;
-    private static final int ETCHING_XP_COST_LEVELS = 1;
+    public static final int ETCHING_XP_COST_LEVELS = 1;
 
     private final ContainerLevelAccess access;
     private final Level level;
@@ -162,6 +162,10 @@ public final class EtchingTableMenu extends AbstractContainerMenu {
     }
 
     private boolean canAffordEtchingCost(Player player) {
+        return canAffordEtchingCostLevels(player);
+    }
+
+    public static boolean canAffordEtchingCostLevels(Player player) {
         return player.getAbilities().instabuild || player.experienceLevel >= ETCHING_XP_COST_LEVELS;
     }
 
